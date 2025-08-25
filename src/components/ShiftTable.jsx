@@ -20,13 +20,21 @@ export default function ShiftTable({ shifts, showActions = true }) {
   };
 
   const handleApply = (shiftId) => {
-    // TODO: Implement application logic
+    // Debug point: Add a debugger statement
+    debugger;
     console.log('Applying for shift:', shiftId);
+    // TODO: Implement application logic
+    const shift = shifts.find(s => s.id === shiftId);
+    console.log('Shift details:', shift);
   };
 
   const handleAssign = (shiftId) => {
-    // TODO: Implement assignment logic
+    // Debug point: Add a debugger statement
+    debugger;
     console.log('Assigning shift:', shiftId);
+    // TODO: Implement assignment logic
+    const shift = shifts.find(s => s.id === shiftId);
+    console.log('Shift details:', shift);
   };
 
   const handleCancel = (shiftId) => {
