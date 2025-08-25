@@ -4,18 +4,52 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#222F88',
-        'brand-accent': '#27ADE7',
+        'brand-primary': 'var(--brand-primary)',
+        'brand-primary-light': 'var(--brand-primary-light)',
+        'brand-primary-dark': 'var(--brand-primary-dark)',
+        'brand-accent': 'var(--brand-accent)',
         'brand-surface': 'var(--brand-surface)',
         'brand-bg': 'var(--brand-bg)',
         'brand-border': 'var(--brand-border)',
         'brand-text': 'var(--brand-text)',
         'muted': 'var(--muted)',
+        'ok': 'var(--ok)',
+        'warn': 'var(--warn)',
+        'err': 'var(--err)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+      fontSize: {
+        '2xs': '0.625rem',
+      },
+      spacing: {
+        '4.5': '1.125rem',
+      },
+      borderRadius: {
+        'inherit': 'inherit',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-in': 'slideIn 0.3s ease-in-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 };
