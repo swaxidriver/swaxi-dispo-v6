@@ -10,22 +10,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          primary: {
-            DEFAULT: '#222F88',
-            light: '#2f3d99',
-            dark: '#1a2566'
-          },
-          accent: '#27ADE7',
-          surface: '#ffffff',
-          bg: '#f8fafc',
-          border: '#e2e8f0',
-          text: '#0f172a'
-        },
-        muted: '#64748b',
-        ok: '#16a34a',
-        warn: '#f59e0b',
-        err: '#dc2626'
+        'brand-primary': '#222F88',
+        'brand-primary-light': '#2f3d99',
+        'brand-primary-dark': '#1a2566',
+        'brand-accent': '#27ADE7',
+        'brand-surface': '#ffffff',
+        'brand-bg': '#f8fafc',
+        'brand-border': '#e2e8f0',
+        'brand-text': '#0f172a',
+        'muted': '#64748b',
+        'ok': '#16a34a',
+        'warn': '#f59e0b',
+        'err': '#dc2626',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -55,5 +51,7 @@ export default {
       },
     },
   },
-  plugins: [forms],
+  plugins: [
+    forms,
+  ],
 };

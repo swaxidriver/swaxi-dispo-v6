@@ -21,7 +21,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
 
   const handleApply = (shiftId) => {
     // Debug point: Add a debugger statement
-    debugger;
+    // debugger; // Commented out for production
     console.log('Applying for shift:', shiftId);
     // TODO: Implement application logic
     const shift = shifts.find(s => s.id === shiftId);
@@ -30,7 +30,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
 
   const handleAssign = (shiftId) => {
     // Debug point: Add a debugger statement
-    debugger;
+    // debugger; // Commented out for production
     console.log('Assigning shift:', shiftId);
     // TODO: Implement assignment logic
     const shift = shifts.find(s => s.id === shiftId);

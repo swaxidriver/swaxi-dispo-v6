@@ -4,7 +4,31 @@
 
 @layer base {
   :root {
+    --brand-primary: #222F88;
+    --brand-primary-light: #2f3d99;
+    --brand-primary-dark: #1a2566;
+    --brand-accent: #27ADE7;
+    --brand-surface: #ffffff;
+    --brand-bg: #f8fafc;
+    --brand-border: #e2e8f0;
+    --brand-text: #0f172a;
+    --muted: #64748b;
+    --ok: #16a34a;
+    --warn: #f59e0b;
+    --err: #dc2626;
     font-family: Inter, system-ui, -apple-system, sans-serif;
+  }
+
+  .dark {
+    --brand-primary: #3b4da3;
+    --brand-primary-light: #4a5eb8;
+    --brand-primary-dark: #2c3a7a;
+    --brand-accent: #27ADE7;
+    --brand-surface: #1e293b;
+    --brand-bg: #0f172a;
+    --brand-border: #334155;
+    --brand-text: #f1f5f9;
+    --muted: #94a3b8;
   }
 
   body {

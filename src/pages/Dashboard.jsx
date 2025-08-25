@@ -43,9 +43,10 @@ export default function Dashboard() {
     switch (filter) {
       case 'today':
         return shiftDate.toDateString() === today.toDateString();
-      case '7days':
+      case '7days': {
         const sevenDaysFromNow = new Date(today.setDate(today.getDate() + 7));
         return shiftDate <= sevenDaysFromNow;
+      }
       case 'open':
         return shift.status === 'open';
       case 'assigned':

@@ -29,7 +29,30 @@ export default [
       ...js.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'warn',
+      'no-unused-vars': ['warn', { 
+        varsIgnorePattern: '^(React|_)',
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+        caughtErrorsIgnorePattern: '^_'
+      }]
+    }
+  },
+  {
+    files: ['jest.config.js', 'jest.setup.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node
+      }
+    }
+  },
+  {
+    files: ['**/*.test.{js,jsx}', '**/*.spec.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jest
+      }
     }
   }
 ]
