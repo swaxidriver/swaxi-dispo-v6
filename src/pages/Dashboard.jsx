@@ -1,100 +1,98 @@
 import { useState } from 'react'
+import { useShifts } from '../contexts/ShiftContext'
+import { ROLES } from '../utils/constants'
+import { canManageShifts } from '../utils/auth'
+import MiniAnalytics from '../components/MiniAnalytics'
+import ShiftTable from '../components/ShiftTable'
+import NotificationMenu from '../components/NotificationMenu'
+import ThemeToggle from '../components/ThemeToggle'
 
-const initialStats = [
-  { name: 'Aktive Fahrer', stat: '12', change: '+2', changeType: 'increase' },
-  { name: 'Offene Schichten', stat: '8', change: '-3', changeType: 'decrease' },
-  { name: 'Buchungen heute', stat: '156', change: '+23%', changeType: 'increase' },
-]
+function QuickFilters({ onChange }) {
+  const filters = [
+    { id: 'today', name: 'Heute' },
+    { id: '7days', name: '7 Tage' },
+    { id: 'open', name: 'Offen' },
+    { id: 'assigned', name: 'Zugewiesen' },
+    { id: 'cancelled', name: 'Abgesagt' },
+  ];
+
+  return (
+    <div className="flex space-x-2">
+      {filters.map((filter) => (
+        <button
+          key={filter.id}
+          onClick={() => onChange(filter.id)}
+          className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          {filter.name}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export default function Dashboard() {
-  const [stats] = useState(initialStats)
+  const { state } = useShifts();
+  const [filter, setFilter] = useState('today');
+  const userRole = ROLES.ADMIN; // TODO: Get from auth context
+
+  const filteredShifts = state.shifts.filter(shift => {
+    const shiftDate = new Date(shift.date);
+    const today = new Date();
+    
+    switch (filter) {
+      case 'today':
+        return shiftDate.toDateString() === today.toDateString();
+      case '7days':
+        const sevenDaysFromNow = new Date(today.setDate(today.getDate() + 7));
+        return shiftDate <= sevenDaysFromNow;
+      case 'open':
+        return shift.status === 'open';
+      case 'assigned':
+        return shift.status === 'assigned';
+      case 'cancelled':
+        return shift.status === 'cancelled';
+      default:
+        return true;
+    }
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="md:flex md:items-center md:justify-between mb-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <div className="mt-4 flex md:ml-4 md:mt-0">
-          <button
-            type="button"
-            className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
-          >
-            Neue Schicht erstellen
-          </button>
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Überblick über alle Dienste und Aktivitäten
+          </p>
+        </div>
+        <div className="mt-4 flex items-center space-x-3 md:ml-4 md:mt-0">
+          <NotificationMenu />
+          <ThemeToggle />
+          {canManageShifts(userRole) && (
+            <button
+              type="button"
+              onClick={() => alert('Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉')}
+              className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
+            >
+              Automatisch zuteilen
+            </button>
+          )}
         </div>
       </div>
 
-      <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-        {stats.map((item) => (
-          <div
-            key={item.name}
-            className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
-          >
-            <dt>
-              <div className="absolute rounded-md bg-brand-accent/10 p-3">
-                <div className="h-6 w-6 text-brand-accent" aria-hidden="true" />
-              </div>
-              <p className="ml-16 truncate text-sm font-medium text-gray-500">{item.name}</p>
-            </dt>
-            <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
-              <p className="text-2xl font-semibold text-gray-900">{item.stat}</p>
-              <p
-                className={classNames(
-                  item.changeType === 'increase' ? 'text-green-600' : 'text-red-600',
-                  'ml-2 flex items-baseline text-sm font-semibold'
-                )}
-              >
-                {item.change}
-              </p>
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <div className="mb-8">
+        <MiniAnalytics />
+      </div>
 
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">Aktuelle Schichten</h2>
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fahrer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fahrzeug
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Zeit
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="text-sm font-medium text-gray-900">Max Mustermann</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">SW-X 123</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Aktiv
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">8:00 - 16:00</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div className="mb-4">
+        <QuickFilters onChange={setFilter} />
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-lg font-semibold mb-4">Aktuelle Dienste</h2>
+        <ShiftTable shifts={filteredShifts} />
       </div>
     </div>
   )
-}
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
 }

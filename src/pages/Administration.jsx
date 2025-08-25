@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import RoleManagement from '../components/RoleManagement'
 
 const demoDrivers = [
   { id: 1, name: 'Max Mustermann', status: 'Aktiv', license: 'Klasse B', vehicle: 'SW-X 123', shifts: 42 },
@@ -12,10 +13,25 @@ const demoVehicles = [
   { id: 3, plate: 'SW-X 345', model: 'Tesla Model Y', status: 'Wartung', driver: 'Lisa Schmidt', mileage: '31,245' },
 ]
 
+const demoUsers = [
+  { id: 1, name: 'Admin User', role: 'Admin' },
+  { id: 2, name: 'Chief Dispatcher', role: 'Chief' },
+  { id: 3, name: 'Dispatcher 1', role: 'Disponent' },
+  { id: 4, name: 'Analyst 1', role: 'Analyst' },
+]
+
 export default function Administration() {
   const [activeTab, setActiveTab] = useState('drivers')
   const [drivers] = useState(demoDrivers)
   const [vehicles] = useState(demoVehicles)
+  const [users, setUsers] = useState(demoUsers)
+
+  const handleUpdateRole = (userId, newRole) => {
+    setUsers(users.map(user => 
+      user.id === userId ? { ...user, role: newRole } : user
+    ))
+    // TODO: Update role in backend
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -40,6 +56,7 @@ export default function Administration() {
           >
             <option value="drivers">Fahrer</option>
             <option value="vehicles">Fahrzeuge</option>
+            <option value="users">Benutzer</option>
           </select>
         </div>
         <div className="hidden sm:block">
@@ -66,11 +83,24 @@ export default function Administration() {
             >
               Fahrzeuge
             </button>
+            <button
+              onClick={() => setActiveTab('users')}
+              className={classNames(
+                activeTab === 'users'
+                  ? 'bg-brand-primary text-white'
+                  : 'text-gray-500 hover:text-gray-700',
+                'px-3 py-2 font-medium text-sm rounded-md'
+              )}
+            >
+              Benutzer
+            </button>
           </nav>
         </div>
       </div>
 
-      {activeTab === 'drivers' ? (
+      {activeTab === 'users' ? (
+        <RoleManagement users={users} onUpdateRole={handleUpdateRole} />
+      ) : activeTab === 'drivers' ? (
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
             {drivers.map((driver) => (
