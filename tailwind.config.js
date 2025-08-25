@@ -1,3 +1,5 @@
+import forms from '@tailwindcss/forms';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -8,18 +10,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        'brand-primary': 'var(--brand-primary)',
-        'brand-primary-light': 'var(--brand-primary-light)',
-        'brand-primary-dark': 'var(--brand-primary-dark)',
-        'brand-accent': 'var(--brand-accent)',
-        'brand-surface': 'var(--brand-surface)',
-        'brand-bg': 'var(--brand-bg)',
-        'brand-border': 'var(--brand-border)',
-        'brand-text': 'var(--brand-text)',
-        'muted': 'var(--muted)',
-        'ok': 'var(--ok)',
-        'warn': 'var(--warn)',
-        'err': 'var(--err)',
+        brand: {
+          primary: {
+            DEFAULT: '#222F88',
+            light: '#2f3d99',
+            dark: '#1a2566'
+          },
+          accent: '#27ADE7',
+          surface: '#ffffff',
+          bg: '#f8fafc',
+          border: '#e2e8f0',
+          text: '#0f172a'
+        },
+        muted: '#64748b',
+        ok: '#16a34a',
+        warn: '#f59e0b',
+        err: '#dc2626'
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -49,7 +55,5 @@ export default {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [forms],
 };
