@@ -8,5 +8,22 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true
+  },
+  css: {
+    devSourcemap: true,
+    modules: {
+      localsConvention: 'camelCase'
+    }
+  },
+  build: {
+    cssMinify: true,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        }
+      }
+    }
   }
 });
