@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import Administration from './pages/Administration'
 import Audit from './pages/Audit'
+import TestPage from './pages/TestPage'
 import './App.css'
 
 const APP_VERSION = '5.3.0'
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/admin" element={<Administration />} />
                 <Route path="/audit" element={<Audit />} />
+                <Route path="/test" element={<TestPage />} />
               </Routes>
             </main>
             <Footer />

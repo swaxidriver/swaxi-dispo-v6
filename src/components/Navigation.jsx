@@ -10,6 +10,7 @@ export default function Navigation() {
     { name: 'Kalender', href: '/calendar' },
     { name: 'Verwaltung', href: '/admin' },
     { name: 'Audit', href: '/audit' },
+    { name: '🧪 Test', href: '/test' },
   ]
 
   return (

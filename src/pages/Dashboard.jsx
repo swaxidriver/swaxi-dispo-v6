@@ -6,6 +6,7 @@ import MiniAnalytics from '../components/MiniAnalytics'
 import ShiftTable from '../components/ShiftTable'
 import NotificationMenu from '../components/NotificationMenu'
 import ThemeToggle from '../components/ThemeToggle'
+import ConnectionStatus from '../components/ConnectionStatus'
 
 function QuickFilters({ onChange }) {
   const filters = [
@@ -60,6 +61,11 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Connection Status - NEW: Shows SharePoint/localStorage mode */}
+      <div className="mb-6">
+        <ConnectionStatus />
+      </div>
+
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
