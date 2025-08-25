@@ -8,7 +8,7 @@ import './App.css'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/swaxi-dispo-v6">
       <div className="min-h-screen bg-brand-bg text-brand-text">
         <Navigation />
         <main>
