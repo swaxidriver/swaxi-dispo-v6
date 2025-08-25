@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import { useShifts } from '../contexts/ShiftContext'
-import { SHIFT_STATUS, WORK_LOCATIONS, ROLES } from '../utils/constants'
+import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
 
 export default function ShiftTable({ shifts, showActions = true }) {
   const { dispatch } = useShifts();
-  const [selectedShift, setSelectedShift] = useState(null);
   const userRole = 'admin'; // TODO: Get from auth context
 
   const getStatusBadgeClass = (status) => {
@@ -49,7 +47,13 @@ export default function ShiftTable({ shifts, showActions = true }) {
             <div className="px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-brand-primary truncate">
-                  {shift.date} • {shift.start}-{shift.end}
+                  {shift.date instanceof Date 
+                    ? shift.date.toLocaleDateString('de-DE', { 
+                        weekday: 'short', 
+                        day: '2-digit', 
+                        month: '2-digit' 
+                      }) 
+                    : shift.date} • {shift.start}-{shift.end}
                 </div>
                 <div className="ml-2 flex-shrink-0 flex">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`}>
