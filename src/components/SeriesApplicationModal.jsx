@@ -1,12 +1,15 @@
 import { useState } from 'react';
 
 import { useShifts } from '../contexts/useShifts';
+import { useAuth } from '../contexts/useAuth';
 import { SHIFT_STATUS } from '../utils/constants';
 
 export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] }) {
   const { applyToSeries } = useShifts();
+  const auth = useAuth(); // may be undefined in isolated tests
   const [selectedShifts, setSelectedShifts] = useState([]);
-  const [userId] = useState('current-user'); // TODO: Get from auth context
+  // Preserve legacy default "current-user" to keep existing tests stable
+  const [userId] = useState(auth?.user?.id || 'current-user');
 
   const availableShifts = shifts.filter(shift => shift.status === SHIFT_STATUS.OPEN);
 

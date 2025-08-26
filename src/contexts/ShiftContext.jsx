@@ -156,11 +156,13 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
       const updated = { ...target, conflicts: checkShiftConflicts(target, state.shifts.filter(o => o.id !== target.id), [...state.applications, app]) }
       dispatch({ type: 'UPDATE_SHIFT', payload: updated })
     }
-  // Fire & forget repository persistence
-  repoRef.current?.applyToShift?.(shiftId, userId).catch(() => {})
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `apply_${shiftId}_${Date.now()}`, title: 'Bewerbung eingereicht', message: `Shift ${shiftId} Bewerbung gespeichert`, timestamp: new Date().toLocaleString(), isRead: false } })
+    // Fire & forget repository persistence
+    repoRef.current?.applyToShift?.(shiftId, userId).catch(() => {})
   }, [state.shifts, state.applications])
 
   const applyToSeries = useCallback((shiftIds, userId) => {
+    if (!shiftIds.length) return
     const apps = shiftIds.map(id => ({ id: `${id}_${userId}`, shiftId: id, userId, ts: Date.now() }))
     dispatch({ type: 'ADD_SERIES_APPLICATION', payload: apps })
     // Bulk conflict recompute for involved shifts
@@ -171,6 +173,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
         dispatch({ type: 'UPDATE_SHIFT', payload: updated })
       }
     })
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `apply_series_${Date.now()}`, title: 'Serienbewerbung', message: `${shiftIds.length} Bewerbungen gespeichert`, timestamp: new Date().toLocaleString(), isRead: false } })
   }, [state.shifts, state.applications])
 
   const updateShiftStatus = useCallback((shiftId, status) => {
@@ -198,6 +201,20 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const markNotificationRead = useCallback((id) => dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id }), [])
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
 
+  const createShift = useCallback((partial) => {
+    // partial: { date, type, start, end, workLocation? }
+    const date = partial.date instanceof Date ? partial.date : new Date(partial.date)
+    const id = `${date.toISOString().slice(0,10)}_${partial.type}`
+    if (state.shifts.find(s => s.id === id)) {
+      return { ok: false, reason: 'duplicate' }
+    }
+    const shift = { id, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: partial.workLocation || 'office', conflicts: [] }
+    shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
+    dispatch({ type: 'ADD_SHIFT', payload: shift })
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `create_${id}_${Date.now()}`, title: 'Dienst erstellt', message: `${partial.type} ${partial.start}-${partial.end}`, timestamp: new Date().toLocaleString(), isRead: false } })
+    return { ok: true, id }
+  }, [state.shifts, state.applications])
+
   const value = useMemo(() => ({
     state,
     shifts: state.shifts,
@@ -207,11 +224,12 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     applyToSeries,
     updateShiftStatus,
     assignShift,
+    createShift,
     markNotificationRead,
     markAllNotificationsRead,
   getOpenShifts: () => state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN),
   getConflictedShifts: () => state.shifts.filter(s => s.conflicts?.length),
-  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, markNotificationRead, markAllNotificationsRead])
+  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, createShift, markNotificationRead, markAllNotificationsRead])
 
   return <ShiftContext.Provider value={value}>{children}</ShiftContext.Provider>
 }

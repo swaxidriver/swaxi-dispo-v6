@@ -4,6 +4,7 @@ import { useShifts } from '../contexts/useShifts'
 import { canManageShifts } from '../utils/auth'
 import AuthContext from '../contexts/AuthContext'
 import _ShiftTable from '../components/ShiftTable'
+import CreateShiftModal from '../components/CreateShiftModal'
 
 const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`)
@@ -51,6 +52,7 @@ function getShiftSpanForDay(shift, dayDate) {
 export default function Calendar() {
   const { state } = useShifts();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
   // future: month view support
   const auth = useContext(AuthContext)
   const userRole = auth?.user?.role || 'analyst'
@@ -88,8 +90,7 @@ export default function Calendar() {
 
   const handleCreateShift = () => {
     if (canManageShifts(userRole)) {
-      // TODO: Open create shift modal
-      console.log('Creating new shift');
+      setIsCreateOpen(true)
     }
   };
 
@@ -210,6 +211,7 @@ export default function Calendar() {
         <h2 className="text-lg font-semibold mb-4">Diese Woche</h2>
         <_ShiftTable shifts={weekShifts} />
       </div>
+      <CreateShiftModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} defaultDate={selectedDate} />
     </div>
   );
 }
