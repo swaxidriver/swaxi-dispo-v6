@@ -1,42 +1,43 @@
-import { createContext, useState, useContext, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { ShiftTemplateContext } from './ShiftTemplateContextCore'
 import { v4 as uuidv4 } from 'uuid'
 
-const ShiftTemplateContext = createContext()
 
-export function ShiftTemplateProvider({ children }) {
+function ShiftTemplateProviderImpl({ children }) {
   const [templates, setTemplates] = useState(() => {
-    const savedTemplates = localStorage.getItem('shiftTemplates')
-    return savedTemplates ? JSON.parse(savedTemplates) : []
+    try {
+      const savedTemplates = localStorage.getItem('shiftTemplates')
+      return savedTemplates ? JSON.parse(savedTemplates) : []
+    } catch {
+      return []
+    }
   })
 
   useEffect(() => {
-    localStorage.setItem('shiftTemplates', JSON.stringify(templates))
+    try {
+      localStorage.setItem('shiftTemplates', JSON.stringify(templates))
+    } catch {/* ignore quota errors */}
   }, [templates])
 
   const addTemplate = (template) => {
     const newTemplate = { ...template, id: uuidv4() }
-    setTemplates([...templates, newTemplate])
+    setTemplates((prev) => [...prev, newTemplate])
   }
 
   const updateTemplate = (updatedTemplate) => {
-    setTemplates(
-      templates.map((t) => (t.id === updatedTemplate.id ? updatedTemplate : t))
-    )
+    setTemplates((prev) => prev.map((t) => (t.id === updatedTemplate.id ? updatedTemplate : t)))
   }
 
   const deleteTemplate = (id) => {
-    setTemplates(templates.filter((t) => t.id !== id))
+    setTemplates((prev) => prev.filter((t) => t.id !== id))
   }
 
-  return (
-    <ShiftTemplateContext.Provider
-      value={{ templates, addTemplate, updateTemplate, deleteTemplate }}
-    >
-      {children}
-    </ShiftTemplateContext.Provider>
-  )
+  const value = useMemo(() => ({ templates, addTemplate, updateTemplate, deleteTemplate }), [templates])
+
+  return <ShiftTemplateContext.Provider value={value}>{children}</ShiftTemplateContext.Provider>
 }
 
-export function useShiftTemplates() {
-  return useContext(ShiftTemplateContext)
+export function ShiftTemplateProvider(props) {
+  return <ShiftTemplateProviderImpl {...props} />
 }
+

@@ -1,6 +1,5 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
-
-const ThemeContext = createContext();
+import { useReducer, useEffect } from 'react';
+import { ThemeContext } from './ThemeContextCore';
 
 const initialState = {
   isDark: false,
@@ -53,10 +52,3 @@ export function ThemeProvider({ children }) {
   );
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-}
