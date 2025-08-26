@@ -13,6 +13,31 @@ dist-ssr
 *.local
 coverage/
 
+# Environment configuration (do not commit secrets)
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Trunk.io cache/output
+.trunk/
+
+# Tool / build caches
+.cache
+.vite
+.eslintcache
+jest-cache/
+.jest-cache/
+.jest/
+
+# Package manager artifacts
+*.tgz
+
+# Optional: test/quality reports (uncomment if you decide not to track them)
+# reports/
+
 
 # Editor directories and files
 .vscode/*
