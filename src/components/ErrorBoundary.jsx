@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { logError } from '../utils/logger'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -9,8 +10,15 @@ class ErrorBoundary extends Component {
     return { error }
   }
   componentDidCatch(error, info) {
-    // Basic console log; could be replaced by remote logging later
-    console.error('ErrorBoundary caught error', error, info?.componentStack)
+    const payload = {
+      message: error?.message || String(error),
+      stack: error?.stack,
+      componentStack: info?.componentStack,
+      time: new Date().toISOString(),
+      version: '6.0.1'
+    }
+    logError('ErrorBoundary captured error', payload)
+    // TODO: send to remote telemetry endpoint when available
   }
   handleReload = () => {
     window.location.reload()

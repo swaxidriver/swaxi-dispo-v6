@@ -7,24 +7,28 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 ## ✨ Features
 
 ### 🔄 **Hybrid Data Layer (NEU)**
+
 - **SharePoint Integration** für Stadtwerke Augsburg MS365
 - **Automatischer Fallback** auf localStorage bei fehlender SharePoint-Verbindung
 - **Seamless Switching** zwischen Datenquellen ohne Datenverlust
 - **Real-time Connection Status** mit visuellen Indikatoren
 
 ### 🚗 **Schichtplanung**
+
 - Umfassende Schichtplanung und -verwaltung
 - 👥 Rollenbasierte Zugriffskontrolle (Admin, Chief, Disponent, Analyst)
 - 📊 Echtzeit-Analytics und Statistiken
 - 📅 Erweiterte Kalenderansicht mit Filtern
 
 ### 🎨 **User Experience**
+
 - 🌓 Light/Dark Mode mit Persistence
 - 📱 Vollständig responsive Design
 - 🔔 Echtzeit-Benachrichtigungssystem
 - � Umfassende Audit-Protokollierung
 
 ### 🧪 **Testing & Diagnostics**
+
 - **Comprehensive Test Suite** (`/test` Route)
 - **Real-time Status Monitoring**
 - **Connection Diagnostics**
@@ -169,6 +173,38 @@ npm run lint
 - **Build Time:** ~1.8s
 - **Lighthouse Score:** 98/100
 - **Code Splitting:** Optimized vendor/router/ui chunks
+
+### **🛡 Error Handling & Logging**
+
+Routed content is wrapped in a class-based `ErrorBoundary` (`src/components/ErrorBoundary.jsx`).
+
+Features:
+
+- Catches render / lifecycle errors beneath it
+- Friendly fallback UI with reload button (role="alert")
+- Structured error object (message, stack, componentStack, timestamp, version)
+- Delegated logging via `utils/logger.js` (`logError`, `logInfo`) which auto-silences under Jest
+- Extension hook (TODO) for remote telemetry (Sentry / OpenTelemetry / custom endpoint)
+
+Example:
+
+```jsx
+import ErrorBoundary from './components/ErrorBoundary'
+
+function Root() {
+   return (
+      <ErrorBoundary>
+         <AppRoutes />
+      </ErrorBoundary>
+   )
+}
+```
+
+Logger tips:
+
+- Call `setLoggerSilent(true)` to suppress logs in special embedded contexts.
+- Replace the TODO in `componentDidCatch` with a `fetch('/log', { method:'POST', body: JSON.stringify(payload) })` for server capture.
+
 
 ## 🚀 Deployment
 
