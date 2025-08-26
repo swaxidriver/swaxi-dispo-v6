@@ -9,6 +9,16 @@ const originalLog = console.log
 beforeAll(() => { console.log = jest.fn() })
 afterAll(() => { console.log = originalLog })
 
+// Ensure unique snapshot IDs: mock Date.now to increment
+let mockNowBase = 1700000000000
+beforeEach(() => {
+  mockNowBase += 10000
+  jest.spyOn(Date, 'now').mockImplementation(() => (mockNowBase += 1000))
+})
+afterEach(() => {
+  jest.restoreAllMocks()
+})
+
 // Helper to seed shift state via localStorage before provider init
 function seedState({ shifts = [], applications = [], notifications = [] } = {}) {
   localStorage.setItem('shifts', JSON.stringify(shifts))
