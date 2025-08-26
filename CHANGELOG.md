@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - Navigation now shows application version (v0.3.0+) alongside brand for quick diagnostics.
 - README extended with testing strategy v2, versioning & backlog sections.
 - Introduced design tokens (`tokens.css`) + persistent theme with system preference + Lato font integration; legacy Tailwind brand-* classes retained for staged migration.
+- Modernized primary font from Lato to Manrope (geometric humanist) with fallback chain.
+- Added token lint script (`npm run lint:tokens`) to detect raw hex colors outside approved files.
 
 ### Internal / Tooling (0.3.0)
 

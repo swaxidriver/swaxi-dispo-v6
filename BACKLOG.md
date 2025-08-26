@@ -10,7 +10,7 @@ Legend: P0 = critical foundation, P1 = near-term, P2 = nice-to-have.
 
 ## 📌 In Progress / Next
 
-- P0-9 Theming tokens & typography unification
+- P0-9 Theming tokens & typography unification (COMPLETED: tokens.css, Manrope font, token lint script)
 - Expand role-based conditional rendering tests (shift creation button, templates, audit)
 - Coverage uplift toward pre-defined thresholds (re‑enable stricter gates gradually)
 
@@ -62,3 +62,11 @@ Legend: P0 = critical foundation, P1 = near-term, P2 = nice-to-have.
 
 ## 📝 Notes
 This backlog is intentionally lightweight; promote items to CHANGELOG when shipped. Keep README high-level; implementation granularity lives here.
+
+
+### Recent Theming Enhancements
+
+- Switched primary font to Manrope for a more modern geometric look
+- Added `lint:tokens` script to guard against raw hex usage
+- Documented token usage and migration path in README
+- Planned: JSON export of tokens for design tooling (Figma) & Tailwind var() mapping

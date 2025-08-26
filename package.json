@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "format": "prettier --write .",
     "quality": "node scripts/quality.mjs",
-    "check:imports": "node scripts/check-imports.mjs",
+  "check:imports": "node scripts/check-imports.mjs",
+  "lint:tokens": "node scripts/check-raw-colors.mjs",
     "debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand"
   },
   "dependencies": {

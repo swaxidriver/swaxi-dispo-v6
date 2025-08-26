@@ -26,7 +26,8 @@ export default {
         'err': '#dc2626',
       },
       fontFamily: {
-        sans: ['Lato', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        /* Modern geometric humanist font */
+        sans: ['Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         '2xs': '0.625rem',

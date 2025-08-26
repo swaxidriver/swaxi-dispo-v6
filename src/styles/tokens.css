@@ -17,8 +17,8 @@
   --color-err: #dc2626;
 
   /* Typography Scale */
-  /* Primary brand font (CD): Lato with Inter fallback for environments without Google Fonts */
-  --font-sans: Lato, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Primary brand font (modern): Manrope with Inter fallback */
+  --font-sans: Manrope, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

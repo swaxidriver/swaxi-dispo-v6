@@ -344,7 +344,7 @@ Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farb
 
 - Basis-Styling über Hilfsklassen (`btn`, `card`, `input`) in `index.css`.
 - Direkter Zugriff über `var(--color-*)` für Spezialfälle.
-- Schriftfamilie: Primär Lato (Fallback Inter/System) – eingebunden in `index.html`.
+- Schriftfamilie: Primär Manrope (Fallback Inter/System) – eingebunden in `index.html`.
 
 ### Migration Alt → Neu
 
