@@ -20,4 +20,8 @@ export default {
   ],
   // Relaxed / temporarily disabled coverage thresholds during early test build-out
   coverageThreshold: {},
+  reporters: [
+    'default',
+    ['jest-junit', { outputDirectory: 'reports/junit', outputName: 'jest-junit.xml' }]
+  ],
 }

@@ -4,6 +4,10 @@ version: 0.1
 cli:
   version: latest
 
+toolchain:
+  runtimes:
+    - node@20
+
 # Lint / static analysis configuration
 lint:
   # Enable individual linters. (Trunk will auto-install missing versions in an internal cache.)
@@ -21,6 +25,7 @@ lint:
     - dist/**
     - coverage/**
     - public/**
+  - reports/**
 
 # Tool specific overrides
 tools:
@@ -41,6 +46,9 @@ tasks:
   - id: build
     name: Vite Build
     run: npm run build
+  - id: test:ci
+    name: Jest CI (JUnit)
+    run: npm test -- --ci --reporters=default --reporters=summary
 
 # Formatting placeholder (add prettier or other formatters later if desired)
 # format:
