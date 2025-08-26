@@ -1,8 +1,9 @@
 export default {
   rootDir: '.',
   testEnvironment: 'jsdom',
-  // Use the CommonJS setup file to avoid any potential ESM resolution edge cases in CI
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
+  // Include both ESM and CJS variants; Jest will load both (idempotent). This avoids transient
+  // resolution issues observed on CI where one variant was intermittently reported missing.
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', '<rootDir>/jest.setup.cjs'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
