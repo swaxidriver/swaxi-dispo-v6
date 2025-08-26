@@ -25,6 +25,7 @@ export class InMemoryShiftRepository extends ShiftRepository {
   async cancelShift(id) {
     return this.update(id, { status: 'cancelled' })
   }
+  async ping() { return true }
 }
 
 export default InMemoryShiftRepository

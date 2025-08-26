@@ -1,8 +1,9 @@
-import { screen, fireEvent } from './testUtils'
-import { renderWithProviders } from './testUtils'
 import SeriesApplicationModal from '../components/SeriesApplicationModal'
 import { SHIFT_STATUS } from '../utils/constants'
 import * as useShiftsModule from '../contexts/useShifts'
+
+import { renderWithProviders } from './testUtils'
+import { screen, fireEvent } from './testUtils'
 
 // Mock useShifts to observe applyToSeries calls without full provider complexity
 const mockApplyToSeries = jest.fn()

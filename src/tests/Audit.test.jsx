@@ -1,6 +1,8 @@
 import React from 'react'
-import { screen, fireEvent, renderWithProviders } from './testUtils'
+
 import Audit from '../pages/Audit'
+
+import { screen, fireEvent, renderWithProviders } from './testUtils'
 
 describe('Audit page', () => {
   it('renders heading and all logs initially', () => {

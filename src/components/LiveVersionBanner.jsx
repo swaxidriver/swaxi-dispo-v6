@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 // Lightweight env shim (avoids direct process reference for lint in browser context)
 const __env = (typeof globalThis !== 'undefined' && globalThis.process && globalThis.process.env)
   ? globalThis.process.env

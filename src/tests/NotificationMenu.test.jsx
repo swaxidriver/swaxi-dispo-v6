@@ -1,5 +1,6 @@
 // Removed unused global eslint-disable
 import { render, screen, fireEvent } from '@testing-library/react'
+
 import { ShiftProvider } from '../contexts/ShiftContext'
 import AuthContext from '../contexts/AuthContext'
 import NotificationMenu from '../components/NotificationMenu'

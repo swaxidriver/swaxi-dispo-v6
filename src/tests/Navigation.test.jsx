@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+
 import Navigation from '../components/Navigation'
 import AuthContext from '../contexts/AuthContext'
-import { MemoryRouter } from 'react-router-dom'
 
 function renderNav(user) {
   const logout = jest.fn()

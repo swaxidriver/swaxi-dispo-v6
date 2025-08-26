@@ -1,4 +1,5 @@
 import { useReducer, useEffect } from 'react';
+
 import { ThemeContext } from './ThemeContextCore';
 
 const initialState = {

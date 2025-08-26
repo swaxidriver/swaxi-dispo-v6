@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 // reference to satisfy strict unused var rule in certain test contexts
 const _navLinkRef = NavLink
 import { useContext } from 'react'
+
 import AuthContext from '../contexts/AuthContext'
 
 function classNames(...classes) {

@@ -1,4 +1,5 @@
 import { Component } from 'react'
+
 import { logError } from '../utils/logger'
 
 class ErrorBoundary extends Component {

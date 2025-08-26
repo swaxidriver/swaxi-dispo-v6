@@ -1,6 +1,8 @@
 import React from 'react'
-import { screen, fireEvent, renderWithProviders } from './testUtils'
+
 import Calendar from '../pages/Calendar'
+
+import { screen, fireEvent, renderWithProviders } from './testUtils'
 
 jest.mock('../utils/auth', () => ({ canManageShifts: () => true }))
 

@@ -1,5 +1,6 @@
-import { ShiftRepository } from './ShiftRepository'
 import { sharePointService } from '../services/sharePointService'
+
+import { ShiftRepository } from './ShiftRepository'
 
 // Adapter wrapping existing sharePointService functions to conform to repository interface.
 export class SharePointShiftRepository extends ShiftRepository {
@@ -27,6 +28,14 @@ export class SharePointShiftRepository extends ShiftRepository {
   async cancelShift(id) {
     await sharePointService.updateShift(id, { status: 'cancelled' })
     return { success: true }
+  }
+  async ping() {
+    try {
+      const shifts = await sharePointService.getShifts()
+      return Array.isArray(shifts)
+    } catch {
+      return false
+    }
   }
 }
 

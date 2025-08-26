@@ -1,4 +1,7 @@
+/* eslint-disable import/order */
+import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
 import { AuthProvider } from './contexts/AuthContext'
 import { ShiftProvider } from './contexts/ShiftContext'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -12,7 +15,7 @@ import Audit from './pages/Audit'
 import TestPage from './pages/TestPage'
 import Login from './components/Login'
 import './App.css'
-import { useState, useEffect } from 'react'
+
 import ErrorBoundary from './components/ErrorBoundary'
 
 function LoadingSkeleton() {

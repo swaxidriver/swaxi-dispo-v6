@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react'
+
 import { useShifts } from '../contexts/useShifts'
 import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
+
 import _SeriesApplicationModal from './SeriesApplicationModal'
 
 export default function ShiftTable({ shifts, showActions = true }) {

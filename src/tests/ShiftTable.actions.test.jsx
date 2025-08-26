@@ -1,8 +1,9 @@
-import { renderWithProviders, screen, fireEvent } from './testUtils'
 import ShiftTable from '../components/ShiftTable'
 import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import * as useShiftsModule from '../contexts/useShifts'
+
+import { renderWithProviders, screen, fireEvent } from './testUtils'
 
 // Mock useShifts to track calls without full provider overhead
 const mockApplyToShift = jest.fn()

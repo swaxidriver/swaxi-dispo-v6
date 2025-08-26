@@ -1,6 +1,8 @@
 import React from 'react'
-import { screen, fireEvent, renderWithProviders, act } from './testUtils'
+
 import TestPage from '../pages/TestPage'
+
+import { screen, fireEvent, renderWithProviders, act } from './testUtils'
 
 // Mock sharePointService methods used
 jest.mock('../services/sharePointService', () => ({

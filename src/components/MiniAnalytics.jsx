@@ -32,7 +32,7 @@ export default function MiniAnalytics() {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => (
         <div
           key={stat.name}
@@ -49,6 +49,6 @@ export default function MiniAnalytics() {
           </dd>
         </div>
       ))}
-    </div>
+    </dl>
   )
 }

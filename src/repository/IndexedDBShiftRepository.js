@@ -65,6 +65,7 @@ export class IndexedDBShiftRepository extends ShiftRepository {
     return this.update(id, { status: 'assigned', assignedTo: userName })
   }
   async cancelShift(id) { return this.update(id, { status: 'cancelled' }) }
+  async ping() { return true }
 }
 
 export default IndexedDBShiftRepository

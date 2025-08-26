@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+
 import { ShiftContext } from './ShiftContext'
 
 export function useShifts() {

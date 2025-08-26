@@ -1,4 +1,5 @@
 import { useContext, useMemo } from 'react'
+
 import { ShiftTemplateContext } from './ShiftTemplateContextCore'
 
 // Returns the real template context if mounted, otherwise a safe no-op fallback.

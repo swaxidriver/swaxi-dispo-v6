@@ -63,6 +63,8 @@ export function shiftReducer(state, action) {
       return { ...state, notifications: state.notifications.map(n => ({ ...n, isRead: true })) }
     case 'DELETE_NOTIFICATION':
       return { ...state, notifications: state.notifications.filter(n => n.id !== action.payload) }
+    case 'SET_ONLINE':
+      return { ...state, isOnline: action.payload }
     default:
       return state
   }

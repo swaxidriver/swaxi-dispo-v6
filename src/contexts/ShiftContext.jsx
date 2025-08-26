@@ -1,14 +1,19 @@
+/* global process */
+/* eslint-disable import/order */
 import { createContext, useReducer, useEffect, useCallback, useMemo, useRef } from 'react'
-import { generateShiftTemplates } from '../utils/shifts'
+
 import { getShiftRepository } from '../repository/repositoryFactory'
+import { generateShiftTemplates, checkShiftConflicts } from '../utils/shifts'
+import { validateShiftArray } from '../utils/validation'
+
 import { SHIFT_STATUS } from '../utils/constants'
-import { useShiftTemplates } from './useShiftTemplates'
 import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
-import { checkShiftConflicts } from '../utils/shifts'
+import { useShiftTemplates } from './useShiftTemplates'
 
 const ShiftContext = createContext(null)
 
-export function ShiftProvider({ children }) {
+export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbeatMs = 15000, enableAsyncInTests = false }) {
+  const isTestEnv = typeof process !== 'undefined' && process.env?.JEST_WORKER_ID !== undefined
   const tplContext = useShiftTemplates() || {}
   const memoTemplates = useMemo(() => tplContext.templates || [], [tplContext.templates])
 
@@ -47,7 +52,7 @@ export function ShiftProvider({ children }) {
 
     // 2. Async repository load if no shifts were loaded yet.
     async function bootstrapAsync() {
-      if (cancelled) return
+      if (cancelled || disableAsyncBootstrap || (isTestEnv && !enableAsyncInTests)) return
   if (bootstrappedRef.current) return // already bootstrapped from LS
       try {
         let loadedShifts = []
@@ -59,13 +64,41 @@ export function ShiftProvider({ children }) {
           loadedShifts = normalizeGeneratedShifts(base)
         }
         loadedShifts = loadedShifts.map(s => ({ ...s, conflicts: checkShiftConflicts(s, loadedShifts.filter(o => o.id !== s.id), state.applications) }))
-        if (!cancelled) dispatch({ type: 'INIT_SHIFTS', payload: loadedShifts })
+        // Validate (dev/test only logs); filter out obviously malformed entries to prevent downstream errors.
+        const validated = validateShiftArray(loadedShifts)
+        const env = (typeof process !== 'undefined' && process?.env?.NODE_ENV) || 'development'
+        if (validated.length !== loadedShifts.length && env !== 'production') {
+          console.warn(`ShiftProvider: filtered ${loadedShifts.length - validated.length} malformed shift(s).`)
+        }
+        if (!cancelled) dispatch({ type: 'INIT_SHIFTS', payload: validated })
       } catch { /* swallow */ }
     }
     bootstrapAsync()
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Heartbeat ping to repository to update online status (skipped in tests unless explicitly enabled)
+  useEffect(() => {
+    if ((isTestEnv && !enableAsyncInTests) || heartbeatMs <= 0) return () => {}
+    let stopped = false
+    let handle
+    async function loop() {
+      if (stopped) return
+      try {
+        const res = await repoRef.current?.ping?.()
+        if (typeof res === 'boolean' && res !== state.isOnline) {
+          dispatch({ type: 'SET_ONLINE', payload: res })
+        }
+      } catch {
+        if (state.isOnline) dispatch({ type: 'SET_ONLINE', payload: false })
+      } finally {
+        handle = setTimeout(loop, heartbeatMs)
+      }
+    }
+    loop()
+    return () => { stopped = true; if (handle) clearTimeout(handle) }
+  }, [heartbeatMs, state.isOnline, isTestEnv, enableAsyncInTests])
 
   useEffect(() => {
     if (state.shifts.length) localStorage.setItem('shifts', JSON.stringify(state.shifts))
@@ -169,6 +202,7 @@ export function ShiftProvider({ children }) {
     state,
     shifts: state.shifts,
     dispatch,
+  isOnline: state.isOnline,
     applyToShift,
     applyToSeries,
     updateShiftStatus,

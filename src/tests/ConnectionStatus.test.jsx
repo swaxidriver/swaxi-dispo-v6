@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+
 import ConnectionStatus from '../components/ConnectionStatus'
 
 jest.mock('../contexts/useShifts', () => ({

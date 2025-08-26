@@ -1,6 +1,8 @@
 import React from 'react'
-import { screen, renderWithProviders } from './testUtils'
+
 import Administration from '../pages/Administration'
+
+import { screen, renderWithProviders } from './testUtils'
 
 jest.mock('../components/ShiftTemplateManager', () => {
   const Comp = () => <div data-testid="shift-template-manager">ShiftTemplateManager</div>

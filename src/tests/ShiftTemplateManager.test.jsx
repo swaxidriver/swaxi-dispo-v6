@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
+
 import ShiftTemplateManager from '../components/ShiftTemplateManager'
 
 jest.mock('../contexts/useShiftTemplates', () => ({
