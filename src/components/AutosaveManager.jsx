@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useShifts } from '../contexts/ShiftContext';
+// Corrected import: useShifts is defined in its own hook file, not exported from ShiftContext
+import { useShifts } from '../contexts/useShifts';
 
 const AUTOSAVE_INTERVAL = 30000; // 30 seconds
 const MAX_SNAPSHOTS = 10; // Keep last 10 snapshots
