@@ -187,10 +187,32 @@ npm run lint
 
 ### **🧪 Testing**
 
-- **Unit Tests:** Jest + React Testing Library
-- **Integration Tests:** Real SharePoint connection testing
-- **E2E Tests:** Comprehensive user journey validation
-- **Test Page:** Interactive test suite at `/test`
+Layered Strategy (v2):
+
+| Layer | Pfad | Zweck | Tools |
+|-------|------|-------|-------|
+| Unit | `src/tests/unit` | Pure Funktionen, Reducer, kleine Komponenten | Jest + RTL |
+| Integration | `src/tests/integration` | Kontext + Services + Persistence Zusammenspiel | Jest + RTL + fake-indexeddb |
+| Accessibility | `src/tests/a11y` | Semantik, Kontraste, Fokus-Fluss | jest-axe + Custom Matcher |
+
+Custom Matcher: `expect(container).toHaveNoA11yViolations()` (siehe `jest.setup.js`).
+
+Skripte:
+
+```bash
+npm run test:unit
+npm run test:integration
+npm run test:a11y
+npm run test:coverage
+```
+
+Coverage Gates (aktuell – werden weiter angezogen):
+
+- Global ≥63/58/63/63 (Statements/Branches/Functions/Lines)
+- Utils ≥80/80/90/80
+- shiftGenerationService ≥80/70/80/80
+
+Letzter Lauf: Global ~80/71/80/82 → komfortabler Puffer für nächste Erhöhung.
 
 ### **📈 Performance**
 
@@ -199,7 +221,7 @@ npm run lint
 - **Lighthouse Score:** 98/100
 - **Code Splitting:** Optimized vendor/router/ui chunks
 
-### **🛡 Error Handling & Logging**
+### **🛡 Error Handling, Telemetry & Logging**
 
 Routed content is wrapped in a class-based `ErrorBoundary` (`src/components/ErrorBoundary.jsx`).
 
@@ -208,8 +230,8 @@ Features:
 - Catches render / lifecycle errors beneath it
 - Friendly fallback UI with reload button (role="alert")
 - Structured error object (message, stack, componentStack, timestamp, version)
-- Delegated logging via `utils/logger.js` (`logError`, `logInfo`) which auto-silences under Jest
-- Extension hook (TODO) for remote telemetry (Sentry / OpenTelemetry / custom endpoint)
+- Delegated logging via `utils/logger.js` (`logError`, `logInfo`) – auto-silenced unter Jest
+- Leichtgewichtiges Fehler-Telemetrie Utility `src/utils/errorTelemetry.js` (`registerErrorTelemetry`, `dispatchErrorTelemetry`) mit boolean Rückgabewert
 
 Example:
 
@@ -225,10 +247,12 @@ function Root() {
 }
 ```
 
-Logger tips:
+Telemetry & Logger Tipps:
 
-- Call `setLoggerSilent(true)` to suppress logs in special embedded contexts.
-- Replace the TODO in `componentDidCatch` with a `fetch('/log', { method:'POST', body: JSON.stringify(payload) })` for server capture.
+- `registerErrorTelemetry(handler)` einmalig beim App-Bootstrapping.
+- `dispatchErrorTelemetry(payload)` wird vom `ErrorBoundary` genutzt; gibt `true` (gesendet) oder `false` (kein Handler) zurück.
+- `setLoggerSilent(true)` für eingebettete Iframes / Storybook.
+- Remote Logging: eigenen Handler registrieren oder in Handler intern `fetch('/error-log', { method:'POST', body: JSON.stringify(payload) })` verwenden.
 
 
 ## 🚀 Deployment
@@ -348,7 +372,9 @@ Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farb
 
 ### Migration Alt → Neu
 
-Bestehende Tailwind Klassen wie `bg-brand-primary` sind als Legacy belassen. Neue Komponenten sollten bevorzugt semantische Klassen oder direkte Tokens nutzen:
+Legacy Klassen `bg-brand-primary`, `text-brand-primary`, `focus:ring-brand-primary`, `bg-brand-secondary` wurden weitestgehend ersetzt durch Token-Verwendung (Stand v0.3.x). Ehemalige Sass Datei `styles/main.scss` wurde in v0.3.x entfernt – alle Werte sind nun als CSS Tokens oder Utility-Klassen verfügbar.
+
+Neue Komponenten sollten semantische Klassen oder direkte Tokens nutzen:
 
 ```jsx
 <button className="btn-primary">Anlegen</button>
@@ -371,6 +397,9 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 
 ### Geplante Erweiterungen
 
-- Lint-Regel/Skript gegen nackte Hex-Werte
+- Erhöhung der Coverage Thresholds (iterativ)
+- (Erledigt) Entfernen alter Sass Variablen / `main.scss`
+- (Neu) Fehler-Telemetrie Stub (`registerErrorTelemetry`) für zukünftige Remote Collection
 - Export der Tokens als JSON für Figma / Storybook
-- Mapping der Tokens ins Tailwind Theme via CSS Variable Referenzen für Variants
+- Tailwind Theme Mapping der Tokens (für Variants)
+- Optionale visuelle Regression Tests (Playwright + percy)
