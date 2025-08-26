@@ -52,6 +52,9 @@ jobs:
           curl -fsSL https://get.trunk.io -o get-trunk.sh
           bash get-trunk.sh -y
           echo "$HOME/.trunk/bin" >> $GITHUB_PATH
+      - name: Trunk init (idempotent)
+        run: |
+          trunk init --ci --no-progress || echo "Trunk already initialized or init not required"
       - name: Trunk check (lint + format validation)
         run: |
           trunk version
