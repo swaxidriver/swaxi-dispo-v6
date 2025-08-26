@@ -19,6 +19,9 @@ jobs:
           cache: npm
       - name: Install deps
         run: npm ci
+      - name: Workaround Rollup native binary install (linux)
+        # Lockfile generated on macOS misses linux optional rollup binary; install explicitly to avoid build error
+        run: npm install --no-save @rollup/rollup-linux-x64-gnu || true
       - name: Lint
         run: npm run lint
       - name: Test
@@ -49,6 +52,8 @@ jobs:
           cache: npm
       - name: Install deps
         run: npm ci
+      - name: Workaround Rollup native binary install (linux)
+        run: npm install --no-save @rollup/rollup-linux-x64-gnu || true
       - name: Build
         run: npm run build
       - name: Configure Pages
