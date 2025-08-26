@@ -1,4 +1,4 @@
-import { useTheme } from '../contexts/ThemeContext'
+import { useTheme } from '../contexts/useTheme'
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline'
 
 export default function ThemeToggle() {
@@ -12,9 +12,9 @@ export default function ThemeToggle() {
     >
       <span className="sr-only">Toggle theme</span>
       {state.isDark ? (
-        <SunIcon className="h-6 w-6" aria-hidden="true" />
+  <SunIcon data-testid="sun-icon" className="h-6 w-6" aria-hidden="true" />
       ) : (
-        <MoonIcon className="h-6 w-6" aria-hidden="true" />
+  <MoonIcon data-testid="moon-icon" className="h-6 w-6" aria-hidden="true" />
       )}
     </button>
   )

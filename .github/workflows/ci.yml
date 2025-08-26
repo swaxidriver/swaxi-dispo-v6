@@ -47,6 +47,31 @@ jobs:
           fi
           # Workaround Rollup native binary missing on linux
           npm install --no-save @rollup/rollup-linux-x64-gnu || true
+      - name: Install trunk
+        run: |
+          curl -fsSL https://get.trunk.io -o get-trunk.sh
+          bash get-trunk.sh -y
+          echo "$HOME/.trunk/bin" >> $GITHUB_PATH
+      - name: Trunk check (lint + format validation)
+        run: |
+          trunk version
+          trunk check --ci --no-progress || { echo "Trunk check failed"; exit 1; }
+      - name: Quality Gate (lint+tests+coverage prioritized summary)
+        run: |
+          npm run quality || {
+            code=$?
+            echo "Quality gate failed with exit code $code" >&2
+            # Always upload quality artifacts even on failure
+            exit $code
+          }
+      - name: Upload quality reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            reports/quality/quality-summary.json
+            reports/junit/jest-junit.xml
       - name: Lint
         run: npm run lint
       - name: Test

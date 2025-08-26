@@ -115,6 +115,7 @@ swaxi-dispo-v6/
 - **`sharePointService.js`** - Intelligente SharePoint Integration mit automatischem Fallback
 - **`ShiftContext.jsx`** - Zentrale Datenverwaltung mit dual-source support
 - **`ConnectionStatus.jsx`** - Real-time Status-Anzeige der Datenquelle
+**`firebaseConfig.js` (stub)** - Firebase aktuell deaktiviert / Platzhalter. Re-Aktivierung geplant.
 
 ### **📊 Analytics & Monitoring**
 
@@ -243,6 +244,7 @@ User Action → ShiftContext → sharePointService
 - **`SHAREPOINT_SETUP.md`** - SharePoint Integration Guide
 - **`DATABASE_RECOMMENDATION.md`** - Architektur-Entscheidungen
 - **`MIGRATION_PLAN.md`** - Produktions-Migration
+**Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
 
 ### **🔧 Troubleshooting**
 

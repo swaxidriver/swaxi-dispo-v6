@@ -15,3 +15,8 @@ global.ResizeObserver = class ResizeObserver {
   unobserve() { return null; }
   disconnect() { return null; }
 };
+
+// Polyfill TextEncoder/TextDecoder for react-router (Node 20 jsdom environment)
+import { TextEncoder, TextDecoder } from 'util';
+if (!global.TextEncoder) global.TextEncoder = TextEncoder;
+if (!global.TextDecoder) global.TextDecoder = TextDecoder;

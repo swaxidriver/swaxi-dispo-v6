@@ -1,35 +1,27 @@
-// src/services/firebaseConfig.js
-import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
+// src/services/firebaseConfig.js (stubbed / optional)
+// NOTE: Firebase has been intentionally deferred. This stub allows the rest of
+// the application (and tests) to run without the firebase packages installed.
+// When you are ready to enable Firebase again, replace this file with the
+// original initialization logic or a dynamic loader.
 
-const firebaseConfig = {
-  // This will be populated when you create your Firebase project
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
+// Public API kept stable so future code changes are minimal.
+export const db = null;
+export const auth = null;
+const app = null;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
-export const db = getFirestore(app);
-
-// Initialize Auth
-export const auth = getAuth(app);
-
-// Connect to emulators in development
-if (import.meta.env.MODE === 'development') {
+// Utility to detect if firebase is configured (all essential env vars present)
+export function isFirebaseConfigured() {
+  let env = {};
   try {
-    connectFirestoreEmulator(db, 'localhost', 8080);
-    connectAuthEmulator(auth, 'http://localhost:9099');
-  } catch (_error) {
-    // Emulators already connected
+    env = import.meta?.env || {};
+  } catch (_e) {
+    env = {};
   }
+  return !!(
+    env.VITE_FIREBASE_API_KEY &&
+    env.VITE_FIREBASE_PROJECT_ID &&
+    env.VITE_FIREBASE_APP_ID
+  );
 }
 
 export default app;

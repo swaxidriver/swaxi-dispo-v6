@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -101,7 +101,7 @@
 <a name='L36'></a><a href='#L36'>36</a>
 <a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -112,18 +112,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">70x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -133,11 +131,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { addDays, format, getDay } from 'date-fns'
 &nbsp;
-const dayMapping = <span class="cstat-no" title="statement not covered" >{</span>
+const dayMapping = {
   Su: 0,
   Mo: 1,
   Tu: 2,
@@ -147,17 +147,17 @@ const dayMapping = <span class="cstat-no" title="statement not covered" >{</span
   Sa: 6,
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >generateShifts(</span>templates) {
-  const newShifts = <span class="cstat-no" title="statement not covered" >[]</span>
-  const today = <span class="cstat-no" title="statement not covered" >new Date()</span>
+export function generateShifts(templates) {
+  const newShifts = []
+  const today = new Date()
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; 10; i++) {</span>
-    const date = <span class="cstat-no" title="statement not covered" >addDays(today, i)</span>
-    const dayOfWeek = <span class="cstat-no" title="statement not covered" >getDay(date)</span>
+  for (let i = 0; i &lt; 10; i++) {
+    const date = addDays(today, i)
+    const dayOfWeek = getDay(date)
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    templates.forEach(<span class="fstat-no" title="function not covered" >(t</span>emplate) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      if (template.days.map(<span class="fstat-no" title="function not covered" >d </span>=&gt; <span class="cstat-no" title="statement not covered" >dayMapping[d])</span>.includes(dayOfWeek)) {</span>
-<span class="cstat-no" title="statement not covered" >        newShifts.push({</span>
+    templates.forEach((template) =&gt; {
+      if (template.days.map(d =&gt; dayMapping[d]).includes(dayOfWeek)) {
+        newShifts.push({
           id: `${format(date, 'yyyy-MM-dd')}-${template.name}`,
           date: format(date, 'yyyy-MM-dd'),
           name: template.name,
@@ -169,7 +169,7 @@ export function <span class="fstat-no" title="function not covered" >generateShi
       }
     })
   }
-<span class="cstat-no" title="statement not covered" >  return newShifts</span>
+  return newShifts
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -178,7 +178,7 @@ export function <span class="fstat-no" title="function not covered" >generateShi
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-26T09:23:58.082Z
+                at 2025-08-26T12:59:42.083Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

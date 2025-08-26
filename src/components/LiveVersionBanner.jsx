@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+// Lightweight env shim (avoids direct process reference for lint in browser context)
+const __env = (typeof globalThis !== 'undefined' && globalThis.process && globalThis.process.env)
+  ? globalThis.process.env
+  : { NODE_ENV: 'development' };
 import { useShifts } from '../contexts/useShifts';
 
 export default function LiveVersionBanner() {
@@ -10,7 +14,8 @@ export default function LiveVersionBanner() {
     // Get build information
     const buildTime = new Date().toLocaleString('de-DE');
     const version = '6.0.0'; // Static version for now
-    const environment = import.meta.env.PROD ? 'production' : 'development';
+  // Use NODE_ENV for environment to keep Jest (CJS) compatibility instead of import.meta.env
+  const environment = __env.NODE_ENV === 'production' ? 'production' : 'development';
     
     setBuildInfo({
       version,

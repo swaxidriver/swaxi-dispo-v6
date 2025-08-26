@@ -1,0 +1,55 @@
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ShiftProvider } from '../contexts/ShiftContext'
+import { AuthProvider } from '../contexts/AuthContext'
+import { ShiftTemplateProvider } from '../contexts/ShiftTemplateContext'
+import { useShifts } from '../contexts/useShifts'
+
+function Probe() {
+  const { state, applyToShift, assignShift, updateShiftStatus, getOpenShifts, getConflictedShifts } = useShifts()
+  return (
+    <div>
+      <div data-testid="count">{state.shifts.length}</div>
+      <div data-testid="open-count">{getOpenShifts().length}</div>
+      <div data-testid="conflicted-count">{getConflictedShifts().length}</div>
+      <button onClick={() => {
+        const first = state.shifts[0]
+        applyToShift(first.id, 'u1')
+      }}>apply-first</button>
+      <button onClick={() => {
+        const first = state.shifts[0]
+        assignShift(first.id, 'u2')
+      }}>assign-first</button>
+      <button onClick={() => {
+        const first = state.shifts[0]
+        updateShiftStatus(first.id, 'closed')
+      }}>close-first</button>
+    </div>
+  )
+}
+
+describe('ShiftContext integration basics', () => {
+  test('initializes shifts and supports core actions', () => {
+    render(
+      <AuthProvider>
+        <ShiftTemplateProvider>
+          <ShiftProvider>
+            <Probe />
+          </ShiftProvider>
+        </ShiftTemplateProvider>
+      </AuthProvider>
+    )
+    const count = Number(screen.getByTestId('count').textContent)
+    expect(count).toBeGreaterThan(0)
+
+    // Apply to first shift
+    fireEvent.click(screen.getByText('apply-first'))
+    // Assign first shift
+    fireEvent.click(screen.getByText('assign-first'))
+    // Close first shift
+    fireEvent.click(screen.getByText('close-first'))
+
+    // Open count should be <= total
+    const openCount = Number(screen.getByTestId('open-count').textContent)
+    expect(openCount).toBeLessThanOrEqual(count)
+  })
+})

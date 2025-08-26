@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="43" failures="0" errors="0" time="1.375">
+  <testsuite name="NotificationMenu" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:40" time="0.368" tests="2">
+    <testcase classname="NotificationMenu marks single notification read" name="NotificationMenu marks single notification read" time="0.08">
+    </testcase>
+    <testcase classname="NotificationMenu marks all notifications read" name="NotificationMenu marks all notifications read" time="0.014">
+    </testcase>
+  </testsuite>
+  <testsuite name="SharePointService" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:40" time="0.026" tests="6">
+    <testcase classname="SharePointService getShifts returns transformed data on success" name="SharePointService getShifts returns transformed data on success" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService getShifts falls back to localStorage on fetch error" name="SharePointService getShifts falls back to localStorage on fetch error" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService createShift returns transformed shift on success" name="SharePointService createShift returns transformed shift on success" time="0">
+    </testcase>
+    <testcase classname="SharePointService createShift fallback to localStorage on failing token fetch" name="SharePointService createShift fallback to localStorage on failing token fetch" time="0">
+    </testcase>
+    <testcase classname="SharePointService isSharePointAvailable returns true when response ok" name="SharePointService isSharePointAvailable returns true when response ok" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService isSharePointAvailable returns false on error" name="SharePointService isSharePointAvailable returns false on error" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ShiftTemplateManager" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:40" time="0.079" tests="3">
+    <testcase classname="ShiftTemplateManager adds a new template" name="ShiftTemplateManager adds a new template" time="0.03">
+    </testcase>
+    <testcase classname="ShiftTemplateManager edits existing template" name="ShiftTemplateManager edits existing template" time="0.015">
+    </testcase>
+    <testcase classname="ShiftTemplateManager deletes template" name="ShiftTemplateManager deletes template" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="shiftGenerationService.generateShifts" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:40" time="0.071" tests="2">
+    <testcase classname="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" name="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" time="0.002">
+    </testcase>
+    <testcase classname="shiftGenerationService.generateShifts returns empty array when no templates match any days" name="shiftGenerationService.generateShifts returns empty array when no templates match any days" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="SeriesApplicationModal" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.057" tests="2">
+    <testcase classname="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" name="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" time="0.024">
+    </testcase>
+    <testcase classname="SeriesApplicationModal disables submit when no selection and enables after selecting one" name="SeriesApplicationModal disables submit when no selection and enables after selecting one" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="ThemeToggle" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.047" tests="2">
+    <testcase classname="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" name="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" time="0.005">
+    </testcase>
+    <testcase classname="ThemeToggle sets data-theme attribute on documentElement when toggled" name="ThemeToggle sets data-theme attribute on documentElement when toggled" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="Navigation" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.046" tests="2">
+    <testcase classname="Navigation shows login link when not authenticated" name="Navigation shows login link when not authenticated" time="0.007">
+    </testcase>
+    <testcase classname="Navigation shows admin links and logout when admin" name="Navigation shows admin links and logout when admin" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="ShiftTable actions" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.036" tests="3">
+    <testcase classname="ShiftTable actions invokes applyToShift when Bewerben clicked" name="ShiftTable actions invokes applyToShift when Bewerben clicked" time="0.004">
+    </testcase>
+    <testcase classname="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" name="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" time="0.003">
+    </testcase>
+    <testcase classname="ShiftTable actions dispatches cancellation when Absagen clicked on assigned shift" name="ShiftTable actions dispatches cancellation when Absagen clicked on assigned shift" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="AutosaveManager" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.04" tests="3">
+    <testcase classname="AutosaveManager creates an initial snapshot and shows autosave indicator" name="AutosaveManager creates an initial snapshot and shows autosave indicator" time="0.005">
+    </testcase>
+    <testcase classname="AutosaveManager adds multiple snapshots over time (interval advance)" name="AutosaveManager adds multiple snapshots over time (interval advance)" time="0.004">
+    </testcase>
+    <testcase classname="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" name="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="ConnectionStatus" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.037" tests="4">
+    <testcase classname="ConnectionStatus shows sharepoint connected state (green)" name="ConnectionStatus shows sharepoint connected state (green)" time="0.003">
+    </testcase>
+    <testcase classname="ConnectionStatus shows localStorage offline mode with tip (yellow)" name="ConnectionStatus shows localStorage offline mode with tip (yellow)" time="0.001">
+    </testcase>
+    <testcase classname="ConnectionStatus shows error state (red) when sharepoint not online" name="ConnectionStatus shows error state (red) when sharepoint not online" time="0">
+    </testcase>
+    <testcase classname="ConnectionStatus clicking test button triggers handler (smoke)" name="ConnectionStatus clicking test button triggers handler (smoke)" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="Shift assignment &amp; notifications" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.031" tests="1">
+    <testcase classname="Shift assignment &amp; notifications assigns a shift and updates status" name="Shift assignment &amp; notifications assigns a shift and updates status" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="ShiftContext integration basics" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.039" tests="1">
+    <testcase classname="ShiftContext integration basics initializes shifts and supports core actions" name="ShiftContext integration basics initializes shifts and supports core actions" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="LiveVersionBanner" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.031" tests="2">
+    <testcase classname="LiveVersionBanner renders with demo badge and localStorage icon" name="LiveVersionBanner renders with demo badge and localStorage icon" time="0.003">
+    </testcase>
+    <testcase classname="LiveVersionBanner dismiss button hides banner and stores flag" name="LiveVersionBanner dismiss button hides banner and stores flag" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="RoleManagement" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.03" tests="1">
+    <testcase classname="RoleManagement renders users and allows editing manageable role" name="RoleManagement renders users and allows editing manageable role" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="Login" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.031" tests="2">
+    <testcase classname="Login renders role buttons when logged out and logs in on click" name="Login renders role buttons when logged out and logs in on click" time="0.004">
+    </testcase>
+    <testcase classname="Login shows welcome and logout when user present" name="Login shows welcome and logout when user present" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthProvider" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.029" tests="2">
+    <testcase classname="AuthProvider logs in and persists user, then restores on reload" name="AuthProvider logs in and persists user, then restores on reload" time="0.003">
+    </testcase>
+    <testcase classname="AuthProvider logout clears user and storage" name="AuthProvider logout clears user and storage" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="ShiftTable" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.027" tests="2">
+    <testcase classname="ShiftTable renders shifts correctly" name="ShiftTable renders shifts correctly" time="0.003">
+    </testcase>
+    <testcase classname="ShiftTable handles apply action" name="ShiftTable handles apply action" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="auth permission helpers" errors="0" failures="0" skipped="0" timestamp="2025-08-26T12:59:41" time="0.02" tests="2">
+    <testcase classname="auth permission helpers role hierarchy enforces expected permissions" name="auth permission helpers role hierarchy enforces expected permissions" time="0">
+    </testcase>
+    <testcase classname="auth permission helpers no higher role incorrectly gains audit permission" name="auth permission helpers no higher role incorrectly gains audit permission" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="undefined" errors="0" failures="0" skipped="1" timestamp="2025-08-26T12:59:41" time="0.018" tests="1">
+    <testcase classname=" MigrationService tests deferred until Firebase enabled" name=" MigrationService tests deferred until Firebase enabled" time="0">
+      <skipped/>
+    </testcase>
+  </testsuite>
+</testsuites>

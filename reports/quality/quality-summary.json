@@ -1,0 +1,30 @@
+{
+  "stats": {
+    "tests": {
+      "total": 43,
+      "failed": 0,
+      "passed": 42
+    },
+    "suites": {
+      "total": 19,
+      "failed": 0
+    },
+    "lint": {
+      "errors": 0,
+      "filesWithErrors": 0
+    },
+    "coverage": {
+      "statements": 53.53,
+      "branches": 50.58,
+      "functions": 57.19,
+      "lines": 53.16
+    }
+  },
+  "thresholds": {
+    "statements": 40,
+    "branches": 38,
+    "functions": 40,
+    "lines": 38
+  },
+  "actionItems": []
+}

@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changes
+
+- Firebase initialization stubbed (deferred) in `firebaseConfig.js`; exports now null placeholders until backend needed.
+- `migrationService` tests temporarily skipped (placeholder) pending real Firebase integration.
+
+### Additions / QA
+
+- SharePoint service fallback tests (error paths) in place; success path coverage planned.
+
+### Next Steps
+
+- Re-enable Firebase by restoring original config and unskipping migration tests (create follow-up ticket).
+
 ## [0.1.0-test] - 2025-08-26
 
 ### Added
