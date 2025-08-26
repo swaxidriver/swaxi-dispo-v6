@@ -10,7 +10,7 @@ const roleDescriptions = {
   [ROLES.ANALYST]: 'Nur Lesezugriff und Analytics',
 };
 
-export default function RoleManagement({ users, onUpdateRole }) {
+export default function RoleManagement({ users = [], onUpdateRole = () => {} }) {
   const [editingUser, setEditingUser] = useState(null);
 
   const handleRoleChange = (userId, newRole) => {
@@ -33,10 +33,15 @@ export default function RoleManagement({ users, onUpdateRole }) {
     }
   };
 
+  const hasUsers = Array.isArray(users) && users.length > 0
+
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+    <div className="bg-white shadow overflow-hidden sm:rounded-md" data-testid="role-management-root">
+      {!hasUsers && (
+        <div className="p-4 text-sm text-gray-500" data-testid="no-users">Keine Benutzer vorhanden</div>
+      )}
       <ul className="divide-y divide-gray-200">
-        {users.map((user) => (
+        {hasUsers && users.map((user) => (
           <li key={user.id}>
             <div className="px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between">
@@ -78,7 +83,7 @@ export default function RoleManagement({ users, onUpdateRole }) {
               </div>
             </div>
           </li>
-        ))}
+  ))}
       </ul>
     </div>
   );

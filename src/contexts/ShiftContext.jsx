@@ -8,11 +8,12 @@ import { validateShiftArray } from '../utils/validation'
 
 import { SHIFT_STATUS } from '../utils/constants'
 import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
+import { enqueue, drain as drainQueue, peekQueue } from '../services/offlineQueue'
 import { useShiftTemplates } from './useShiftTemplates'
 
 const ShiftContext = createContext(null)
 
-export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbeatMs = 15000, enableAsyncInTests = false }) {
+export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbeatMs = 15000, enableAsyncInTests = false, repositoryOverride = null }) {
   const isTestEnv = typeof process !== 'undefined' && process.env?.JEST_WORKER_ID !== undefined
   const tplContext = useShiftTemplates() || {}
   const memoTemplates = useMemo(() => tplContext.templates || [], [tplContext.templates])
@@ -20,7 +21,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const [state, dispatch] = useReducer(shiftReducer, initialState)
 
   const repoRef = useRef(null)
-  if (!repoRef.current) repoRef.current = getShiftRepository()
+  if (!repoRef.current) repoRef.current = repositoryOverride || getShiftRepository()
   const bootstrappedRef = useRef(false)
 
   useEffect(() => {
@@ -169,7 +170,16 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     }
     dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `apply_${shiftId}_${Date.now()}`, title: 'Bewerbung eingereicht', message: `Shift ${shiftId} Bewerbung gespeichert`, timestamp: new Date().toLocaleString(), isRead: false } })
     // Fire & forget repository persistence
-    repoRef.current?.applyToShift?.(shiftId, userId).catch(() => {})
+    // Repository persistence with offline queue fallback
+    const attempt = repoRef.current?.applyToShift?.(shiftId, userId)
+    if (attempt && typeof attempt.then === 'function') {
+      attempt.catch(() => {
+        enqueue({ id: `apply_${app.id}`, type: 'apply', payload: { shiftId, userId }, ts: Date.now() })
+      })
+    } else {
+      // If no promise returned treat as failure for offline queue
+      enqueue({ id: `apply_${app.id}`, type: 'apply', payload: { shiftId, userId }, ts: Date.now() })
+    }
   }, [state.shifts, state.applications])
 
   const applyToSeries = useCallback((shiftIds, userId) => {
@@ -204,8 +214,14 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
       updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
       dispatch({ type: 'UPDATE_SHIFT', payload: updated })
       dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `${shiftId}_${Date.now()}`, title: 'Shift assigned', message: `${user} wurde Dienst zugewiesen`, timestamp: new Date().toLocaleString(), isRead: false } })
-      // Fire and forget repository update
-      repoRef.current?.assignShift?.(shiftId, user).catch(() => {})
+      const attempt = repoRef.current?.assignShift?.(shiftId, user)
+      if (attempt && typeof attempt.then === 'function') {
+        attempt.catch(() => {
+          enqueue({ id: `assign_${shiftId}_${user}`, type: 'assign', payload: { shiftId, user }, ts: Date.now() })
+        })
+      } else {
+        enqueue({ id: `assign_${shiftId}_${user}`, type: 'assign', payload: { shiftId, user }, ts: Date.now() })
+      }
     }
   }, [state.shifts, state.applications])
 
@@ -219,12 +235,59 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     if (state.shifts.find(s => s.id === id)) {
       return { ok: false, reason: 'duplicate' }
     }
-    const shift = { id, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: partial.workLocation || 'office', conflicts: [] }
+    const shift = { id, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: partial.workLocation || 'office', conflicts: [], pendingSync: false }
     shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
     dispatch({ type: 'ADD_SHIFT', payload: shift })
     dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `create_${id}_${Date.now()}`, title: 'Dienst erstellt', message: `${partial.type} ${partial.start}-${partial.end}`, timestamp: new Date().toLocaleString(), isRead: false } })
+    // Optimistic persistence
+    const attempt = repoRef.current?.create?.(shift)
+    if (attempt && typeof attempt.then === 'function') {
+      attempt
+        .then(saved => {
+          dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, ...saved, pendingSync: false } })
+        })
+        .catch(() => {
+          // queue create action and flag pendingSync
+          enqueue({ id: `create_${id}`, type: 'create', payload: { shift }, ts: Date.now() })
+          dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, pendingSync: true } })
+        })
+    } else {
+      enqueue({ id: `create_${id}`, type: 'create', payload: { shift }, ts: Date.now() })
+      dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, pendingSync: true } })
+    }
     return { ok: true, id }
   }, [state.shifts, state.applications])
+
+  // Drain offline queue when coming online
+  useEffect(() => {
+    if (!state.isOnline) return
+    const current = peekQueue()
+    if (!current.length) return
+    let stopped = false
+    ;(async () => {
+      await drainQueue(async (act) => {
+        if (stopped) return
+        if (act.type === 'create') {
+          try {
+            const saved = await repoRef.current?.create?.(act.payload.shift)
+            if (saved) {
+              dispatch({ type: 'UPDATE_SHIFT', payload: { ...act.payload.shift, ...saved, pendingSync: false } })
+            } else {
+              dispatch({ type: 'UPDATE_SHIFT', payload: { ...act.payload.shift, pendingSync: false } })
+            }
+          } catch {
+            // If still failing, re-enqueue for later
+            enqueue(act)
+          }
+        } else if (act.type === 'apply') {
+          try { await repoRef.current?.applyToShift?.(act.payload.shiftId, act.payload.userId) } catch { enqueue(act) }
+        } else if (act.type === 'assign') {
+          try { await repoRef.current?.assignShift?.(act.payload.shiftId, act.payload.user) } catch { enqueue(act) }
+        }
+      })
+    })()
+    return () => { stopped = true }
+  }, [state.isOnline, state.shifts])
 
   const value = useMemo(() => ({
     state,
