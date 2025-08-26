@@ -1,0 +1,52 @@
+version: 0.1
+
+# Pin (or use 'latest') trunk cli version for consistency across machines/CI.
+cli:
+  version: latest
+
+# Lint / static analysis configuration
+lint:
+  # Enable individual linters. (Trunk will auto-install missing versions in an internal cache.)
+  enabled:
+    - eslint@9
+  # Paths to include (minimize noise by skipping build artifacts & coverage output)
+  files:
+    - src/**
+    - jest.config.js
+    - vite.config.js
+    - eslint.config.js
+    - package.json
+  ignore:
+    - node_modules/**
+    - dist/**
+    - coverage/**
+    - public/**
+
+# Tool specific overrides
+tools:
+  eslint:
+    # Use the project flat config file.
+    config: eslint.config.js
+    # Treat warnings as non-blocking (adjust to 'error' later if desired)
+    severity: advisory
+
+# Define convenient tasks runnable via `trunk run <id>`.
+tasks:
+  - id: test
+    name: Jest Tests
+    run: npm test -- --ci
+  - id: test:watch
+    name: Jest Watch
+    run: npm run test:watch
+  - id: build
+    name: Vite Build
+    run: npm run build
+
+# Formatting placeholder (add prettier or other formatters later if desired)
+# format:
+#   enabled:
+#     - prettier
+
+# Future ideas:
+# - Add a jest-junit reporter & configure trunk to surface test results.
+# - Add dependency vulnerability scanning (e.g., osv-scanner) once baseline is stable.
