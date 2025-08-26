@@ -19,15 +19,36 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-          registry-url: 'https://registry.npmjs.org'
-      
-      - name: Clean cache and install
+          node-version: 20.x
+          registry-url: https://registry.npmjs.org
+      - name: Configure npm (retries + offline preference)
         run: |
-          npm cache clean --force
-          rm -rf node_modules package-lock.json
-          npm install --no-optional
-          npm install @rollup/rollup-linux-x64-gnu --optional
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-maxtimeout 600000
+          npm config set fetch-timeout 600000
+          npm config set prefer-offline true
+      - name: Install dependencies (robust)
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "Using lockfile with npm ci"
+            n=0
+            until [ $n -ge 3 ]; do
+              npm ci --no-audit --no-fund && break
+              n=$((n+1))
+              echo "npm ci failed (attempt $n), retrying in $((2**n))s..." >&2
+              sleep $((2**n))
+            done
+            if [ $n -ge 3 ]; then
+              echo "Falling back to npm install" >&2
+              npm install --no-audit --no-fund
+            fi
+          else
+            echo "No lockfile found; running guarded npm install"
+            npm install --no-audit --no-fund
+          fi
+          # Pre-fetch optional native rollup binary (ignore failure)
+          npm install --no-save @rollup/rollup-linux-x64-gnu || true
       
       - name: Build
         run: npm run build
