@@ -44,3 +44,22 @@ console.error = (...args) => {
   }
   originalConsoleError(...args)
 }
+import { configureAxe } from 'jest-axe'
+import { expect as jestExpect } from '@jest/globals'
+
+const axe = configureAxe({
+  rules: {
+    region: { enabled: false }, // noisy for test container
+  }
+})
+
+jestExpect.extend({
+  async toHaveNoA11yViolations(container) {
+    const results = await axe(container)
+    if (results.violations.length === 0) {
+      return { pass: true, message: () => 'No accessibility violations found' }
+    }
+    const summary = results.violations.map(v => `${v.id}: ${v.nodes.length} nodes`).join('\n')
+    return { pass: false, message: () => `Accessibility violations:\n${summary}` }
+  }
+})
