@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useShifts } from '../contexts/ShiftContext';
+import { useShifts } from '../contexts/useShifts';
 import { SHIFT_STATUS } from '../utils/constants';
 
 export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] }) {

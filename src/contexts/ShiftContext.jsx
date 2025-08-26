@@ -1,247 +1,150 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
-import { generateShiftTemplates } from '../utils/shifts';
-import { sharePointService } from '../services/sharePointService';
+import { createContext, useReducer, useEffect, useCallback, useMemo } from 'react'
+import { generateShiftTemplates } from '../utils/shifts'
+import { SHIFT_STATUS } from '../utils/constants'
+import { useShiftTemplates } from './ShiftTemplateContext'
+import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
+import { checkShiftConflicts } from '../utils/shifts'
 
-const ShiftContext = createContext();
-
-const initialState = {
-  shifts: [],
-  applications: [],
-  notifications: [],
-  filters: {
-    timeRange: 'all',
-    status: 'all',
-    location: 'all'
-  },
-  dataSource: 'localStorage', // 'localStorage' | 'sharePoint'
-  isOnline: false,
-  lastSync: null
-};
-
-function shiftReducer(state, action) {
-  switch (action.type) {
-    case 'INIT_SHIFTS':
-      return {
-        ...state,
-        shifts: action.payload
-      };
-    case 'SET_DATA_SOURCE':
-      return {
-        ...state,
-        dataSource: action.payload.source,
-        isOnline: action.payload.isOnline,
-        lastSync: new Date()
-      };
-    case 'ADD_SHIFT':
-      return {
-        ...state,
-        shifts: [...state.shifts, action.payload]
-      };
-    case 'UPDATE_SHIFT':
-      return {
-        ...state,
-        shifts: state.shifts.map(shift =>
-          shift.id === action.payload.id ? action.payload : shift
-        )
-      };
-    case 'ADD_APPLICATION':
-      return {
-        ...state,
-        applications: [...state.applications, action.payload]
-      };
-    case 'ADD_SERIES_APPLICATION':
-      return {
-        ...state,
-        applications: [...state.applications, ...action.payload]
-      };
-    case 'REMOVE_APPLICATION':
-      return {
-        ...state,
-        applications: state.applications.filter(app => app.id !== action.payload)
-      };
-    case 'ADD_NOTIFICATION':
-      return {
-        ...state,
-        notifications: [...state.notifications, action.payload]
-      };
-    case 'UPDATE_FILTERS':
-      return {
-        ...state,
-        filters: { ...state.filters, ...action.payload }
-      };
-    case 'SYNC_STATUS':
-      return {
-        ...state,
-        lastSync: action.payload.timestamp,
-        isOnline: action.payload.isOnline
-      };
-    case 'SET_NOTIFICATIONS':
-      return {
-        ...state,
-        notifications: action.payload
-      };
-    case 'MARK_NOTIFICATION_READ':
-      return {
-        ...state,
-        notifications: state.notifications.map(notification =>
-          notification.id === action.payload 
-            ? { ...notification, isRead: true }
-            : notification
-        )
-      };
-    case 'MARK_ALL_NOTIFICATIONS_READ':
-      return {
-        ...state,
-        notifications: state.notifications.map(notification => ({
-          ...notification,
-          isRead: true
-        }))
-      };
-    case 'DELETE_NOTIFICATION':
-      return {
-        ...state,
-        notifications: state.notifications.filter(notification =>
-          notification.id !== action.payload
-        )
-      };
-    default:
-      return state;
-  }
-}
+const ShiftContext = createContext(null)
 
 export function ShiftProvider({ children }) {
-  const [state, dispatch] = useReducer(shiftReducer, initialState);
+  const tplContext = useShiftTemplates() || {}
+  const memoTemplates = useMemo(() => tplContext.templates || [], [tplContext.templates])
 
-  // Hybrid data loading - tries SharePoint first, falls back to localStorage
-  const loadShifts = async () => {
-    try {
-      // Check if SharePoint is available
-      const isSharePointOnline = await sharePointService.isSharePointAvailable();
-      
-      if (isSharePointOnline) {
-        console.log('🟢 SharePoint detected - loading from SharePoint');
-        const shifts = await sharePointService.getShifts();
-        dispatch({ type: 'INIT_SHIFTS', payload: shifts });
-        dispatch({ 
-          type: 'SET_DATA_SOURCE', 
-          payload: { source: 'sharePoint', isOnline: true }
-        });
-      } else {
-        console.log('🟡 SharePoint not available - using localStorage');
-        const today = new Date();
-        const generatedShifts = generateShiftTemplates(today, 10);
-        dispatch({ type: 'INIT_SHIFTS', payload: generatedShifts });
-        dispatch({ 
-          type: 'SET_DATA_SOURCE', 
-          payload: { source: 'localStorage', isOnline: false }
-        });
-      }
-    } catch (error) {
-      console.log('⚠️ Error loading from SharePoint, falling back to localStorage:', error);
-      const today = new Date();
-      const generatedShifts = generateShiftTemplates(today, 10);
-      dispatch({ type: 'INIT_SHIFTS', payload: generatedShifts });
-      dispatch({ 
-        type: 'SET_DATA_SOURCE', 
-        payload: { source: 'localStorage', isOnline: false }
-      });
-    }
-  };
+  const [state, dispatch] = useReducer(shiftReducer, initialState)
 
-  // Auto-load shifts on mount
   useEffect(() => {
-    loadShifts();
-  }, []);
-
-  // Auto-save to localStorage (backup)
-  useEffect(() => {
-    localStorage.setItem('swaxi-dispo-state', JSON.stringify(state));
-  }, [state]);
-
-  // Hybrid create shift function
-  const createShift = async (shiftData) => {
-    try {
-      if (state.isOnline) {
-        // Try SharePoint first
-        const newShift = await sharePointService.createShift(shiftData);
-        dispatch({ type: 'ADD_SHIFT', payload: newShift });
-        await sharePointService.logAudit('SHIFT_CREATED', { shiftId: newShift.id });
-        return newShift;
-      } else {
-        // Fallback to localStorage
-        const newShift = {
-          ...shiftData,
-          id: Date.now(),
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        dispatch({ type: 'ADD_SHIFT', payload: newShift });
-        return newShift;
-      }
-    } catch (error) {
-      console.error('Error creating shift:', error);
-      // Always fallback to localStorage
-      const newShift = {
-        ...shiftData,
-        id: Date.now(),
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      dispatch({ type: 'ADD_SHIFT', payload: newShift });
-      return newShift;
+    const pShifts = localStorage.getItem('shifts')
+    const pApps = localStorage.getItem('applications')
+    const pNotes = localStorage.getItem('notifications')
+    let loadedShifts = []
+    if (pShifts) {
+      try { loadedShifts = JSON.parse(pShifts) } catch { /* ignore */ }
     }
-  };
+    if (!loadedShifts.length) {
+      const base = generateShiftTemplates(new Date())
+      loadedShifts = normalizeGeneratedShifts(base)
+    }
+    // initial conflict calc (no applications yet)
+    loadedShifts = loadedShifts.map(s => ({ ...s, conflicts: checkShiftConflicts(s, loadedShifts.filter(o => o.id !== s.id), []) }))
+    dispatch({ type: 'INIT_SHIFTS', payload: loadedShifts })
+    if (pApps) {
+      try { dispatch({ type: 'INIT_APPLICATIONS', payload: JSON.parse(pApps) }) } catch { /* ignore */ }
+    }
+    if (pNotes) {
+      try { dispatch({ type: 'INIT_NOTIFICATIONS', payload: JSON.parse(pNotes) }) } catch { /* ignore */ }
+    }
+  }, [])
 
-  const applyToShift = (shiftId, userId) => {
-    const application = {
-      id: Date.now(),
-      shiftId,
-      userId,
-      appliedAt: new Date(),
-      type: 'single'
-    };
-    dispatch({ type: 'ADD_APPLICATION', payload: application });
-  };
+  useEffect(() => {
+    if (state.shifts.length) localStorage.setItem('shifts', JSON.stringify(state.shifts))
+  }, [state.shifts])
+  useEffect(() => { localStorage.setItem('applications', JSON.stringify(state.applications)) }, [state.applications])
+  useEffect(() => { localStorage.setItem('notifications', JSON.stringify(state.notifications)) }, [state.notifications])
 
-  const applyToSeries = (shiftIds, userId) => {
-    const applications = shiftIds.map(shiftId => ({
-      id: Date.now() + Math.random(),
-      shiftId,
-      userId,
-      appliedAt: new Date(),
-      type: 'series'
-    }));
-    dispatch({ type: 'ADD_SERIES_APPLICATION', payload: applications });
-  };
+  useEffect(() => {
+    if (!memoTemplates.length) return
+    const today = new Date()
+    const additions = []
+    for (let i = 0; i < 10; i++) {
+      const date = new Date(today)
+      date.setDate(today.getDate() + i)
+      const iso = date.toISOString().slice(0, 10)
+      memoTemplates.forEach(t => {
+        if (t.days?.length) {
+          const weekdayMap = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+          const code = weekdayMap[date.getDay()]
+          if (!t.days.includes(code)) return
+        }
+        const id = `${iso}_${t.name}`
+        if (!state.shifts.find(s => s.id === id)) {
+          additions.push({
+            id,
+            date,
+            type: t.name,
+            start: t.startTime,
+            end: t.endTime,
+            status: SHIFT_STATUS.OPEN,
+            assignedTo: null,
+            workLocation: 'office',
+            conflicts: [],
+          })
+        }
+      })
+    }
+    if (additions.length) {
+      // compute conflicts for new additions only vs existing + new additions
+      const combined = [...state.shifts, ...additions]
+      const enriched = additions.map(s => ({
+        ...s,
+        conflicts: checkShiftConflicts(s, combined.filter(o => o.id !== s.id), state.applications)
+      }))
+      enriched.forEach(s => dispatch({ type: 'ADD_SHIFT', payload: s }))
+    }
+  }, [memoTemplates, state.shifts, state.applications])
 
-  const testConnection = async () => {
-    const isOnline = await sharePointService.isSharePointAvailable();
-    dispatch({ 
-      type: 'SYNC_STATUS', 
-      payload: { isOnline, timestamp: new Date() }
-    });
-    return isOnline;
-  };
+  const applyToShift = useCallback((shiftId, userId) => {
+    const app = { id: `${shiftId}_${userId}`, shiftId, userId, ts: Date.now() }
+    dispatch({ type: 'ADD_APPLICATION', payload: app })
+    // Recalculate conflicts for that shift
+    const target = state.shifts.find(s => s.id === shiftId)
+    if (target) {
+      const updated = { ...target, conflicts: checkShiftConflicts(target, state.shifts.filter(o => o.id !== target.id), [...state.applications, app]) }
+      dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+    }
+  }, [state.shifts, state.applications])
 
-  return (
-    <ShiftContext.Provider value={{ 
-      state, 
-      dispatch, 
-      loadShifts,
-      createShift,
-      applyToShift,
-      applyToSeries,
-      testConnection
-    }}>
-      {children}
-    </ShiftContext.Provider>
-  );
+  const applyToSeries = useCallback((shiftIds, userId) => {
+    const apps = shiftIds.map(id => ({ id: `${id}_${userId}`, shiftId: id, userId, ts: Date.now() }))
+    dispatch({ type: 'ADD_SERIES_APPLICATION', payload: apps })
+    // Bulk conflict recompute for involved shifts
+    shiftIds.forEach(id => {
+      const target = state.shifts.find(s => s.id === id)
+      if (target) {
+        const updated = { ...target, conflicts: checkShiftConflicts(target, state.shifts.filter(o => o.id !== target.id), [...state.applications, ...apps]) }
+        dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+      }
+    })
+  }, [state.shifts, state.applications])
+
+  const updateShiftStatus = useCallback((shiftId, status) => {
+    const shift = state.shifts.find(s => s.id === shiftId)
+    if (shift) {
+      const updated = { ...shift, status }
+      updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
+      dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+    }
+  }, [state.shifts, state.applications])
+
+  const assignShift = useCallback((shiftId, user) => {
+    dispatch({ type: 'ASSIGN_SHIFT', payload: { id: shiftId, user } })
+    const target = state.shifts.find(s => s.id === shiftId)
+    if (target) {
+      const updated = { ...target, status: SHIFT_STATUS.ASSIGNED, assignedTo: user }
+      updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
+      dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+      dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `${shiftId}_${Date.now()}`, title: 'Shift assigned', message: `${user} wurde Dienst zugewiesen`, timestamp: new Date().toLocaleString(), isRead: false } })
+    }
+  }, [state.shifts, state.applications])
+
+  const markNotificationRead = useCallback((id) => dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id }), [])
+  const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
+
+  const value = useMemo(() => ({
+    state,
+    shifts: state.shifts,
+    dispatch,
+    applyToShift,
+    applyToSeries,
+    updateShiftStatus,
+    assignShift,
+    markNotificationRead,
+    markAllNotificationsRead,
+  getOpenShifts: () => state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN),
+  getConflictedShifts: () => state.shifts.filter(s => s.conflicts?.length),
+  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, markNotificationRead, markAllNotificationsRead])
+
+  return <ShiftContext.Provider value={value}>{children}</ShiftContext.Provider>
 }
 
-export function useShifts() {
-  const context = useContext(ShiftContext);
-  if (!context) {
-    throw new Error('useShifts must be used within a ShiftProvider');
-  }
-  return context;
-}
+export { ShiftContext }

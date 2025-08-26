@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useShifts } from '../contexts/ShiftContext';
+import { useShifts } from '../contexts/useShifts';
 
 export default function LiveVersionBanner() {
   const { state } = useShifts();

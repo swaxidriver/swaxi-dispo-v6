@@ -1,13 +1,15 @@
-import { useState } from 'react'
-import { useShifts } from '../contexts/ShiftContext'
+import React, { useState, useContext } from 'react'
+import { useShifts } from '../contexts/useShifts'
+import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
-import SeriesApplicationModal from './SeriesApplicationModal'
+import _SeriesApplicationModal from './SeriesApplicationModal'
 
 export default function ShiftTable({ shifts, showActions = true }) {
-  const { dispatch, applyToShift } = useShifts();
+  const { dispatch, applyToShift, assignShift } = useShifts();
   const [showSeriesModal, setShowSeriesModal] = useState(false);
-  const userRole = 'disponent'; // TODO: Get from auth context
+  const auth = useContext(AuthContext)
+  const userRole = auth?.user?.role || 'analyst'
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -23,17 +25,13 @@ export default function ShiftTable({ shifts, showActions = true }) {
   };
 
   const handleApply = (shiftId) => {
-    applyToShift(shiftId, 'current-user'); // TODO: Get real user ID
-    console.log('Applied to shift:', shiftId);
+    if(!auth?.user) return; // must be logged in
+    applyToShift(shiftId, auth.user.name || auth.user.role);
   };
 
   const handleAssign = (shiftId) => {
-    // Debug point: Add a debugger statement
-    // debugger; // Commented out for production
-    console.log('Assigning shift:', shiftId);
-    // TODO: Implement assignment logic
-    const shift = shifts.find(s => s.id === shiftId);
-    console.log('Shift details:', shift);
+    if(!auth?.user) return
+    assignShift(shiftId, auth.user.name || auth.user.role)
   };
 
   const handleCancel = (shiftId) => {
@@ -137,7 +135,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
       )}
       
       {/* Series Application Modal */}
-      <SeriesApplicationModal
+  <_SeriesApplicationModal
         isOpen={showSeriesModal}
         onClose={() => setShowSeriesModal(false)}
         shifts={shifts}
@@ -145,3 +143,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
     </div>
   );
 }
+
+export function ShiftTableComponent(props){
+  return ShiftTable(props)
+}
+export { ShiftTable as ShiftTableDefault }

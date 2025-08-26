@@ -7,3 +7,11 @@ global.IntersectionObserver = class IntersectionObserver {
   unobserve() { return null; }
   disconnect() { return null; }
 };
+
+// Mock ResizeObserver for headlessui/react
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  observe() { return null; }
+  unobserve() { return null; }
+  disconnect() { return null; }
+};

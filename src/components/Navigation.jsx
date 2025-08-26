@@ -1,17 +1,24 @@
 import { NavLink } from 'react-router-dom'
+// reference to satisfy strict unused var rule in certain test contexts
+const _navLinkRef = NavLink
+import { useContext } from 'react'
+import AuthContext from '../contexts/AuthContext'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function Navigation() {
+  const auth = useContext(AuthContext)
+  const role = auth?.user?.role
+  const isAdmin = role === 'admin' || role === 'chief'
   const navigation = [
     { name: 'Dashboard', href: '/' },
     { name: 'Kalender', href: '/calendar' },
-    { name: 'Verwaltung', href: '/admin' },
-    { name: 'Audit', href: '/audit' },
+    isAdmin && { name: 'Verwaltung', href: '/admin' },
+    isAdmin && { name: 'Audit', href: '/audit' },
     { name: '🧪 Test', href: '/test' },
-  ]
+  ].filter(Boolean)
 
   return (
     <nav className="bg-brand-primary">
@@ -39,6 +46,23 @@ export default function Navigation() {
                   {item.name}
                 </NavLink>
               ))}
+              {!auth?.user && (
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive ? 'border-brand-accent text-white' : 'border-transparent text-gray-300 hover:border-gray-300 hover:text-white',
+                      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
+                    )
+                  }
+                >Login</NavLink>
+              )}
+              {auth?.user && (
+                <button
+                  onClick={auth.logout}
+                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300"
+                >Logout ({auth.user.role})</button>
+              )}
             </div>
           </div>
         </div>

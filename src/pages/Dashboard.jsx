@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useShifts } from '../contexts/ShiftContext'
+import { useShifts } from '../contexts/useShifts'
 import { ROLES } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
 import MiniAnalytics from '../components/MiniAnalytics'

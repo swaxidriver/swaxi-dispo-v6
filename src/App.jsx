@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
 import { ShiftProvider } from './contexts/ShiftContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Navigation from './components/Navigation'
@@ -9,9 +10,10 @@ import Calendar from './pages/Calendar'
 import Administration from './pages/Administration'
 import Audit from './pages/Audit'
 import TestPage from './pages/TestPage'
+import Login from './components/Login'
 import './App.css'
 
-const APP_VERSION = '6.0.0'
+const APP_VERSION = '6.0.1'
 
 function Footer() {
   return (
@@ -23,27 +25,30 @@ function Footer() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <ShiftProvider>
-        <Router basename="/swaxi-dispo-v6">
-          <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
-            <LiveVersionBanner />
-            <Navigation />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/admin" element={<Administration />} />
-                <Route path="/audit" element={<Audit />} />
-                <Route path="/test" element={<TestPage />} />
-              </Routes>
-            </main>
-            <Footer />
-            <AutosaveManager />
-          </div>
-        </Router>
-      </ShiftProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <ShiftProvider>
+          <Router basename="/swaxi-dispo-v6">
+            <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
+              <LiveVersionBanner />
+              <Navigation />
+              <main className="flex-1">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/admin" element={<Administration />} />
+                  <Route path="/audit" element={<Audit />} />
+                  <Route path="/test" element={<TestPage />} />
+                  <Route path="/login" element={<Login />} />
+                </Routes>
+              </main>
+              <Footer />
+              <AutosaveManager />
+            </div>
+          </Router>
+        </ShiftProvider>
+      </ThemeProvider>
+    </AuthProvider>
   )
 }
 

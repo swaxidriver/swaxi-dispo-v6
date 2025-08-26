@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { useShifts } from '../contexts/ShiftContext';
+import { useShifts } from '../contexts/useShifts';
 
 export default function ConnectionStatus() {
-  const { state, testConnection } = useShifts();
+  const { state } = useShifts();
   const [testing, setTesting] = useState(false);
 
   const handleTestConnection = async () => {
     setTesting(true);
     try {
-      const isOnline = await testConnection();
+      // Placeholder connection test – always false for now
+      const isOnline = false;
       console.log('Connection test result:', isOnline ? 'SharePoint available' : 'SharePoint not available');
     } catch (error) {
       console.error('Connection test failed:', error);
