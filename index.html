@@ -1,13 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swaxi Dispo v6</title>
+    <meta name="description" content="Hybride Dienstplanung (offline & online) – Swaxi Dispo v6." />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="canonical" href="https://swaxi.example.com/" />
+    <meta property="og:title" content="Swaxi Dispo" />
+    <meta property="og:description" content="Hybride Dienstplanung – funktioniert offline & online." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://swaxi.example.com/" />
+    <meta property="og:image" content="/vite.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Swaxi Dispo" />
+    <meta name="twitter:description" content="Hybride Dienstplanung – funktioniert offline & online." />
   </head>
-  <body>
+  <body class="bg-brand-bg text-brand-text">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-white text-black px-3 py-2 rounded shadow">Zum Inhalt springen</a>
     <div id="root"></div>
+    <noscript>
+      <div style="padding:1rem;font-family:system-ui">Diese Anwendung benötigt JavaScript.</div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

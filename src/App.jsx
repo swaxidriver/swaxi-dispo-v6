@@ -12,6 +12,42 @@ import Audit from './pages/Audit'
 import TestPage from './pages/TestPage'
 import Login from './components/Login'
 import './App.css'
+import { useState, useEffect } from 'react'
+
+function ErrorBoundary({ children }) {
+  const [error, setError] = useState(null)
+  return (
+    <ErrorBoundaryInner onError={setError} error={error}>
+      {error ? (
+        <div className="p-6 text-red-700 bg-red-50 rounded">
+          <h2 className="font-semibold mb-2">Ein Fehler ist aufgetreten</h2>
+          <pre className="text-xs whitespace-pre-wrap">{String(error.message || error)}</pre>
+          <button className="mt-3 bg-brand-primary text-white px-3 py-1 rounded" onClick={() => window.location.reload()}>Neu laden</button>
+        </div>
+      ) : children}
+    </ErrorBoundaryInner>
+  )
+}
+
+function ErrorBoundaryInner({ children, onError, error }) {
+  try {
+    if (error) return children
+    return children
+  } catch (e) {
+    onError(e)
+    return null
+  }
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4 p-6">
+      <div className="h-6 bg-gray-300 rounded w-1/3" />
+      <div className="h-4 bg-gray-200 rounded w-1/2" />
+      <div className="h-64 bg-gray-200 rounded" />
+    </div>
+  )
+}
 
 const APP_VERSION = '6.0.1'
 
@@ -24,6 +60,12 @@ function Footer() {
 }
 
 function App() {
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    // minimal defer to allow ShiftProvider bootstrap; could watch context instead
+    const t = setTimeout(() => setReady(true), 50)
+    return () => clearTimeout(t)
+  }, [])
   return (
     <AuthProvider>
       <ThemeProvider>
@@ -32,16 +74,20 @@ function App() {
             <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
               <LiveVersionBanner />
               <Navigation />
-              <main className="flex-1">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/calendar" element={<Calendar />} />
-                  <Route path="/admin" element={<Administration />} />
-                  <Route path="/audit" element={<Audit />} />
-                  <Route path="/test" element={<TestPage />} />
-                  <Route path="/login" element={<Login />} />
-                </Routes>
-              </main>
+              <ErrorBoundary>
+                <main id="main-content" className="flex-1" role="main">
+                  {ready ? (
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/calendar" element={<Calendar />} />
+                      <Route path="/admin" element={<Administration />} />
+                      <Route path="/audit" element={<Audit />} />
+                      <Route path="/test" element={<TestPage />} />
+                      <Route path="/login" element={<Login />} />
+                    </Routes>
+                  ) : <LoadingSkeleton />}
+                </main>
+              </ErrorBoundary>
               <Footer />
               <AutosaveManager />
             </div>
