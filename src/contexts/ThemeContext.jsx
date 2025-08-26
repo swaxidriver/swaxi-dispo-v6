@@ -2,37 +2,23 @@ import { useReducer, useEffect } from 'react';
 
 import { ThemeContext } from './ThemeContextCore';
 
-const initialState = {
-  isDark: false,
-  colors: {
-    primary: '#222F88',
-    accent: '#27ADE7',
-    background: '#f6f7fb',
-    surface: '#ffffff',
-    text: '#0f172a'
+const prefersDark = () => {
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') return stored === 'dark';
   }
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  return false;
 };
+
+const initialState = { isDark: prefersDark() };
 
 function themeReducer(state, action) {
   switch (action.type) {
     case 'TOGGLE_THEME':
-      return {
-        ...state,
-        isDark: !state.isDark,
-        colors: state.isDark ? {
-          primary: '#222F88',
-          accent: '#27ADE7',
-          background: '#f6f7fb',
-          surface: '#ffffff',
-          text: '#0f172a'
-        } : {
-          primary: '#222F88',
-          accent: '#27ADE7',
-          background: '#060918',
-          surface: '#0b1022',
-          text: '#e5e7eb'
-        }
-      };
+      return { ...state, isDark: !state.isDark };
     default:
       return state;
   }
@@ -43,11 +29,13 @@ export function ThemeProvider({ children }) {
 
   // Apply theme to document
   useEffect(() => {
-    document.documentElement.dataset.theme = state.isDark ? 'dark' : 'light';
+    const mode = state.isDark ? 'dark' : 'light';
+    document.documentElement.dataset.theme = mode;
+    try { localStorage.setItem('theme', mode); } catch { /* ignore */ }
   }, [state.isDark]);
 
   return (
-    <ThemeContext.Provider value={{ state, dispatch }}>
+  <ThemeContext.Provider value={{ state, dispatch }}>
       {children}
     </ThemeContext.Provider>
   );

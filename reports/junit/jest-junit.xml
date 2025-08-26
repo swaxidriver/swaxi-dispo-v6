@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.643">
-  <testsuite name="VersionBadge" errors="0" failures="0" skipped="0" timestamp="2025-08-26T22:11:54" time="0.391" tests="1">
-    <testcase classname="VersionBadge renders version badge with defined version" name="VersionBadge renders version badge with defined version" time="0.013">
+<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.642">
+  <testsuite name="ThemeContext tokens" errors="0" failures="0" skipped="0" timestamp="2025-08-26T22:19:24" time="0.391" tests="1">
+    <testcase classname="ThemeContext tokens toggles data-theme attribute and persists" name="ThemeContext tokens toggles data-theme attribute and persists" time="0.015">
     </testcase>
   </testsuite>
 </testsuites>
