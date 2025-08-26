@@ -75,6 +75,35 @@ function shiftReducer(state, action) {
         lastSync: action.payload.timestamp,
         isOnline: action.payload.isOnline
       };
+    case 'SET_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: action.payload
+      };
+    case 'MARK_NOTIFICATION_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(notification =>
+          notification.id === action.payload 
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      };
+    case 'MARK_ALL_NOTIFICATIONS_READ':
+      return {
+        ...state,
+        notifications: state.notifications.map(notification => ({
+          ...notification,
+          isRead: true
+        }))
+      };
+    case 'DELETE_NOTIFICATION':
+      return {
+        ...state,
+        notifications: state.notifications.filter(notification =>
+          notification.id !== action.payload
+        )
+      };
     default:
       return state;
   }

@@ -11,7 +11,7 @@ export default function NotificationMenu() {
       <Menu.Button className="flex items-center rounded-full bg-gray-50 p-1 text-gray-400 hover:text-gray-600">
         <span className="sr-only">View notifications</span>
         <BellIcon className="h-6 w-6" aria-hidden="true" />
-        {state.notifications.length > 0 && (
+        {state.notifications && state.notifications.length > 0 && (
           <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-white" />
         )}
       </Menu.Button>
@@ -26,7 +26,7 @@ export default function NotificationMenu() {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          {state.notifications.map((notification) => (
+          {state.notifications && state.notifications.map((notification) => (
             <Menu.Item key={notification.id}>
               {({ active }) => (
                 <div
@@ -42,7 +42,7 @@ export default function NotificationMenu() {
               )}
             </Menu.Item>
           ))}
-          {state.notifications.length === 0 && (
+          {(!state.notifications || state.notifications.length === 0) && (
             <div className="px-4 py-2 text-sm text-gray-500">
               Keine neuen Benachrichtigungen
             </div>
