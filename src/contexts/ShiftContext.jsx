@@ -147,6 +147,17 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     }
   }, [memoTemplates, state.shifts, state.applications])
 
+  // Listen for feedback events to surface as notifications
+  useEffect(() => {
+    function onFeedback(e) {
+      const f = e.detail
+      if (!f) return
+      dispatch({ type: 'ADD_NOTIFICATION', payload: { id: 'fb_evt_' + f.id, title: 'Feedback', message: f.category + ' gespeichert', timestamp: new Date().toLocaleString(), isRead: false } })
+    }
+    window.addEventListener('swaxi-feedback', onFeedback)
+    return () => window.removeEventListener('swaxi-feedback', onFeedback)
+  }, [])
+
   const applyToShift = useCallback((shiftId, userId) => {
     const app = { id: `${shiftId}_${userId}`, shiftId, userId, ts: Date.now() }
     dispatch({ type: 'ADD_APPLICATION', payload: app })

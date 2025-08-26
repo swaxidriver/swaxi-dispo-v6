@@ -31,3 +31,16 @@ if (typeof global.structuredClone !== 'function') {
     return JSON.parse(JSON.stringify(val))
   }
 }
+
+// Suppress noisy React act() warnings originating from asynchronous Headless UI
+// transition / floating-ui internal state updates that are flushed automatically.
+// The underlying behavior is covered by user-facing interaction tests, and
+// wrapping every internal passive effect would add brittle test complexity.
+// We intentionally filter only the specific warning string to keep other errors visible.
+const originalConsoleError = console.error
+console.error = (...args) => {
+  if (typeof args[0] === 'string' && args[0].includes('not wrapped in act')) {
+    return
+  }
+  originalConsoleError(...args)
+}
