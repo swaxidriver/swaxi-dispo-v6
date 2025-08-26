@@ -26,6 +26,7 @@ lint:
     - coverage/**
     - public/**
   - reports/**
+  - get-trunk.sh
 
 # Tool specific overrides
 tools:
@@ -57,6 +58,8 @@ tasks:
 format:
   enabled:
     - prettier@3
+  ignore:
+    - get-trunk.sh
 
 # Future ideas:
 # - Add a jest-junit reporter & configure trunk to surface test results.

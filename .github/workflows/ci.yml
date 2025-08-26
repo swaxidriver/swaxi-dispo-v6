@@ -49,8 +49,8 @@ jobs:
           npm install --no-save @rollup/rollup-linux-x64-gnu || true
       - name: Install trunk
         run: |
-          curl -fsSL https://get.trunk.io -o get-trunk.sh
-          bash get-trunk.sh -y
+          # Install trunk without leaving an ephemeral script file that triggers format checks
+          curl -fsSL https://get.trunk.io | bash -s -- -y
           echo "$HOME/.trunk/bin" >> $GITHUB_PATH
       - name: Trunk init (idempotent)
         run: |
