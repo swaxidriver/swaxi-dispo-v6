@@ -1,0 +1,17 @@
+name: swaxi-dispo-v6 CodeQL Config
+
+queries:
+  - uses: security-extended
+  - uses: security-and-quality
+
+paths:
+  - src
+
+paths-ignore:
+  - node_modules
+  - dist
+  - coverage
+  - reports
+  - public
+
+# Exclude generated test coverage reports & build artifacts to speed up scan.
