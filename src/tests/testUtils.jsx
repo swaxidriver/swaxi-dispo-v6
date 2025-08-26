@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act, within } from '@testing-library/react'
 import AuthContext from '../contexts/AuthContext'
 import { ShiftProvider } from '../contexts/ShiftContext'
+import { ThemeProvider } from '../contexts/ThemeContext'
 
 /**
  * Unified test render with common providers.
@@ -11,9 +12,11 @@ import { ShiftProvider } from '../contexts/ShiftContext'
 export function renderWithProviders(ui, { authUser = { name: 'Tester', role: 'admin' }, ...renderOptions } = {}) {
   return render(
     <AuthContext.Provider value={{ user: authUser }}>
-      <ShiftProvider>
-        {ui}
-      </ShiftProvider>
+      <ThemeProvider>
+        <ShiftProvider>
+          {ui}
+        </ShiftProvider>
+      </ThemeProvider>
     </AuthContext.Provider>,
     renderOptions
   )

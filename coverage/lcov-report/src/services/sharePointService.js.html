@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -335,7 +335,8 @@
 <a name='L270'></a><a href='#L270'>270</a>
 <a name='L271'></a><a href='#L271'>271</a>
 <a name='L272'></a><a href='#L272'>272</a>
-<a name='L273'></a><a href='#L273'>273</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L273'></a><a href='#L273'>273</a>
+<a name='L274'></a><a href='#L274'>274</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -343,8 +344,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -606,8 +608,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/services/sharePointService.js
+import { logError, logInfo } from '../utils/logger';
 /**
  * SharePoint Integration Service for Stadtwerke Augsburg
  * This service connects your React app to SharePoint Lists
@@ -658,7 +661,7 @@ export class SharePointService {
       const data = await response.json();
       return data.d.results.map(this.transformShiftFromSharePoint);
     } catch (error) {
-      console.error('Error fetching shifts from SharePoint:', error);
+      logError('Error fetching shifts from SharePoint:', error);
       // Fallback to localStorage for development
       return this.getShiftsFromLocalStorage();
     }
@@ -690,7 +693,7 @@ export class SharePointService {
       const data = await response.json();
       return this.transformShiftFromSharePoint(data.d);
     } catch (error) {
-      console.error('Error creating shift in SharePoint:', error);
+      logError('Error creating shift in SharePoint:', error);
       // Fallback to localStorage
       return this.createShiftInLocalStorage(shiftData);
     }
@@ -723,7 +726,7 @@ export class SharePointService {
       
 <span class="cstat-no" title="statement not covered" >      return { success: true };</span>
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('Error updating shift in SharePoint:', error);</span>
+<span class="cstat-no" title="statement not covered" >      logError('Error updating shift in SharePoint:', error);</span>
 <span class="cstat-no" title="statement not covered" >      return this.updateShiftInLocalStorage(shiftId, updates);</span>
     }
   }
@@ -743,7 +746,7 @@ export class SharePointService {
       const data = <span class="cstat-no" title="statement not covered" >await response.json();</span>
 <span class="cstat-no" title="statement not covered" >      return data.d.results.map(this.transformUserFromSharePoint);</span>
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('Error fetching users from SharePoint:', error);</span>
+<span class="cstat-no" title="statement not covered" >      logError('Error fetching users from SharePoint:', error);</span>
 <span class="cstat-no" title="statement not covered" >      return this.getUsersFromLocalStorage();</span>
     }
   }
@@ -773,9 +776,9 @@ export class SharePointService {
         }
       );
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      console.error('Error logging audit to SharePoint:', error);</span>
+<span class="cstat-no" title="statement not covered" >      logError('Error logging audit to SharePoint:', error);</span>
       // Log to console as fallback
-<span class="cstat-no" title="statement not covered" >      console.log('Audit Log:', { action, details, timestamp: new Date() });</span>
+<span class="cstat-no" title="statement not covered" >      logInfo('Audit Log:', { action, details, timestamp: new Date() });</span>
     }
   }
 &nbsp;
@@ -886,7 +889,7 @@ export const sharePointService = new SharePointService();
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-26T12:59:42.083Z
+                at 2025-08-26T14:36:49.252Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

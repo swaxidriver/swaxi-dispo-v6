@@ -1,64 +1,88 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'
 // Corrected import: useShifts is defined in its own hook file, not exported from ShiftContext
-import { useShifts } from '../contexts/useShifts';
+import { useShifts } from '../contexts/useShifts'
 
-const AUTOSAVE_INTERVAL = 30000; // 30 seconds
-const MAX_SNAPSHOTS = 10; // Keep last 10 snapshots
+const DEFAULT_AUTOSAVE_INTERVAL = 30000 // 30 seconds
+const DEFAULT_MAX_SNAPSHOTS = 10 // Keep last 10 snapshots
 
-export default function AutosaveManager() {
-  const { state } = useShifts();
-  const [lastSave, setLastSave] = useState(null);
-  const [isRecovering, setIsRecovering] = useState(false);
-  const [availableSnapshots, setAvailableSnapshots] = useState([]);
-  const [showRecoveryPanel, setShowRecoveryPanel] = useState(false);
+/**
+ * AutosaveManager
+ * Responsibilities:
+ *  - Periodically snapshot relevant shift/application/notification state to localStorage (ring buffer limited)
+ *  - Offer recovery UI when unsaved work + recent snapshot present
+ *  - Export & housekeeping (cleanup oldest) actions
+ * Known limitations (acceptable for now):
+ *  - Snapshot diffing heuristic is simplistic (signature by lengths); could hash payload for deeper dedupe.
+ */
+export default function AutosaveManager({
+  intervalMs = DEFAULT_AUTOSAVE_INTERVAL,
+  maxSnapshots = DEFAULT_MAX_SNAPSHOTS,
+  enableLogging = false,
+  dedupeSnapshots = false, // if true, identical (by simple signature) consecutive snapshots are skipped
+} = {}) {
+  const { state } = useShifts()
+  const [lastSave, setLastSave] = useState(null)
+  const [isRecovering, setIsRecovering] = useState(false)
+  const [availableSnapshots, setAvailableSnapshots] = useState([])
+  const [showRecoveryPanel, setShowRecoveryPanel] = useState(false)
+  const lastSignatureRef = useRef(null)
 
   // Auto-save functionality
   useEffect(() => {
     const saveSnapshot = () => {
       try {
+        // Build a simple signature to avoid redundant identical snapshots
+        const signature = [
+          state.shifts.length,
+          state.applications.length,
+          state.notifications.length,
+          state.lastActivity || 0,
+        ].join(':')
+        if (dedupeSnapshots) {
+          if (signature === lastSignatureRef.current) return
+          lastSignatureRef.current = signature
+        }
+
+        const now = Date.now()
+        const dataSource = typeof state.dataSource === 'string'
+          ? state.dataSource
+          : (state.dataSource?.source || 'localStorage')
+
         const snapshot = {
-          id: Date.now(),
-          timestamp: new Date().toISOString(),
+          id: now,
+          timestamp: new Date(now).toISOString(),
           data: {
             shifts: state.shifts,
             applications: state.applications,
             notifications: state.notifications,
-            lastActivity: state.lastActivity
+            lastActivity: state.lastActivity,
           },
-          dataSource: state.dataSource?.source || 'localStorage',
-          changeCount: state.shifts.length + state.applications.length
-        };
+          dataSource,
+          changeCount: state.shifts.length + state.applications.length,
+        }
 
-        // Get existing snapshots
-        const existingSnapshots = JSON.parse(localStorage.getItem('swaxi-autosave-snapshots') || '[]');
-        
-        // Add new snapshot and limit to MAX_SNAPSHOTS
-        const updatedSnapshots = [snapshot, ...existingSnapshots].slice(0, MAX_SNAPSHOTS);
-        
-        // Save to localStorage
-        localStorage.setItem('swaxi-autosave-snapshots', JSON.stringify(updatedSnapshots));
+        const existingSnapshots = JSON.parse(localStorage.getItem('swaxi-autosave-snapshots') || '[]')
+        const updatedSnapshots = [snapshot, ...existingSnapshots].slice(0, maxSnapshots)
+
+        localStorage.setItem('swaxi-autosave-snapshots', JSON.stringify(updatedSnapshots))
         localStorage.setItem('swaxi-last-autosave', JSON.stringify({
-          timestamp: new Date().toISOString(),
-          changeCount: snapshot.changeCount
-        }));
+          timestamp: snapshot.timestamp,
+          changeCount: snapshot.changeCount,
+        }))
 
-        setLastSave(new Date());
-        setAvailableSnapshots(updatedSnapshots);
-        
-        console.log('📸 Autosave: Snapshot erstellt', snapshot.id);
+        setLastSave(new Date(snapshot.timestamp))
+        setAvailableSnapshots(updatedSnapshots)
+        if (enableLogging) console.log('📸 Autosave: Snapshot erstellt', snapshot.id)
       } catch (error) {
-        console.error('❌ Autosave Fehler:', error);
+        if (enableLogging) console.error('❌ Autosave Fehler:', error)
       }
-    };
+    }
 
-    // Initial save
-    saveSnapshot();
-
-    // Set up interval
-    const interval = setInterval(saveSnapshot, AUTOSAVE_INTERVAL);
-
-    return () => clearInterval(interval);
-  }, [state.shifts, state.applications, state.notifications, state.dataSource?.source, state.lastActivity]);
+    // Initial save (after mount / state updates)
+    saveSnapshot()
+    const interval = setInterval(saveSnapshot, intervalMs)
+    return () => clearInterval(interval)
+  }, [state.shifts, state.applications, state.notifications, state.dataSource, state.lastActivity, intervalMs, maxSnapshots, enableLogging, dedupeSnapshots])
 
   // Load snapshots on component mount
   useEffect(() => {
@@ -177,75 +201,90 @@ export default function AutosaveManager() {
   };
 
   // Recovery Panel
-  if (showRecoveryPanel) {
-    return (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-          <div className="text-center">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
-              <span className="text-2xl">🔄</span>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Ungespeicherte Änderungen erkannt
-            </h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Es wurden automatische Snapshots gefunden. Möchten Sie Ihre Arbeit wiederherstellen?
-            </p>
-            
-            <div className="max-h-40 overflow-y-auto mb-6">
-              {availableSnapshots.slice(0, 3).map((snapshot) => (
-                <div key={snapshot.id} className="flex items-center justify-between p-3 border rounded-md mb-2">
-                  <div className="text-left">
-                    <div className="text-sm font-medium">
-                      {new Date(snapshot.timestamp).toLocaleString('de-DE')}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {snapshot.data.shifts.length} Dienste • {snapshot.dataSource}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => recoverFromSnapshot(snapshot.id)}
-                    disabled={isRecovering}
-                    className="ml-3 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-brand-primary hover:bg-brand-primary/80 disabled:opacity-50"
-                  >
-                    {isRecovering ? 'Lädt...' : 'Wiederherstellen'}
-                  </button>
-                </div>
-              ))}
-            </div>
-            
-            <div className="flex justify-center space-x-3">
-              <button
-                onClick={() => setShowRecoveryPanel(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-              >
-                Überspringen
-              </button>
-              <button
-                onClick={() => {
-                  localStorage.removeItem('swaxi-unsaved-work');
-                  setShowRecoveryPanel(false);
-                }}
-                className="px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-primary/80"
-              >
-                Neu beginnen
-              </button>
-            </div>
+  // Recovery overlay (keep separate so indicator still mounts for consistent layout if needed later)
+  const recoveryOverlay = showRecoveryPanel && (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" data-testid="recovery-overlay">
+      <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div className="text-center">
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 mb-4">
+            <span className="text-2xl">🔄</span>
           </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Ungespeicherte Änderungen erkannt
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Es wurden automatische Snapshots gefunden. Möchten Sie Ihre Arbeit wiederherstellen?
+          </p>
+
+          <div className="max-h-48 overflow-y-auto mb-4 text-left">
+            {availableSnapshots.slice(0, 5).map((snapshot) => (
+              <div key={snapshot.id} className="flex items-center justify-between p-3 border rounded-md mb-2">
+                <div>
+                  <div className="text-sm font-medium">
+                    {new Date(snapshot.timestamp).toLocaleString('de-DE')}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {snapshot.data.shifts.length} Dienste • {snapshot.dataSource}
+                  </div>
+                </div>
+                <button
+                  onClick={() => recoverFromSnapshot(snapshot.id)}
+                  disabled={isRecovering}
+                  className="ml-3 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-brand-primary hover:bg-brand-primary/80 disabled:opacity-50"
+                >
+                  {isRecovering ? 'Lädt...' : 'Wiederherstellen'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2 mb-4">
+            <button
+              onClick={() => setShowRecoveryPanel(false)}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            >
+              Überspringen
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem('swaxi-unsaved-work')
+                setShowRecoveryPanel(false)
+              }}
+              className="px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-primary/80"
+            >
+              Neu beginnen
+            </button>
+            <button
+              onClick={exportSnapshots}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+            >
+              Export
+            </button>
+            {availableSnapshots.length > 3 && (
+              <button
+                onClick={() => deleteSnapshot(availableSnapshots[availableSnapshots.length - 1].id)}
+                className="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200"
+              >
+                Bereinigen
+              </button>
+            )}
+          </div>
+          <div className="text-xs text-gray-500">{availableSnapshots.length} Snapshots verfügbar</div>
         </div>
       </div>
-    );
-  }
+    </div>
+  )
 
   // Auto-save status indicator (shown in corner)
   return (
-    <div className="fixed bottom-4 right-4 z-40">
-      <div className="bg-white shadow-lg rounded-lg p-3 border border-gray-200">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span className="text-xs text-gray-600">
-            Autosave: {lastSave ? formatTimeAgo(lastSave) : 'Initialisierung...'}
-          </span>
+    <>
+      <div className="fixed bottom-4 right-4 z-40">
+        <div className="bg-white shadow-lg rounded-lg p-3 border border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-xs text-gray-600">
+              Autosave: {lastSave ? formatTimeAgo(lastSave) : 'Initialisierung...'}
+            </span>
             <button
               onClick={() => setShowRecoveryPanel(true)}
               className="text-xs text-brand-primary hover:text-brand-primary/80"
@@ -254,32 +293,14 @@ export default function AutosaveManager() {
               📸
             </button>
           </div>
-          
-          {showRecoveryPanel && (
-            <div className="mt-2 flex space-x-1">
-              <button
-                onClick={exportSnapshots}
-                className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-                title="Snapshots exportieren"
-              >
-                Export
-              </button>
-              {availableSnapshots.length > 3 && (
-                <button
-                  onClick={() => deleteSnapshot(availableSnapshots[availableSnapshots.length - 1].id)}
-                  className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
-                  title="Älteste Snapshots löschen"
-                >
-                  Bereinigen
-                </button>
-              )}
+          {availableSnapshots.length > 0 && (
+            <div className="mt-2 text-xs text-gray-500">
+              {availableSnapshots.length} Snapshots verfügbar
             </div>
-          )}        {availableSnapshots.length > 0 && (
-          <div className="mt-2 text-xs text-gray-500">
-            {availableSnapshots.length} Snapshots verfügbar
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  );
+      {recoveryOverlay}
+    </>
+  )
 }

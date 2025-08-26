@@ -16,3 +16,11 @@ global.ResizeObserver = class ResizeObserver {
   unobserve() { return null; }
   disconnect() { return null; }
 };
+
+// IndexedDB polyfill (CommonJS fallback)
+require('fake-indexeddb/auto');
+
+// structuredClone polyfill for older Node in test env
+if (typeof global.structuredClone !== 'function') {
+  global.structuredClone = (val) => JSON.parse(JSON.stringify(val));
+}

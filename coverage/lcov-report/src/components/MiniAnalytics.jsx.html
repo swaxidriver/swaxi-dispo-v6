@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -121,39 +121,39 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -174,40 +174,40 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useShifts } from '../contexts/useShifts'
 import { SHIFT_STATUS } from '../utils/constants'
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >MiniAnalytics(</span>) {
-  const { state } = <span class="cstat-no" title="statement not covered" >useShifts();</span>
+export default function MiniAnalytics() {
+  const { state } = useShifts();
   
-  const stats = <span class="cstat-no" title="statement not covered" >[</span>
+  const stats = [
     {
       name: 'Offene Dienste',
-      value: state.shifts.filter(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.status === SHIFT_STATUS.OPEN)</span>.length,
+      value: state.shifts.filter(s =&gt; s.status === SHIFT_STATUS.OPEN).length,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100'
     },
     {
       name: 'Zugewiesene Dienste',
-      value: state.shifts.filter(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.status === SHIFT_STATUS.ASSIGNED)</span>.length,
+      value: state.shifts.filter(s =&gt; s.status === SHIFT_STATUS.ASSIGNED).length,
       color: 'text-green-600',
       bgColor: 'bg-green-100'
     },
     {
       name: 'Abgesagte Dienste',
-      value: state.shifts.filter(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.status === SHIFT_STATUS.CANCELLED)</span>.length,
+      value: state.shifts.filter(s =&gt; s.status === SHIFT_STATUS.CANCELLED).length,
       color: 'text-red-600',
       bgColor: 'bg-red-100'
     },
     {
       name: 'Aktive Konflikte',
-      value: state.shifts.filter(<span class="fstat-no" title="function not covered" >s </span>=&gt; <span class="cstat-no" title="statement not covered" >s.conflicts?.length &gt; 0)</span>.length,
+      value: state.shifts.filter(s =&gt; s.conflicts?.length &gt; 0).length,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-100'
     }
   ];
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"&gt;
-      {stats.map(<span class="fstat-no" title="function not covered" >(s</span>tat) =&gt; (
-<span class="cstat-no" title="statement not covered" >        &lt;div</span>
+      {stats.map((stat) =&gt; (
+        &lt;div
           key={stat.name}
           className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
         &gt;
@@ -232,7 +232,7 @@ export default function <span class="fstat-no" title="function not covered" >Min
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-26T12:59:42.083Z
+                at 2025-08-26T14:36:49.252Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

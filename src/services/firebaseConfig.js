@@ -4,6 +4,7 @@
 // When you are ready to enable Firebase again, replace this file with the
 // original initialization logic or a dynamic loader.
 
+/* global process */
 // Public API kept stable so future code changes are minimal.
 export const db = null;
 export const auth = null;
@@ -11,17 +12,12 @@ const app = null;
 
 // Utility to detect if firebase is configured (all essential env vars present)
 export function isFirebaseConfigured() {
-  let env = {};
-  try {
-    env = import.meta?.env || {};
-  } catch (_e) {
-    env = {};
-  }
+  const env = (typeof process !== 'undefined' && process.env) ? process.env : {}
   return !!(
     env.VITE_FIREBASE_API_KEY &&
     env.VITE_FIREBASE_PROJECT_ID &&
     env.VITE_FIREBASE_APP_ID
-  );
+  )
 }
 
 export default app;

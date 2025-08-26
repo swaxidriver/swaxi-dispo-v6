@@ -1,5 +1,6 @@
-import { createContext, useReducer, useEffect, useCallback, useMemo } from 'react'
+import { createContext, useReducer, useEffect, useCallback, useMemo, useRef } from 'react'
 import { generateShiftTemplates } from '../utils/shifts'
+import { getShiftRepository } from '../repository/repositoryFactory'
 import { SHIFT_STATUS } from '../utils/constants'
 import { useShiftTemplates } from './useShiftTemplates'
 import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
@@ -13,27 +14,57 @@ export function ShiftProvider({ children }) {
 
   const [state, dispatch] = useReducer(shiftReducer, initialState)
 
+  const repoRef = useRef(null)
+  if (!repoRef.current) repoRef.current = getShiftRepository()
+  const bootstrappedRef = useRef(false)
+
   useEffect(() => {
-    const pShifts = localStorage.getItem('shifts')
-    const pApps = localStorage.getItem('applications')
-    const pNotes = localStorage.getItem('notifications')
-    let loadedShifts = []
-    if (pShifts) {
-      try { loadedShifts = JSON.parse(pShifts) } catch { /* ignore */ }
+    let cancelled = false
+
+    // 1. Synchronous localStorage bootstrap for legacy tests & offline continuity.
+  try {
+      const lsShifts = localStorage.getItem('shifts')
+      if (lsShifts) {
+        const parsed = JSON.parse(lsShifts)
+        if (Array.isArray(parsed) && parsed.length) {
+          const withConflicts = parsed.map(s => ({
+            ...s,
+            conflicts: checkShiftConflicts(s, parsed.filter(o => o.id !== s.id), [])
+          }))
+          dispatch({ type: 'INIT_SHIFTS', payload: withConflicts })
+      bootstrappedRef.current = true
+        }
+      }
+      const pApps = localStorage.getItem('applications')
+      if (pApps) {
+        try { dispatch({ type: 'INIT_APPLICATIONS', payload: JSON.parse(pApps) }) } catch { /* ignore */ }
+      }
+      const pNotes = localStorage.getItem('notifications')
+      if (pNotes) {
+        try { dispatch({ type: 'INIT_NOTIFICATIONS', payload: JSON.parse(pNotes) }) } catch { /* ignore */ }
+      }
+    } catch { /* ignore */ }
+
+    // 2. Async repository load if no shifts were loaded yet.
+    async function bootstrapAsync() {
+      if (cancelled) return
+  if (bootstrappedRef.current) return // already bootstrapped from LS
+      try {
+        let loadedShifts = []
+        try {
+          loadedShifts = await repoRef.current.list()
+        } catch { /* repository unavailable */ }
+        if (!loadedShifts || !loadedShifts.length) {
+          const base = generateShiftTemplates(new Date())
+          loadedShifts = normalizeGeneratedShifts(base)
+        }
+        loadedShifts = loadedShifts.map(s => ({ ...s, conflicts: checkShiftConflicts(s, loadedShifts.filter(o => o.id !== s.id), state.applications) }))
+        if (!cancelled) dispatch({ type: 'INIT_SHIFTS', payload: loadedShifts })
+      } catch { /* swallow */ }
     }
-    if (!loadedShifts.length) {
-      const base = generateShiftTemplates(new Date())
-      loadedShifts = normalizeGeneratedShifts(base)
-    }
-    // initial conflict calc (no applications yet)
-    loadedShifts = loadedShifts.map(s => ({ ...s, conflicts: checkShiftConflicts(s, loadedShifts.filter(o => o.id !== s.id), []) }))
-    dispatch({ type: 'INIT_SHIFTS', payload: loadedShifts })
-    if (pApps) {
-      try { dispatch({ type: 'INIT_APPLICATIONS', payload: JSON.parse(pApps) }) } catch { /* ignore */ }
-    }
-    if (pNotes) {
-      try { dispatch({ type: 'INIT_NOTIFICATIONS', payload: JSON.parse(pNotes) }) } catch { /* ignore */ }
-    }
+    bootstrapAsync()
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -92,6 +123,8 @@ export function ShiftProvider({ children }) {
       const updated = { ...target, conflicts: checkShiftConflicts(target, state.shifts.filter(o => o.id !== target.id), [...state.applications, app]) }
       dispatch({ type: 'UPDATE_SHIFT', payload: updated })
     }
+  // Fire & forget repository persistence
+  repoRef.current?.applyToShift?.(shiftId, userId).catch(() => {})
   }, [state.shifts, state.applications])
 
   const applyToSeries = useCallback((shiftIds, userId) => {
@@ -124,6 +157,8 @@ export function ShiftProvider({ children }) {
       updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
       dispatch({ type: 'UPDATE_SHIFT', payload: updated })
       dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `${shiftId}_${Date.now()}`, title: 'Shift assigned', message: `${user} wurde Dienst zugewiesen`, timestamp: new Date().toLocaleString(), isRead: false } })
+      // Fire and forget repository update
+      repoRef.current?.assignShift?.(shiftId, user).catch(() => {})
     }
   }, [state.shifts, state.applications])
 

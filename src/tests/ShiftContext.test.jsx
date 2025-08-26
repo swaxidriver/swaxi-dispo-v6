@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ShiftProvider } from '../contexts/ShiftContext'
 import { AuthProvider } from '../contexts/AuthContext'
 import { ShiftTemplateProvider } from '../contexts/ShiftTemplateContext'
@@ -28,7 +28,7 @@ function Probe() {
 }
 
 describe('ShiftContext integration basics', () => {
-  test('initializes shifts and supports core actions', () => {
+  test('initializes shifts and supports core actions', async () => {
     render(
       <AuthProvider>
         <ShiftTemplateProvider>
@@ -38,8 +38,11 @@ describe('ShiftContext integration basics', () => {
         </ShiftTemplateProvider>
       </AuthProvider>
     )
+    await waitFor(() => {
+      const count = Number(screen.getByTestId('count').textContent)
+      expect(count).toBeGreaterThan(0)
+    })
     const count = Number(screen.getByTestId('count').textContent)
-    expect(count).toBeGreaterThan(0)
 
     // Apply to first shift
     fireEvent.click(screen.getByText('apply-first'))

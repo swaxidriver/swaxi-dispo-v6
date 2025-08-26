@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { ShiftProvider } from '../contexts/ShiftContext'
 import { useShifts } from '../contexts/useShifts'
 import AuthContext from '../contexts/AuthContext'
@@ -35,9 +35,9 @@ describe('Shift assignment & notifications', () => {
     localStorage.removeItem('notifications')
 
   wrapper()
-    const assignBtn = screen.getByText('Zuweisen')
+  const assignBtn = await waitFor(() => screen.getByText('Zuweisen'))
   fireEvent.click(assignBtn)
-  // wait for DOM update with assigned badge
+  // Expect status badge to update to assigned
   const assignedBadge = await screen.findByText((content) => content.toLowerCase() === 'assigned')
   expect(assignedBadge).toBeInTheDocument()
   })

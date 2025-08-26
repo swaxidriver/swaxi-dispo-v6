@@ -18,15 +18,13 @@ export default {
     '!src/**/*.test.{js,jsx}',
     '!src/**/*.spec.{js,jsx}',
   ],
-  // Enforce modest coverage thresholds; adjust upward over time
+  // Granular coverage ratchet: raise global slightly; enforce higher targets on stable areas.
   coverageThreshold: {
     global: {
-      // Ratcheted upward (previous 40/38/40/38). Actual now ~53/50/57/53.
-      // New thresholds (keep safe headroom):
-      statements: 45,
-      branches: 42,
-      functions: 45,
-      lines: 45,
+      statements: 60,
+      branches: 55,
+      functions: 60,
+      lines: 60,
     }
   },
   reporters: [

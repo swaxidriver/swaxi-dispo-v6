@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -162,7 +162,7 @@
 <a name='L97'></a><a href='#L97'>97</a>
 <a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -190,17 +190,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -214,9 +214,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -255,11 +255,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useState } from 'react'
 &nbsp;
-const demoAuditLog = <span class="cstat-no" title="statement not covered" >[</span>
+const demoAuditLog = [
   {
     id: 1,
     user: 'System',
@@ -286,18 +286,18 @@ const demoAuditLog = <span class="cstat-no" title="statement not covered" >[</sp
   },
 ]
 &nbsp;
-export default function <span class="fstat-no" title="function not covered" >Audit(</span>) {
-  const [logs] = <span class="cstat-no" title="statement not covered" >useState(demoAuditLog)</span>
-  const [filter, setFilter] = <span class="cstat-no" title="statement not covered" >useState('all')</span>
+export default function Audit() {
+  const [logs] = useState(demoAuditLog)
+  const [filter, setFilter] = useState('all')
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="container mx-auto px-4 py-8"&gt;
       &lt;div className="md:flex md:items-center md:justify-between mb-8"&gt;
         &lt;h1 className="text-3xl font-bold"&gt;Audit&lt;/h1&gt;
         &lt;div className="mt-4 flex space-x-3 md:ml-4 md:mt-0"&gt;
           &lt;select
             value={filter}
-            onChange={<span class="fstat-no" title="function not covered" >(e</span>) =&gt; <span class="cstat-no" title="statement not covered" >setFilter(e.target.value)}</span>
+            onChange={(e) =&gt; setFilter(e.target.value)}
             className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-brand-primary focus:outline-none focus:ring-brand-primary sm:text-sm"
           &gt;
             &lt;option value="all"&gt;Alle Aktivitäten&lt;/option&gt;
@@ -311,9 +311,9 @@ export default function <span class="fstat-no" title="function not covered" >Aud
       &lt;div className="bg-white shadow overflow-hidden sm:rounded-md"&gt;
         &lt;ul className="divide-y divide-gray-200"&gt;
           {logs
-            .filter(<span class="fstat-no" title="function not covered" >lo</span>g =&gt; <span class="cstat-no" title="statement not covered" >filter === 'all' || log.type === filter)</span>
-            .map(<span class="fstat-no" title="function not covered" >(l</span>og) =&gt; (
-<span class="cstat-no" title="statement not covered" >              &lt;li key={log.id}&gt;</span>
+            .filter(log =&gt; filter === 'all' || log.type === filter)
+            .map((log) =&gt; (
+              &lt;li key={log.id}&gt;
                 &lt;div className="px-4 py-4 sm:px-6"&gt;
                   &lt;div className="flex items-center justify-between"&gt;
                     &lt;div className="text-sm font-medium text-brand-primary truncate"&gt;
@@ -351,8 +351,8 @@ export default function <span class="fstat-no" title="function not covered" >Aud
   )
 }
 &nbsp;
-function <span class="fstat-no" title="function not covered" >classNames(</span>...classes) {
-<span class="cstat-no" title="statement not covered" >  return classes.filter(Boolean).join(' ')</span>
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -361,7 +361,7 @@ function <span class="fstat-no" title="function not covered" >classNames(</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-26T12:59:42.083Z
+                at 2025-08-26T14:36:49.252Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
