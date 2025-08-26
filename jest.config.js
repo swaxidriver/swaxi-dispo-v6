@@ -18,8 +18,16 @@ export default {
     '!src/**/*.test.{js,jsx}',
     '!src/**/*.spec.{js,jsx}',
   ],
-  // Relaxed / temporarily disabled coverage thresholds during early test build-out
-  coverageThreshold: {},
+  // Enforce modest coverage thresholds; adjust upward over time
+  coverageThreshold: {
+    global: {
+  // Raised thresholds after adding test suites (current ~29/27/28/28)
+  statements: 25,
+  branches: 20,
+  functions: 25,
+  lines: 25,
+    }
+  },
   reporters: [
     'default',
     ['jest-junit', { outputDirectory: 'reports/junit', outputName: 'jest-junit.xml' }]
