@@ -1,7 +1,7 @@
 import { createContext, useReducer, useEffect, useCallback, useMemo } from 'react'
 import { generateShiftTemplates } from '../utils/shifts'
 import { SHIFT_STATUS } from '../utils/constants'
-import { useShiftTemplates } from './ShiftTemplateContext'
+import { useShiftTemplates } from './useShiftTemplates'
 import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
 import { checkShiftConflicts } from '../utils/shifts'
 

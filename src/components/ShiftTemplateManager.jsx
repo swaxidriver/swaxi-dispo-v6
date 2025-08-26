@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useShiftTemplates } from '../contexts/ShiftTemplateContext'
+import { useShiftTemplates } from '../contexts/useShiftTemplates'
 
 function ShiftTemplateManager() {
   const { templates, addTemplate, updateTemplate, deleteTemplate } = useShiftTemplates()
