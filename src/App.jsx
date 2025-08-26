@@ -25,12 +25,15 @@ function LoadingSkeleton() {
   )
 }
 
-const APP_VERSION = '6.0.1'
+// Build metadata injected by Vite define() (see vite.config.js)
+/* global __APP_VERSION__, __APP_COMMIT__ */
+const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'
+const APP_COMMIT = typeof __APP_COMMIT__ !== 'undefined' ? __APP_COMMIT__ : 'local'
 
 function Footer() {
   return (
     <footer className="mt-auto py-4 text-center text-sm text-gray-500">
-      <p>swaxi Dispo v{APP_VERSION} • {new Date().getFullYear()}</p>
+  <p>swaxi Dispo v{APP_VERSION} ({APP_COMMIT}) • {new Date().getFullYear()}</p>
     </footer>
   )
 }
