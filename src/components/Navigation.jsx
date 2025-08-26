@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 // reference to satisfy strict unused var rule in certain test contexts
 const _navLinkRef = NavLink
 import { useContext } from 'react'
+import { useFeedback } from '../contexts/useFeedback'
 
 import AuthContext from '../contexts/AuthContext'
 
@@ -66,8 +67,24 @@ export default function Navigation() {
               )}
             </div>
           </div>
+          <FeedbackNavControl />
         </div>
       </div>
     </nav>
   )
 }
+
+function FeedbackNavControl() {
+  // separate component so hook order remains stable if provider absent in isolated tests
+  try {
+    const fb = useFeedback()
+    return (
+      <div className="flex items-center">
+        <button onClick={fb.open} className="ml-4 text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded px-3 py-1">Feedback</button>
+      </div>
+    )
+  } catch {
+    return null
+  }
+}
+

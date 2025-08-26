@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { AuthProvider } from './contexts/AuthContext'
 import { ShiftProvider } from './contexts/ShiftContext'
+import { FeedbackProvider } from './contexts/FeedbackContext'
+import FeedbackModal from './components/FeedbackModal'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Navigation from './components/Navigation'
 import LiveVersionBanner from './components/LiveVersionBanner'
@@ -52,6 +54,14 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <ShiftProvider>
+          <FeedbackProvider onNewFeedback={(entry) => {
+            // push into notifications via ShiftContext dispatch (available under provider tree)
+            // we cannot import hook at module top (ordering) so do dynamic inside callback
+            try {
+              const evt = new CustomEvent('swaxi-feedback', { detail: entry })
+              window.dispatchEvent(evt)
+            } catch { /* ignore */ }
+          }}>
           <Router basename="/swaxi-dispo-v6">
             <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
               <LiveVersionBanner />
@@ -72,8 +82,10 @@ function App() {
               </ErrorBoundary>
               <Footer />
               <AutosaveManager />
+              <FeedbackModal />
             </div>
           </Router>
+          </FeedbackProvider>
         </ShiftProvider>
       </ThemeProvider>
     </AuthProvider>
