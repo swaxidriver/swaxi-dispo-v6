@@ -21,11 +21,11 @@ export default {
   // Enforce modest coverage thresholds; adjust upward over time
   coverageThreshold: {
     global: {
-  // Incrementally raised thresholds (current ~29/27.6/28.1/28.0 at time of change)
-  statements: 28,
-  branches: 24,
-  functions: 27,
-  lines: 27,
+  // Further tightened (current ~29.23/27.65/28.12/28.01 at time of change)
+  statements: 29,
+  branches: 27,
+  functions: 28,
+  lines: 28,
     }
   },
   reporters: [
