@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen, act, fireEvent, waitFor } from '@testing-library/react'
 
 import AutosaveManager from '../components/AutosaveManager'
 import { ShiftProvider } from '../contexts/ShiftContext'
@@ -32,6 +32,8 @@ describe('AutosaveManager', () => {
   beforeEach(() => {
     localStorage.clear()
     jest.clearAllTimers()
+  // mock alert to suppress jsdom not implemented error
+  window.alert = jest.fn()
   })
 
   it('creates an initial snapshot and shows autosave indicator', () => {
@@ -66,5 +68,50 @@ describe('AutosaveManager', () => {
     // Recovery panel should appear automatically (due to unsaved work + snapshot)
     expect(screen.getByText(/Ungespeicherte Änderungen erkannt/)).toBeInTheDocument()
     expect(screen.getByText('Überspringen')).toBeInTheDocument()
+  })
+
+  it('can dismiss recovery panel via Überspringen', () => {
+    seedState({ shifts: [], applications: [], notifications: [] })
+    render(<ShiftProvider><AutosaveManager /></ShiftProvider>)
+    act(() => { jest.advanceTimersByTime(1100) })
+    fireEvent.click(screen.getByText('Überspringen'))
+    expect(screen.queryByText(/Ungespeicherte Änderungen erkannt/)).not.toBeInTheDocument()
+  })
+
+  it('restores snapshot shifts into context', async () => {
+    // Prepare snapshot with a shift
+    const now = Date.now()
+  const snapshot = {
+      id: now,
+      timestamp: new Date(now).toISOString(),
+      data: {
+    shifts: [{ id: '2025-01-01_X', uid: 'shf_test', date: new Date('2025-01-01'), type: 'X', start: '10:00', end: '12:00', status: 'open', assignedTo: null, workLocation: 'office', conflicts: [] }],
+        applications: [],
+        notifications: [],
+        lastActivity: 0,
+      },
+      dataSource: 'localStorage',
+      changeCount: 1,
+    }
+    localStorage.setItem('swaxi-unsaved-work', '1')
+    localStorage.setItem('swaxi-autosave-snapshots', JSON.stringify([snapshot]))
+    render(<ShiftProvider><AutosaveManager /></ShiftProvider>)
+    act(() => { jest.advanceTimersByTime(1100) })
+    // Click restore on first snapshot
+    // Multiple snapshots exist (an initial empty plus our seeded one). Select the one with 1 Dienste.
+    const rows = screen.getAllByRole('button', { name: /wiederherstellen/i })
+    let targetBtn = rows[0]
+    rows.forEach(b => {
+      if (b.parentElement?.textContent?.includes('1 Dienste')) targetBtn = b
+    })
+    act(() => { fireEvent.click(targetBtn) })
+    // flush promise then timers for simulated delay
+    await act(async () => { await Promise.resolve() })
+    act(() => { jest.advanceTimersByTime(500) })
+    await waitFor(() => expect(screen.queryByText(/Ungespeicherte Änderungen erkannt/)).not.toBeInTheDocument())
+    await waitFor(() => {
+      const storedShifts = JSON.parse(localStorage.getItem('shifts') || '[]')
+      expect(storedShifts.length).toBeGreaterThan(0)
+    })
   })
 })

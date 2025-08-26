@@ -2,21 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-08-27
+
+### Added (0.3.0)
+
+- Visible active role badge in navigation (P0-8) plus capability helper functions in `constants.js`.
+- WorkLocation mandatory field enforcement with UI validation + domain guard (P0-6).
+- Autosave snapshot restoration pipeline (`restoreFromSnapshot`) with conflict recomputation (P0-7).
+- Version metadata injection (semantic version, commit, build number, build time) via Vite defines and `VersionBadge` component rendered in navigation.
+- Header documentation comment for `ShiftContext.jsx` outlining responsibilities.
+
+### Changed (0.3.0)
+
+- Navigation now shows application version (v0.3.0+) alongside brand for quick diagnostics.
+- README extended with testing strategy v2, versioning & backlog sections.
+
+### Internal / Tooling (0.3.0)
+
+- Added `VersionBadge.jsx` and build meta injection in `vite.config.js` (constants already present; using existing build meta pattern).
+- Introduced preliminary backlog file to track upcoming tasks.
+
+### Next
+
+- Expand role-based conditional rendering tests to other components (Shift creation, templates, audit gating).
+- Introduce test categorization folders (unit/, integration/, accessibility/).
+- Consider migrating offline queue tests to isolated integration suite.
+
+
 ## [0.2.0] - 2025-08-26
 
-### Added
+### Added (0.2.0)
 
 - Offline action queue (create/apply/assign) with automatic drain on reconnect; queued creates marked via `pendingSync` flag.
 - Integration tests for offline create + apply replay.
 - Accessibility improvements: feedback modal focus trap, ESC close, focus restoration, aria-live status messaging, global polite aria-live region.
 - Runtime safety test for `RoleManagement` component.
 
-### Changed
+### Changed (0.2.0)
 
 - Shift creation now optimistic with retry + queue fallback instead of silent failure.
 - Apply / assign actions enqueue on repository failure for later replay.
 
-### Fixed
+### Fixed (0.2.0)
 
 - Prevent potential runtime error in `RoleManagement` when `users` or `onUpdateRole` props are missing (defaults + empty state).
 

@@ -21,7 +21,7 @@ export default function AutosaveManager({
   enableLogging = false,
   dedupeSnapshots = false, // if true, identical (by simple signature) consecutive snapshots are skipped
 } = {}) {
-  const { state } = useShifts()
+  const { state, restoreFromSnapshot } = useShifts()
   const [lastSave, setLastSave] = useState(null)
   const [isRecovering, setIsRecovering] = useState(false)
   const [availableSnapshots, setAvailableSnapshots] = useState([])
@@ -134,12 +134,10 @@ export default function AutosaveManager({
         throw new Error('Snapshot nicht gefunden');
       }
 
-      // Here you would dispatch actions to restore the state
-      // For demo purposes, we'll just show a success message
-      console.log('🔄 Wiederherstellung von Snapshot:', snapshot);
-      
-      // Simulate recovery process
-      await new Promise(resolve => setTimeout(resolve, 1500));
+  console.log('🔄 Wiederherstellung von Snapshot:', snapshot)
+  restoreFromSnapshot(snapshot)
+  // Simulate minor delay for UX feedback
+  await new Promise(resolve => setTimeout(resolve, 400))
       
       setShowRecoveryPanel(false);
       setIsRecovering(false);
@@ -147,7 +145,7 @@ export default function AutosaveManager({
       // Clear unsaved work flag
       localStorage.removeItem('swaxi-unsaved-work');
       
-      alert(`✅ Daten erfolgreich wiederhergestellt!\n\nSnapshot vom: ${new Date(snapshot.timestamp).toLocaleString('de-DE')}\nDatenquelle: ${snapshot.dataSource}`);
+  alert(`✅ Daten erfolgreich wiederhergestellt!\n\nSnapshot vom: ${new Date(snapshot.timestamp).toLocaleString('de-DE')}\nDatenquelle: ${snapshot.dataSource}`)
     } catch (error) {
       console.error('❌ Wiederherstellung fehlgeschlagen:', error);
       alert('❌ Wiederherstellung fehlgeschlagen: ' + error.message);
@@ -243,6 +241,7 @@ export default function AutosaveManager({
             <button
               onClick={() => setShowRecoveryPanel(false)}
               className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+              data-testid="recovery-skip"
             >
               Überspringen
             </button>

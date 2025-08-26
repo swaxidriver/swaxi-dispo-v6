@@ -8,6 +8,7 @@ export const initialState = {
   dataSource: 'localStorage',
   isOnline: false,
   lastSync: null,
+  lastActivity: null,
 }
 
 export function buildShiftId(date, type) {
@@ -65,6 +66,8 @@ export function shiftReducer(state, action) {
       return { ...state, notifications: state.notifications.filter(n => n.id !== action.payload) }
     case 'SET_ONLINE':
       return { ...state, isOnline: action.payload }
+    case 'SET_LAST_ACTIVITY':
+      return { ...state, lastActivity: action.payload }
     default:
       return state
   }

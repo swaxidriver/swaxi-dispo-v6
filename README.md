@@ -112,6 +112,31 @@ swaxi-dispo-v6/
 └── dist/                   # 📦 Production Build
 ```
 
+### Deterministischer Seed (P0)
+
+Beim ersten Start (falls keine `shifts` im localStorage) werden feste Seed-Daten aus `src/seed/initialData.js` geladen. Ein Snapshot-Test (`seedSnapshot.test.js`) stellt Stabilität sicher.
+
+### ID-Generierung
+
+Monotone IDs mit Prefix via `generateId()` (`src/utils/id.js`) – persistenter Counter (`id_counter_v1`). Kollisionen werden so vermieden.
+
+### Zeit & Dauer Logik (P0-3)
+
+Schichtzeiten werden rein als `HH:MM` Strings verarbeitet und mittels `toMinutes()` normalisiert. Über-Mitternacht-Fälle (z.B. `21:00` -> `05:30`) werden korrekt behandelt, indem die Dauer als Segment über den Tageswechsel gerechnet wird (`computeDuration`). Überlappungen berücksichtigen diese Segmentierung (`overlaps`).
+
+### Konflikt-Logik (P0-4)
+
+Konflikte werden pro Schicht dynamisch berechnet (`computeShiftConflicts` in `src/utils/shifts.js`). Aktuelle Codes:
+
+| Code | Beschreibung |
+|------|--------------|
+| `TIME_OVERLAP` | Zeitliche Überlappung mit mind. einer anderen Schicht |
+| `DOUBLE_APPLICATION` | Ein Benutzer hat sich auf überlappende Schichten beworben |
+| `ASSIGNMENT_COLLISION` | Überlappende Schichten derselben Person zugewiesen |
+| `LOCATION_MISMATCH` | Überlappende zugewiesene Schichten gleicher Person aber widersprüchlicher Arbeitsort |
+
+UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping auf verständlichere Texte / Icons möglich.
+
 ## 🧩 Key Components
 
 ### **🔄 Hybrid Data Management**

@@ -8,19 +8,19 @@ import { renderWithProviders, screen, fireEvent } from './testUtils'
 // Mock useShifts to track calls without full provider overhead
 const mockApplyToShift = jest.fn()
 const mockAssignShift = jest.fn()
-const mockDispatch = jest.fn()
+const mockCancelShift = jest.fn()
 
 jest.spyOn(useShiftsModule, 'useShifts').mockImplementation(() => ({
-  dispatch: mockDispatch,
   applyToShift: mockApplyToShift,
   assignShift: mockAssignShift,
+  cancelShift: mockCancelShift,
 }))
 
 describe('ShiftTable actions', () => {
   beforeEach(() => {
     mockApplyToShift.mockClear()
     mockAssignShift.mockClear()
-    mockDispatch.mockClear()
+  mockCancelShift.mockClear()
   })
 
   const baseShift = (overrides = {}) => ({
@@ -57,7 +57,7 @@ describe('ShiftTable actions', () => {
     expect(mockAssignShift).toHaveBeenCalledWith('s1', 'Lead')
   })
 
-  it('dispatches cancellation when Absagen clicked on assigned shift', () => {
+  it('calls cancelShift when Absagen clicked on assigned shift', () => {
     const shifts = [baseShift({ status: SHIFT_STATUS.ASSIGNED, assignedTo: 'Tester' })]
     renderWithProviders(
       <AuthContext.Provider value={{ user: { name: 'Chief', role: 'chief' }}}>
@@ -65,9 +65,21 @@ describe('ShiftTable actions', () => {
       </AuthContext.Provider>
     )
     fireEvent.click(screen.getByText('Absagen'))
-    expect(mockDispatch).toHaveBeenCalledWith(expect.objectContaining({
-      type: 'UPDATE_SHIFT',
-      payload: expect.objectContaining({ status: SHIFT_STATUS.CANCELLED })
-    }))
+    expect(mockCancelShift).toHaveBeenCalledWith('s1')
+  })
+
+  it('disables Bewerben when not logged in', () => {
+    const shifts = [baseShift()]
+    renderWithProviders(<AuthContext.Provider value={{ user: null }}><ShiftTable shifts={shifts} /></AuthContext.Provider>)
+    const btn = screen.getByText('Bewerben')
+    expect(btn).toBeDisabled()
+    expect(btn.getAttribute('title')).toMatch(/Anmeldung erforderlich/)
+  })
+
+  it('disables Zuweisen when status not open', () => {
+    const shifts = [baseShift({ status: SHIFT_STATUS.CANCELLED })]
+    renderWithProviders(<AuthContext.Provider value={{ user: { name: 'Lead', role: 'chief' }}}><ShiftTable shifts={shifts} /></AuthContext.Provider>)
+    // No Zuweisen button should appear because shift not open
+    expect(screen.queryByText('Zuweisen')).toBeNull()
   })
 })

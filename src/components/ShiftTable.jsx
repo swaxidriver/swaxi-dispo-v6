@@ -3,12 +3,15 @@ import React, { useState, useContext } from 'react'
 import { useShifts } from '../contexts/useShifts'
 import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
+import { canTransition, STATUS } from '../domain/status'
+import { computeDuration } from '../utils/shifts'
+import { describeConflicts } from '../utils/conflicts'
 import { canManageShifts } from '../utils/auth'
 
 import _SeriesApplicationModal from './SeriesApplicationModal'
 
 export default function ShiftTable({ shifts, showActions = true }) {
-  const { dispatch, applyToShift, assignShift } = useShifts();
+  const { applyToShift, assignShift, cancelShift } = useShifts();
   const [showSeriesModal, setShowSeriesModal] = useState(false);
   const auth = useContext(AuthContext)
   const userRole = auth?.user?.role || 'analyst'
@@ -37,13 +40,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
   };
 
   const handleCancel = (shiftId) => {
-    dispatch({
-      type: 'UPDATE_SHIFT',
-      payload: {
-        ...shifts.find(s => s.id === shiftId),
-        status: SHIFT_STATUS.CANCELLED
-      }
-    });
+    cancelShift?.(shiftId)
   };
 
   return (
@@ -61,6 +58,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
                         month: '2-digit' 
                       }) 
                     : shift.date} • {shift.start}-{shift.end}
+                  <span className="ml-2 text-xs text-gray-500">({(computeDuration(shift.start, shift.end)/60).toFixed(1)}h)</span>
                 </div>
                 <div className="ml-2 flex-shrink-0 flex">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`}>
@@ -86,43 +84,31 @@ export default function ShiftTable({ shifts, showActions = true }) {
                   <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 space-x-2">
                     {shift.status === SHIFT_STATUS.OPEN && (
                       <>
-                        <button
-                          onClick={() => handleApply(shift.id)}
-                          className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
-                          title="Für diesen Dienst bewerben"
-                          aria-label="Für diesen Dienst bewerben"
-                        >
-                          Bewerben
-                        </button>
-                        {canManageShifts(userRole) && (
-                          <button
-                            onClick={() => handleAssign(shift.id)}
-                            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                            title="Diesen Dienst einem Nutzer zuweisen"
-                            aria-label="Diesen Dienst einem Nutzer zuweisen"
-                          >
-                            Zuweisen
-                          </button>
-                        )}
+                        {(() => { return null })() /* placeholder to keep structure */}
+                        {(() => {
+                          const applyDisabled = !auth?.user || !canTransition(shift.status, STATUS.OPEN)
+                          const applyReason = !auth?.user ? 'Anmeldung erforderlich' : (!canTransition(shift.status, STATUS.OPEN) ? 'Status erlaubt keine Bewerbung' : 'Für diesen Dienst bewerben')
+                          return <button disabled={applyDisabled} onClick={() => !applyDisabled && handleApply(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${applyDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-brand-primary text-white hover:bg-brand-primary/80'}`} title={applyReason} aria-label={applyReason} aria-disabled={applyDisabled}>Bewerben</button>
+                        })()}
+                        {canManageShifts(userRole) && (() => {
+                          const assignDisabled = !canTransition(shift.status, STATUS.ASSIGNED)
+                          const assignReason = assignDisabled ? 'Status erlaubt keine Zuweisung' : 'Diesen Dienst einem Nutzer zuweisen'
+                          return <button disabled={assignDisabled} onClick={() => !assignDisabled && handleAssign(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ${assignDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'}`} title={assignReason} aria-label={assignReason} aria-disabled={assignDisabled}>Zuweisen</button>
+                        })()}
                       </>
                     )}
-                    {shift.status === SHIFT_STATUS.ASSIGNED && canManageShifts(userRole) && (
-                      <button
-                        onClick={() => handleCancel(shift.id)}
-                        className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
-                        title="Zuweisung für diesen Dienst zurücknehmen"
-                        aria-label="Zuweisung für diesen Dienst zurücknehmen"
-                      >
-                        Absagen
-                      </button>
-                    )}
+                    {shift.status === SHIFT_STATUS.ASSIGNED && canManageShifts(userRole) && (() => {
+                      const cancelDisabled = !canTransition(shift.status, STATUS.CANCELLED)
+                      const cancelReason = cancelDisabled ? 'Status erlaubt keine Absage' : 'Zuweisung für diesen Dienst zurücknehmen'
+                      return <button disabled={cancelDisabled} onClick={() => !cancelDisabled && handleCancel(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${cancelDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`} title={cancelReason} aria-label={cancelReason} aria-disabled={cancelDisabled}>Absagen</button>
+                    })()}
                   </div>
                 )}
               </div>
               
               {shift.conflicts?.length > 0 && (
-                <div className="mt-2 text-sm text-red-600">
-                  Konflikte gefunden: {shift.conflicts.join(', ')}
+                <div className="mt-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded p-2" aria-live="polite">
+                  <strong>Konflikte:</strong> {describeConflicts(shift.conflicts).join(', ')}
                 </div>
               )}
             </div>
@@ -130,7 +116,16 @@ export default function ShiftTable({ shifts, showActions = true }) {
         ))}
       </ul>
       
-      {/* Series Application Button */}
+      {/* Legend & Series Application Button */}
+      <div className="px-4 py-2 bg-white border-t text-xs text-gray-500 space-y-1">
+        <div className="flex flex-wrap gap-3">
+          <span><strong>Legende:</strong></span>
+          <span><span className="font-semibold">Zeitüberlappung</span> = Überschneidung in Zeit</span>
+          <span><span className="font-semibold">Doppelte Bewerbung</span> = Bewerber in overlappenden Diensten</span>
+          <span><span className="font-semibold">Zuweisungs-Kollision</span> = Person doppelt zugewiesen</span>
+          <span><span className="font-semibold">Standort-Konflikt</span> = Unterschiedliche Orte gleichzeitig</span>
+        </div>
+      </div>
       {showActions && shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length > 1 && (
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
           <button

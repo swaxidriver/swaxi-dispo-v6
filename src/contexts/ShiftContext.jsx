@@ -1,14 +1,28 @@
 /* global process */
 /* eslint-disable import/order */
+/**
+ * ShiftContext
+ * Responsibilities:
+ *  - Canonical in-memory shift/application/notification state + conflicts & lastActivity
+ *  - Domain operations: create/apply/assign/cancel with guarded status transitions
+ *  - Duplicate + required workLocation enforcement and conflict recomputation
+ *  - Offline durability (localStorage) & deterministic seeding of initial data
+ *  - Offline action queue drain on reconnect (create/apply/assign)
+ *  - Snapshot restoration (autosave) rebuilding conflicts & timestamps
+ *  - Deterministic id generation (monotonic counter) via generateId
+ */
 import { createContext, useReducer, useEffect, useCallback, useMemo, useRef } from 'react'
 
 import { getShiftRepository } from '../repository/repositoryFactory'
-import { generateShiftTemplates, checkShiftConflicts } from '../utils/shifts'
+import { checkShiftConflicts } from '../utils/shifts'
 import { validateShiftArray } from '../utils/validation'
 
 import { SHIFT_STATUS } from '../utils/constants'
-import { initialState, shiftReducer, normalizeGeneratedShifts } from './ShiftContextCore'
+import { initialState, shiftReducer } from './ShiftContextCore'
+import { applyInitialSeedIfEmpty } from '../seed/initialData'
 import { enqueue, drain as drainQueue, peekQueue } from '../services/offlineQueue'
+import { STATUS, assertTransition } from '../domain/status'
+import { generateId } from '../utils/id'
 import { useShiftTemplates } from './useShiftTemplates'
 
 const ShiftContext = createContext(null)
@@ -61,8 +75,8 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
           loadedShifts = await repoRef.current.list()
         } catch { /* repository unavailable */ }
         if (!loadedShifts || !loadedShifts.length) {
-          const base = generateShiftTemplates(new Date())
-          loadedShifts = normalizeGeneratedShifts(base)
+          // Use deterministic seed for first-run stability (P0-1)
+          loadedShifts = applyInitialSeedIfEmpty([])
         }
         loadedShifts = loadedShifts.map(s => ({ ...s, conflicts: checkShiftConflicts(s, loadedShifts.filter(o => o.id !== s.id), state.applications) }))
         // Validate (dev/test only logs); filter out obviously malformed entries to prevent downstream errors.
@@ -106,6 +120,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   }, [state.shifts])
   useEffect(() => { localStorage.setItem('applications', JSON.stringify(state.applications)) }, [state.applications])
   useEffect(() => { localStorage.setItem('notifications', JSON.stringify(state.notifications)) }, [state.notifications])
+  useEffect(() => { if (state.lastActivity) localStorage.setItem('lastActivity', JSON.stringify(state.lastActivity)) }, [state.lastActivity])
 
   useEffect(() => {
     if (!memoTemplates.length) return
@@ -200,28 +215,38 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const updateShiftStatus = useCallback((shiftId, status) => {
     const shift = state.shifts.find(s => s.id === shiftId)
     if (shift) {
+      try { assertTransition(shift.status, status) } catch { return }
       const updated = { ...shift, status }
       updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
       dispatch({ type: 'UPDATE_SHIFT', payload: updated })
     }
   }, [state.shifts, state.applications])
 
+  const cancelShift = useCallback((shiftId) => {
+    const shift = state.shifts.find(s => s.id === shiftId)
+    if (!shift) return
+    try { assertTransition(shift.status, STATUS.CANCELLED) } catch { return }
+    const updated = { ...shift, status: STATUS.CANCELLED }
+    updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
+    dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+  }, [state.shifts, state.applications])
+
   const assignShift = useCallback((shiftId, user) => {
-    dispatch({ type: 'ASSIGN_SHIFT', payload: { id: shiftId, user } })
     const target = state.shifts.find(s => s.id === shiftId)
-    if (target) {
-      const updated = { ...target, status: SHIFT_STATUS.ASSIGNED, assignedTo: user }
-      updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
-      dispatch({ type: 'UPDATE_SHIFT', payload: updated })
-      dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `${shiftId}_${Date.now()}`, title: 'Shift assigned', message: `${user} wurde Dienst zugewiesen`, timestamp: new Date().toLocaleString(), isRead: false } })
-      const attempt = repoRef.current?.assignShift?.(shiftId, user)
-      if (attempt && typeof attempt.then === 'function') {
-        attempt.catch(() => {
-          enqueue({ id: `assign_${shiftId}_${user}`, type: 'assign', payload: { shiftId, user }, ts: Date.now() })
-        })
-      } else {
+    if (!target) return
+    try { assertTransition(target.status, STATUS.ASSIGNED) } catch { return }
+    dispatch({ type: 'ASSIGN_SHIFT', payload: { id: shiftId, user } })
+    const updated = { ...target, status: SHIFT_STATUS.ASSIGNED, assignedTo: user }
+    updated.conflicts = checkShiftConflicts(updated, state.shifts.filter(o => o.id !== updated.id), state.applications)
+    dispatch({ type: 'UPDATE_SHIFT', payload: updated })
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `${shiftId}_${Date.now()}`, title: 'Shift assigned', message: `${user} wurde Dienst zugewiesen`, timestamp: new Date().toLocaleString(), isRead: false } })
+    const attempt = repoRef.current?.assignShift?.(shiftId, user)
+    if (attempt && typeof attempt.then === 'function') {
+      attempt.catch(() => {
         enqueue({ id: `assign_${shiftId}_${user}`, type: 'assign', payload: { shiftId, user }, ts: Date.now() })
-      }
+      })
+    } else {
+      enqueue({ id: `assign_${shiftId}_${user}`, type: 'assign', payload: { shiftId, user }, ts: Date.now() })
     }
   }, [state.shifts, state.applications])
 
@@ -229,17 +254,25 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
 
   const createShift = useCallback((partial) => {
-    // partial: { date, type, start, end, workLocation? }
+    // partial: { date, type, start, end, workLocation }
     const date = partial.date instanceof Date ? partial.date : new Date(partial.date)
-    const id = `${date.toISOString().slice(0,10)}_${partial.type}`
-    if (state.shifts.find(s => s.id === id)) {
+    const naturalId = `${date.toISOString().slice(0,10)}_${partial.type}`
+    if (state.shifts.find(s => s.id === naturalId)) {
       return { ok: false, reason: 'duplicate' }
     }
-    const shift = { id, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: partial.workLocation || 'office', conflicts: [], pendingSync: false }
+    // Work location domain rule: explicit empty string is invalid; undefined -> default 'office' for backward compat
+    if ('workLocation' in partial) {
+      if (partial.workLocation === '') {
+        return { ok: false, reason: 'workLocation' }
+      }
+    }
+    const resolvedLocation = partial.workLocation == null ? 'office' : partial.workLocation
+    // Add internal uid for future references (e.g., editing when natural key changes)
+    const uid = generateId('shf_')
+  const shift = { id: naturalId, uid, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: resolvedLocation, conflicts: [], pendingSync: false }
     shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
     dispatch({ type: 'ADD_SHIFT', payload: shift })
-    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `create_${id}_${Date.now()}`, title: 'Dienst erstellt', message: `${partial.type} ${partial.start}-${partial.end}`, timestamp: new Date().toLocaleString(), isRead: false } })
-    // Optimistic persistence
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `create_${naturalId}_${Date.now()}`, title: 'Dienst erstellt', message: `${partial.type} ${partial.start}-${partial.end}`, timestamp: new Date().toLocaleString(), isRead: false } })
     const attempt = repoRef.current?.create?.(shift)
     if (attempt && typeof attempt.then === 'function') {
       attempt
@@ -247,16 +280,38 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
           dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, ...saved, pendingSync: false } })
         })
         .catch(() => {
-          // queue create action and flag pendingSync
-          enqueue({ id: `create_${id}`, type: 'create', payload: { shift }, ts: Date.now() })
+          enqueue({ id: `create_${naturalId}`, type: 'create', payload: { shift }, ts: Date.now() })
           dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, pendingSync: true } })
         })
     } else {
-      enqueue({ id: `create_${id}`, type: 'create', payload: { shift }, ts: Date.now() })
+      enqueue({ id: `create_${naturalId}`, type: 'create', payload: { shift }, ts: Date.now() })
       dispatch({ type: 'UPDATE_SHIFT', payload: { ...shift, pendingSync: true } })
     }
-    return { ok: true, id }
+    return { ok: true, id: naturalId, uid }
   }, [state.shifts, state.applications])
+
+  // Restore full state (shifts, applications, notifications) from autosave snapshot
+  const restoreFromSnapshot = useCallback((snapshot) => {
+    if (!snapshot || !snapshot.data) return
+    const { shifts = [], applications = [], notifications = [], lastActivity = Date.now() } = snapshot.data
+    // Recompute conflicts for restored shifts against each other and applications
+    const normalized = shifts.map(s => {
+      const dateObj = s.date instanceof Date ? s.date : new Date(s.date)
+      return { ...s, date: dateObj }
+    })
+    const recomputed = normalized.map(s => ({
+      ...s,
+      conflicts: checkShiftConflicts(s, normalized.filter(o => o.id !== s.id), applications)
+    }))
+  dispatch({ type: 'INIT_SHIFTS', payload: recomputed })
+    dispatch({ type: 'INIT_APPLICATIONS', payload: applications })
+    dispatch({ type: 'INIT_NOTIFICATIONS', payload: notifications })
+    // Persist
+  try { localStorage.setItem('shifts', JSON.stringify(recomputed)) } catch (_e) { /* ignore persistence error */ }
+  try { localStorage.setItem('applications', JSON.stringify(applications)) } catch (_e) { /* ignore persistence error */ }
+  try { localStorage.setItem('notifications', JSON.stringify(notifications)) } catch (_e) { /* ignore persistence error */ }
+    dispatch({ type: 'SET_LAST_ACTIVITY', payload: lastActivity })
+  }, [])
 
   // Drain offline queue when coming online
   useEffect(() => {
@@ -298,12 +353,14 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     applyToSeries,
     updateShiftStatus,
     assignShift,
+  cancelShift,
     createShift,
     markNotificationRead,
     markAllNotificationsRead,
   getOpenShifts: () => state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN),
   getConflictedShifts: () => state.shifts.filter(s => s.conflicts?.length),
-  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, createShift, markNotificationRead, markAllNotificationsRead])
+  restoreFromSnapshot,
+  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, cancelShift, createShift, markNotificationRead, markAllNotificationsRead, restoreFromSnapshot])
 
   return <ShiftContext.Provider value={value}>{children}</ShiftContext.Provider>
 }

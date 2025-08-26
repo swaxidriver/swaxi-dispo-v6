@@ -2,9 +2,14 @@ import { NavLink } from 'react-router-dom'
 // reference to satisfy strict unused var rule in certain test contexts
 const _navLinkRef = NavLink
 import { useContext } from 'react'
-import { useFeedback } from '../contexts/useFeedback'
 
+import { useFeedback } from '../contexts/useFeedback'
 import AuthContext from '../contexts/AuthContext'
+
+import ActiveRoleBadge from './ActiveRoleBadge'
+import VersionBadge from './VersionBadge'
+
+// AuthContext imported above
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -28,7 +33,7 @@ export default function Navigation() {
         <div className="flex h-16 justify-between">
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
-              <span className="text-white font-bold text-xl">swaxi</span>
+              <span className="text-white font-bold text-xl flex items-center">swaxi <VersionBadge /></span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => (
@@ -49,6 +54,9 @@ export default function Navigation() {
                 </NavLink>
               ))}
               <span className="flex-1" aria-hidden="true" />
+              {auth?.user && (
+                <ActiveRoleBadge className="ml-4" />
+              )}
               {!auth?.user && (
                 <NavLink
                   to="/login"

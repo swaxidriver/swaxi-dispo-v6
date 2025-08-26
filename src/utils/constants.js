@@ -16,6 +16,20 @@ export const WORK_LOCATIONS = {
   HOME: 'home'
 };
 
+// Role capability helpers (P0-8)
+export function canManageShifts(role) {
+  return role === ROLES.ADMIN || role === ROLES.CHIEF || role === ROLES.DISPONENT;
+}
+export function canAssignShifts(role) {
+  return role === ROLES.ADMIN || role === ROLES.CHIEF;
+}
+export function canManageTemplates(role) {
+  return role === ROLES.ADMIN || role === ROLES.CHIEF;
+}
+export function canViewAnalytics(role) {
+  return role === ROLES.ADMIN || role === ROLES.ANALYST || role === ROLES.CHIEF;
+}
+
 export const SHIFT_TEMPLATES = {
   WEEKDAY: {
     evening: { start: '17:45', end: '21:45' },

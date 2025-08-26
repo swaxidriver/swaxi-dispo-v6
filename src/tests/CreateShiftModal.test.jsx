@@ -16,12 +16,14 @@ function setup() {
 describe('CreateShiftModal', () => {
   it('creates a shift and closes', () => {
     const { onClose } = setup()
+    // select required work location
+    fireEvent.change(screen.getByLabelText(/Arbeitsort/i), { target: { value: 'office' } })
     const saveBtn = screen.getByRole('button', { name: /speichern/i })
     fireEvent.click(saveBtn)
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('shows validation error when missing fields', () => {
+  it('shows validation error when missing date', () => {
     const { onClose } = setup()
     const dateInput = screen.getByLabelText('Datum')
     // Clear date to trigger validation
@@ -29,6 +31,16 @@ describe('CreateShiftModal', () => {
     const saveBtn = screen.getByRole('button', { name: /speichern/i })
     fireEvent.click(saveBtn)
     expect(onClose).not.toHaveBeenCalled()
-    expect(screen.getByRole('alert')).toHaveTextContent(/Alle Felder erforderlich/)
+  expect(screen.getByRole('alert')).toHaveTextContent(/Alle Felder erforderlich/)
+  })
+
+  it('shows validation error when missing work location', () => {
+    const { onClose } = setup()
+    const locationSelect = screen.getByLabelText(/Arbeitsort/i)
+    fireEvent.change(locationSelect, { target: { value: '' } })
+    const saveBtn = screen.getByRole('button', { name: /speichern/i })
+    fireEvent.click(saveBtn)
+    expect(onClose).not.toHaveBeenCalled()
+  expect(screen.getByRole('alert')).toHaveTextContent(/Arbeitsort/)
   })
 })

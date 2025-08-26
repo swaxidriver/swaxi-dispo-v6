@@ -82,6 +82,8 @@ function App() {
               </ErrorBoundary>
               <Footer />
               <AutosaveManager />
+              {/* Global polite aria-live region for lightweight announcements / toasts */}
+              <div id="aria-live-root" className="sr-only" aria-live="polite" />
               <FeedbackModal />
             </div>
           </Router>

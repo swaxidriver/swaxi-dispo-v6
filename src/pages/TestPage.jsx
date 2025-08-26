@@ -214,7 +214,9 @@ export default function TestPage() {
             <li>• <strong>Stadtwerke Netzwerk:</strong> Erkennt automatisch SharePoint</li>
             <li>• <strong>Fallback:</strong> Wechselt nahtlos zwischen beiden Modi</li>
             <li>• <strong>Synchronisation:</strong> Daten werden automatisch gesichert</li>
+            <li>• <strong>SharePoint Status:</strong> Aktuell ist die direkte SharePoint-Anbindung im Demonstrationsmodus (Mock). Reale Verbindung wird in einer späteren Iteration aktiviert.</li>
           </ul>
+          <div className="mt-4 text-xs text-blue-700" role="note">Geplante Schritte: Authentifizierung, sichere API-Brücke, differenziertes Konflikt-Merging.</div>
         </div>
       </div>
     </div>

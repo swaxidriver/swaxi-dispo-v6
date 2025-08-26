@@ -22,8 +22,8 @@ function Probe() {
       }}>assign-first</button>
       <button onClick={() => {
         const first = state.shifts[0]
-        updateShiftStatus(first.id, 'closed')
-      }}>close-first</button>
+        updateShiftStatus(first.id, 'cancelled')
+      }}>cancel-first</button>
   <div data-testid="notifications-count">{state.notifications.length}</div>
     </div>
   )
@@ -49,9 +49,9 @@ describe('ShiftContext integration basics', () => {
     // Apply to first shift
     fireEvent.click(screen.getByText('apply-first'))
   // Assign first shift (also generates notification)
-    fireEvent.click(screen.getByText('assign-first'))
-    // Close first shift
-    fireEvent.click(screen.getByText('close-first'))
+  fireEvent.click(screen.getByText('assign-first'))
+  // Cancel first shift
+  fireEvent.click(screen.getByText('cancel-first'))
 
     // Open count should be <= total
     const openCount = Number(screen.getByTestId('open-count').textContent)

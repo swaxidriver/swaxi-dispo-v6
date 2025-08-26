@@ -28,7 +28,7 @@ describe('Login', () => {
   test('renders role buttons when logged out and logs in on click', () => {
     setAuth(null)
     render(<Login />)
-    const btn = screen.getByRole('button', { name: /Login as admin/i })
+  const btn = screen.getByRole('button', { name: /Anmelden als admin/i })
     fireEvent.click(btn)
     expect(mockLogin).toHaveBeenCalledWith('admin')
   })
@@ -36,8 +36,8 @@ describe('Login', () => {
   test('shows welcome and logout when user present', () => {
     setAuth({ name: 'Tester', role: 'admin' })
     render(<Login />)
-    expect(screen.getByText(/Welcome, Tester/)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: /Logout/i }))
+  expect(screen.getByText(/Angemeldet als: Tester/)).toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: /Abmelden/i }))
     expect(mockLogout).toHaveBeenCalled()
   })
 })

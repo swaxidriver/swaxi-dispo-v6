@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { useShifts } from '../contexts/useShifts'
 
@@ -8,22 +8,33 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
   const [type, setType] = useState('evening')
   const [start, setStart] = useState('17:45')
   const [end, setEnd] = useState('21:45')
+  const [workLocation, setWorkLocation] = useState('')
   const [error, setError] = useState(null)
+  // mark unsaved work flag for autosave recovery scenarios
+  useEffect(() => {
+    localStorage.setItem('swaxi-unsaved-work', '1')
+    return () => { /* leave flag for recovery until explicit cancel or save */ }
+  }, [])
 
   if (!isOpen) return null
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError(null)
-    if (!date || !type || !start || !end) {
-      setError('Alle Felder erforderlich')
+    if (!date || !type || !start || !end || !workLocation) {
+      setError('Alle Felder erforderlich (inkl. Arbeitsort)')
       return
     }
-    const res = createShift({ date, type, start, end })
-    if (!res.ok && res.reason === 'duplicate') {
-      setError('Dienst existiert bereits')
+    const res = createShift({ date, type, start, end, workLocation })
+    if (!res.ok) {
+      if (res.reason === 'duplicate') {
+        setError('Dienst existiert bereits')
+      } else if (res.reason === 'workLocation') {
+        setError('Arbeitsort erforderlich')
+      }
       return
     }
+    localStorage.removeItem('swaxi-unsaved-work')
     onClose()
   }
 
@@ -53,6 +64,14 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
             <label htmlFor="shift-end" className="text-sm font-medium">Ende</label>
             <input id="shift-end" type="time" value={end} onChange={e => setEnd(e.target.value)} className="w-full border rounded px-2 py-1" />
           </div>
+        </div>
+  <div className="space-y-1">
+          <label htmlFor="shift-location" className="text-sm font-medium">Arbeitsort <span className="text-red-600" aria-hidden="true">*</span></label>
+          <select id="shift-location" value={workLocation} onChange={e => setWorkLocation(e.target.value)} className="w-full border rounded px-2 py-1">
+            <option value="">-- bitte wählen --</option>
+            <option value="office">Büro</option>
+            <option value="home">Homeoffice</option>
+          </select>
         </div>
         <div className="flex justify-end space-x-2 pt-2">
           <button type="button" onClick={onClose} className="px-3 py-1 rounded border text-sm">Abbrechen</button>

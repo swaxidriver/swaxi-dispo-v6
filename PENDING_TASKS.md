@@ -42,11 +42,14 @@ This file tracks the evolving backlog so it is visible inside the repo. Update a
 - [ ] Toast-Komponente mit automatischem Fokus-Management für wichtige Alerts (z.B. Fehler) + `role="alert"`.
 - [ ] `prefers-reduced-motion` respektieren (Animationen reduzieren oder abschalten).
 - [ ] Prüfung Tab-Reihenfolge & Skip-Link Erweiterung (z.B. direkt zur Navigation / zum Footer).
-- [ ] Beschreibende Tooltips (on hover/focus) für Steuer-Elemente (z.B. „Bewerben“, „Zuweisen“) mittels reinem CSS + `aria-describedby` oder Headless/Portal.
+- [x] Beschreibende Tooltips / Disabled-Gründe für Aktionsbuttons (Status / Login Requirement) integriert.
 - [ ] Tabellen Caption + `scope="col"` + SR-only Sortierhinweise bei ShiftTable.
 - [ ] Live-Status-Badge (Online/Offline) mit textueller Alternative & `aria-live="polite"` nur bei Änderung.
 - [ ] Form Labels: Durchgängige Verbindung (id/for), Placeholder nicht als alleinige Beschreibung.
 - [ ] Farbige Status (ASSIGNED/OPEN) zusätzlich mit Icon/Text (nicht nur Farbe) für Farbsehschwäche.
+- [ ] Konflikt-Code Mapping in UI weiter verdichten (Badges mit Icons statt Textliste)
+- [ ] Konflikt-Metadaten (z.B. betroffene Shift-IDs) für zukünftiges Hover-Detail Panel
+- [ ] Unit Tests für `conflicts.js` Mapping (derzeit nur indirekt)
 - [ ] Audit-Log Liste als `<ul>` oder `<table>` mit semantischer Auszeichnung.
 - [ ] Prüfen auf ausreichende Zielgröße (mind. 44x44 CSS px) bei Touch-Buttons.
 - [ ] Tastatur-Shortcut Übersicht (Hilfe-Dialog) – optional F1 / ? Trigger.
@@ -63,6 +66,16 @@ _Automatically populated at runtime in localStorage; export via Feedback modal. 
 ---
 
 Generated on: 2025-08-26
+
+## 8. Hybrid SharePoint Integration
+
+- [x] TestPage Hinweis aktualisiert (Mock / Demonstrationsmodus klar kommuniziert)
+- [ ] SharePoint Auth (Token Flow / Service Principal oder delegated) Konzept
+- [ ] Gesicherte API-Brücke (Server Proxy) statt direkter Client Calls
+- [ ] Konflikt-Merge Strategie (feldbasiert vs last-write-wins) Entscheidungs-Notiz
+- [ ] Hintergrund Sync Status UI (letzte erfolgreiche Synchronisation)
+- [ ] Delta Sync statt Vollabgleich (Performance)
+- [ ] Robuste Fehlerklassifizierung (Netzwerk vs Berechtigung vs Konflikt)
 
 ### Next Implementation Choice (Pick one to proceed)
 
