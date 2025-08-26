@@ -13,31 +13,7 @@ import TestPage from './pages/TestPage'
 import Login from './components/Login'
 import './App.css'
 import { useState, useEffect } from 'react'
-
-function ErrorBoundary({ children }) {
-  const [error, setError] = useState(null)
-  return (
-    <ErrorBoundaryInner onError={setError} error={error}>
-      {error ? (
-        <div className="p-6 text-red-700 bg-red-50 rounded">
-          <h2 className="font-semibold mb-2">Ein Fehler ist aufgetreten</h2>
-          <pre className="text-xs whitespace-pre-wrap">{String(error.message || error)}</pre>
-          <button className="mt-3 bg-brand-primary text-white px-3 py-1 rounded" onClick={() => window.location.reload()}>Neu laden</button>
-        </div>
-      ) : children}
-    </ErrorBoundaryInner>
-  )
-}
-
-function ErrorBoundaryInner({ children, onError, error }) {
-  try {
-    if (error) return children
-    return children
-  } catch (e) {
-    onError(e)
-    return null
-  }
-}
+import ErrorBoundary from './components/ErrorBoundary'
 
 function LoadingSkeleton() {
   return (
