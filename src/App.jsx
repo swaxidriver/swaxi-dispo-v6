@@ -3,6 +3,7 @@ import { ShiftProvider } from './contexts/ShiftContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Navigation from './components/Navigation'
 import LiveVersionBanner from './components/LiveVersionBanner'
+import AutosaveManager from './components/AutosaveManager'
 import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import Administration from './pages/Administration'
@@ -38,6 +39,7 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            <AutosaveManager />
           </div>
         </Router>
       </ShiftProvider>
