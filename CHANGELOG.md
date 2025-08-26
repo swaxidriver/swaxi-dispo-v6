@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - Firebase initialization stubbed (deferred) in `firebaseConfig.js`; exports now null placeholders until backend needed.
 - `migrationService` tests temporarily skipped (placeholder) pending real Firebase integration.
+- Deployment workflow hardened: added retry/backoff npm install logic, removed forced cache clean and `--force` usage to mitigate intermittent registry 403s.
 
 ### Additions / QA
 
