@@ -329,3 +329,48 @@ Hybrid SharePoint/localStorage Architektur für maximale Flexibilität.
 2. **🌐 Online testen:** [Live Demo](https://swaxidriver.github.io/swaxi-dispo-v6/)
 3. **🧪 Features prüfen:** [Test Suite](https://swaxidriver.github.io/swaxi-dispo-v6/test)
 4. **📧 SharePoint anfordern:** `SHAREPOINT_SETUP.md`
+
+## 🎨 Design Tokens & Theming
+
+Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farben, Typografie, Radii, Schatten). Dark Mode erfolgt über `data-theme="dark"` auf `<html>` und überschreibt nur die Variablen – keine doppelte CSS-Pflege.
+
+### Vorteile
+
+- Einheitliche Farblogik (Surface vs. Background vs. Border)
+- Leichtes Corporate-Branding Update (nur Tokens tauschen)
+- Tests & Snapshots stabiler (keine zufälligen Inline-Farben)
+
+### Nutzung
+
+- Basis-Styling über Hilfsklassen (`btn`, `card`, `input`) in `index.css`.
+- Direkter Zugriff über `var(--color-*)` für Spezialfälle.
+- Schriftfamilie: Primär Lato (Fallback Inter/System) – eingebunden in `index.html`.
+
+### Migration Alt → Neu
+
+Bestehende Tailwind Klassen wie `bg-brand-primary` sind als Legacy belassen. Neue Komponenten sollten bevorzugt semantische Klassen oder direkte Tokens nutzen:
+
+```jsx
+<button className="btn-primary">Anlegen</button>
+<div className="card" />
+<div style={{ background: 'var(--color-surface)' }} />
+```
+
+Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
+
+### Dark Mode
+
+`ThemeContext` setzt `data-theme` basierend auf Nutzerwahl oder `prefers-color-scheme`. Keine Neuberechnung an Komponenten nötig.
+
+### Best Practices
+
+1. Neue Farben erst in `tokens.css` definieren
+2. Keine Hex-Werte direkt in JSX
+3. Semantische Benennung: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen
+4. Unterschied `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
+
+### Geplante Erweiterungen
+
+- Lint-Regel/Skript gegen nackte Hex-Werte
+- Export der Tokens als JSON für Figma / Storybook
+- Mapping der Tokens ins Tailwind Theme via CSS Variable Referenzen für Variants

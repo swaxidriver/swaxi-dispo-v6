@@ -32,9 +32,9 @@
 
 ### P0 Fortschritt & Rest
 
-Abgeschlossen: 1,2,3 (Basis),4 (Basis),5
+Abgeschlossen: 1,2,3 (Basis),4 (Basis),5,6,7,8,9 (Basis Theme + Tokens + Lato)
 
-Offen (in Reihenfolge): 6 Arbeitsort-Pflicht, 7 Autosave/Snapshots, 8 UI-Rollenanzeige, 9 CD-Theme Basisschicht
+Offen (P0 Erweiterungen): Konflikt UX Verfeinerung, Konflikt-Metadaten, Theme Legacy Klassen Bereinigung
 
 Erweiterungen in Arbeit / geplant:
 

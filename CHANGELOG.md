@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 - Navigation now shows application version (v0.3.0+) alongside brand for quick diagnostics.
 - README extended with testing strategy v2, versioning & backlog sections.
+- Introduced design tokens (`tokens.css`) + persistent theme with system preference + Lato font integration; legacy Tailwind brand-* classes retained for staged migration.
 
 ### Internal / Tooling (0.3.0)
 

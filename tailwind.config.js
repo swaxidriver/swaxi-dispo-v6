@@ -9,6 +9,7 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      /* Legacy brand-* color tokens retained for incremental migration; prefer CSS variables in tokens.css */
       colors: {
         'brand-primary': '#222F88',
         'brand-primary-light': '#2f3d99',
@@ -25,7 +26,7 @@ export default {
         'err': '#dc2626',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Lato', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         '2xs': '0.625rem',
