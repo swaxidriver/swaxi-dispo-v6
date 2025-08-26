@@ -17,11 +17,27 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - name: Install deps
-        run: npm ci
-      - name: Workaround Rollup native binary install (linux)
-        # Lockfile generated on macOS misses linux optional rollup binary; install explicitly to avoid build error
-        run: npm install --no-save @rollup/rollup-linux-x64-gnu || true
+      - name: Configure npm retries
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-maxtimeout 600000
+          npm config set fetch-timeout 600000
+      - name: Install deps (with retry)
+        run: |
+          n=0
+          until [ $n -ge 3 ]; do
+            npm ci --no-audit --no-fund && break
+            n=$((n+1))
+            echo "npm ci failed (attempt $n), retrying in $((2**n))s..."
+            sleep $((2**n))
+          done
+          if [ $n -ge 3 ]; then
+            echo "npm ci failed after retries" >&2
+            exit 1
+          fi
+          # Workaround Rollup native binary missing on linux
+          npm install --no-save @rollup/rollup-linux-x64-gnu || true
       - name: Lint
         run: npm run lint
       - name: Test
@@ -50,10 +66,26 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - name: Install deps
-        run: npm ci
-      - name: Workaround Rollup native binary install (linux)
-        run: npm install --no-save @rollup/rollup-linux-x64-gnu || true
+      - name: Configure npm retries
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-maxtimeout 600000
+          npm config set fetch-timeout 600000
+      - name: Install deps (with retry)
+        run: |
+          n=0
+          until [ $n -ge 3 ]; do
+            npm ci --no-audit --no-fund && break
+            n=$((n+1))
+            echo "npm ci failed (attempt $n), retrying in $((2**n))s..."
+            sleep $((2**n))
+          done
+          if [ $n -ge 3 ]; then
+            echo "npm ci failed after retries" >&2
+            exit 1
+          fi
+          npm install --no-save @rollup/rollup-linux-x64-gnu || true
       - name: Build
         run: npm run build
       - name: Configure Pages
