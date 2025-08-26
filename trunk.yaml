@@ -49,11 +49,14 @@ tasks:
   - id: test:ci
     name: Jest CI (JUnit)
     run: npm test -- --ci --reporters=default --reporters=summary
+  - id: quality
+    name: Quality Gate
+    run: npm run quality
 
 # Formatting placeholder (add prettier or other formatters later if desired)
-# format:
-#   enabled:
-#     - prettier
+format:
+  enabled:
+    - prettier@3
 
 # Future ideas:
 # - Add a jest-junit reporter & configure trunk to surface test results.

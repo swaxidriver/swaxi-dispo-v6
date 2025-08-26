@@ -11,6 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+  "format": "prettier --write .",
+  "quality": "node scripts/quality.mjs",
     "debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
@@ -42,6 +44,7 @@
     "jest-environment-jsdom": "^30.0.5",
   "jest-junit": "^16.0.0",
     "postcss": "^8.5.6",
+  "prettier": "^3.3.3",
     "tailwindcss": "^3.4.17",
     "terser": "^5.43.1",
     "vite": "^7.1.3"
