@@ -76,6 +76,8 @@ jobs:
         run: npm run lint
       - name: Test
         run: npm test -- --ci --silent
+      - name: Import integrity
+        run: npm run check:imports
       - name: Build
         run: npm run build
       - name: Upload build artifact

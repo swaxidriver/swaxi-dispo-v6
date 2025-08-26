@@ -1,13 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import Login from '../components/Login'
 
-jest.mock('../contexts/AuthContext', () => ({
+jest.mock('../contexts/useAuth', () => ({
   __esModule: true,
-  default: {},
   useAuth: jest.fn()
 }))
 
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/useAuth'
 
 const mockLogin = jest.fn()
 const mockLogout = jest.fn()
