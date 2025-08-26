@@ -15,15 +15,15 @@ export default function Navigation() {
   const role = auth?.user?.role
   const isAdmin = role === 'admin' || role === 'chief'
   const navigation = [
-    { name: 'Dashboard', href: '/' },
-    { name: 'Kalender', href: '/calendar' },
-    isAdmin && { name: 'Verwaltung', href: '/admin' },
-    isAdmin && { name: 'Audit', href: '/audit' },
-    { name: '🧪 Test', href: '/test' },
+  { name: 'Übersicht', href: '/' },
+  { name: 'Kalender', href: '/calendar' },
+  isAdmin && { name: 'Verwaltung', href: '/admin' },
+  isAdmin && { name: 'Audit', href: '/audit' },
+  { name: '🧪 Test', href: '/test' },
   ].filter(Boolean)
 
   return (
-    <nav className="bg-brand-primary">
+  <nav className="bg-brand-primary" aria-label="Hauptnavigation">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
           <div className="flex">
@@ -48,6 +48,7 @@ export default function Navigation() {
                   {item.name}
                 </NavLink>
               ))}
+              <span className="flex-1" aria-hidden="true" />
               {!auth?.user && (
                 <NavLink
                   to="/login"
@@ -57,13 +58,15 @@ export default function Navigation() {
                       'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
                     )
                   }
-                >Login</NavLink>
+                >Anmelden</NavLink>
               )}
               {auth?.user && (
                 <button
                   onClick={auth.logout}
                   className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300"
-                >Logout ({auth.user.role})</button>
+                  aria-label={`Abmelden (${auth.user.role})`}
+                  title="Aktuelle Sitzung beenden"
+                >Abmelden ({auth.user.role})</button>
               )}
             </div>
           </div>
@@ -80,7 +83,7 @@ function FeedbackNavControl() {
     const fb = useFeedback()
     return (
       <div className="flex items-center">
-        <button onClick={fb.open} className="ml-4 text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded px-3 py-1">Feedback</button>
+  <button onClick={fb.open} className="ml-4 text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded px-3 py-1" aria-haspopup="dialog" title="Feedback geben / Problem melden">Feedback</button>
       </div>
     )
   } catch {

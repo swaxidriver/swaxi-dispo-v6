@@ -89,6 +89,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
                         <button
                           onClick={() => handleApply(shift.id)}
                           className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
+                          title="Für diesen Dienst bewerben"
+                          aria-label="Für diesen Dienst bewerben"
                         >
                           Bewerben
                         </button>
@@ -96,6 +98,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
                           <button
                             onClick={() => handleAssign(shift.id)}
                             className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            title="Diesen Dienst einem Nutzer zuweisen"
+                            aria-label="Diesen Dienst einem Nutzer zuweisen"
                           >
                             Zuweisen
                           </button>
@@ -106,6 +110,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
                       <button
                         onClick={() => handleCancel(shift.id)}
                         className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
+                        title="Zuweisung für diesen Dienst zurücknehmen"
+                        aria-label="Zuweisung für diesen Dienst zurücknehmen"
                       >
                         Absagen
                       </button>
