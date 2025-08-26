@@ -3,6 +3,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import react from 'eslint-plugin-react'
+import importPlugin from 'eslint-plugin-import'
 
 export default [
   {
@@ -25,7 +26,8 @@ export default [
     plugins: {
       'react': react,
       'react-hooks': reactHooks,
-      'react-refresh': reactRefresh
+      'react-refresh': reactRefresh,
+      'import': importPlugin
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -34,7 +36,12 @@ export default [
       'react/prop-types': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
+  'react-hooks/exhaustive-deps': 'warn',
+  // Import hygiene
+  // Temporarily disabled due to false positives in flat config; re-enable after resolver tuning
+  'import/no-unresolved': 'off',
+  'import/named': 'off',
+  'import/order': ['warn', { 'newlines-between': 'always', groups: ['builtin','external','internal','parent','sibling','index'] }],
       'no-unused-vars': ['warn', { 
         varsIgnorePattern: '^(React|_)',
         argsIgnorePattern: '^_',
