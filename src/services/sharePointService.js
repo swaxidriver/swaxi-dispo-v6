@@ -1,4 +1,5 @@
 // src/services/sharePointService.js
+import { logError, logInfo } from '../utils/logger';
 /**
  * SharePoint Integration Service for Stadtwerke Augsburg
  * This service connects your React app to SharePoint Lists
@@ -49,7 +50,7 @@ export class SharePointService {
       const data = await response.json();
       return data.d.results.map(this.transformShiftFromSharePoint);
     } catch (error) {
-      console.error('Error fetching shifts from SharePoint:', error);
+      logError('Error fetching shifts from SharePoint:', error);
       // Fallback to localStorage for development
       return this.getShiftsFromLocalStorage();
     }
@@ -81,7 +82,7 @@ export class SharePointService {
       const data = await response.json();
       return this.transformShiftFromSharePoint(data.d);
     } catch (error) {
-      console.error('Error creating shift in SharePoint:', error);
+      logError('Error creating shift in SharePoint:', error);
       // Fallback to localStorage
       return this.createShiftInLocalStorage(shiftData);
     }
@@ -114,7 +115,7 @@ export class SharePointService {
       
       return { success: true };
     } catch (error) {
-      console.error('Error updating shift in SharePoint:', error);
+      logError('Error updating shift in SharePoint:', error);
       return this.updateShiftInLocalStorage(shiftId, updates);
     }
   }
@@ -134,7 +135,7 @@ export class SharePointService {
       const data = await response.json();
       return data.d.results.map(this.transformUserFromSharePoint);
     } catch (error) {
-      console.error('Error fetching users from SharePoint:', error);
+      logError('Error fetching users from SharePoint:', error);
       return this.getUsersFromLocalStorage();
     }
   }
@@ -164,9 +165,9 @@ export class SharePointService {
         }
       );
     } catch (error) {
-      console.error('Error logging audit to SharePoint:', error);
+      logError('Error logging audit to SharePoint:', error);
       // Log to console as fallback
-      console.log('Audit Log:', { action, details, timestamp: new Date() });
+      logInfo('Audit Log:', { action, details, timestamp: new Date() });
     }
   }
 
