@@ -13,6 +13,7 @@ export default {
         'brand-primary': '#222F88',
         'brand-primary-light': '#2f3d99',
         'brand-primary-dark': '#1a2566',
+        'brand-secondary': '#27ADE7',
         'brand-accent': '#27ADE7',
         'brand-surface': '#ffffff',
         'brand-bg': '#f8fafc',

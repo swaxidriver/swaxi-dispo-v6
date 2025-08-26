@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 import { generateShiftTemplates } from '../utils/shifts';
 import { sharePointService } from '../services/sharePointService';
 
@@ -48,6 +48,16 @@ function shiftReducer(state, action) {
       return {
         ...state,
         applications: [...state.applications, action.payload]
+      };
+    case 'ADD_SERIES_APPLICATION':
+      return {
+        ...state,
+        applications: [...state.applications, ...action.payload]
+      };
+    case 'REMOVE_APPLICATION':
+      return {
+        ...state,
+        applications: state.applications.filter(app => app.id !== action.payload)
       };
     case 'ADD_NOTIFICATION':
       return {
@@ -153,7 +163,28 @@ export function ShiftProvider({ children }) {
     }
   };
 
-  // Test SharePoint connection
+  const applyToShift = (shiftId, userId) => {
+    const application = {
+      id: Date.now(),
+      shiftId,
+      userId,
+      appliedAt: new Date(),
+      type: 'single'
+    };
+    dispatch({ type: 'ADD_APPLICATION', payload: application });
+  };
+
+  const applyToSeries = (shiftIds, userId) => {
+    const applications = shiftIds.map(shiftId => ({
+      id: Date.now() + Math.random(),
+      shiftId,
+      userId,
+      appliedAt: new Date(),
+      type: 'series'
+    }));
+    dispatch({ type: 'ADD_SERIES_APPLICATION', payload: applications });
+  };
+
   const testConnection = async () => {
     const isOnline = await sharePointService.isSharePointAvailable();
     dispatch({ 
@@ -169,6 +200,8 @@ export function ShiftProvider({ children }) {
       dispatch, 
       loadShifts,
       createShift,
+      applyToShift,
+      applyToSeries,
       testConnection
     }}>
       {children}

@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { useShifts } from '../contexts/ShiftContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
+import SeriesApplicationModal from './SeriesApplicationModal'
 
 export default function ShiftTable({ shifts, showActions = true }) {
-  const { dispatch } = useShifts();
-  const userRole = 'admin'; // TODO: Get from auth context
+  const { dispatch, applyToShift } = useShifts();
+  const [showSeriesModal, setShowSeriesModal] = useState(false);
+  const userRole = 'disponent'; // TODO: Get from auth context
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
@@ -20,12 +23,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
   };
 
   const handleApply = (shiftId) => {
-    // Debug point: Add a debugger statement
-    // debugger; // Commented out for production
-    console.log('Applying for shift:', shiftId);
-    // TODO: Implement application logic
-    const shift = shifts.find(s => s.id === shiftId);
-    console.log('Shift details:', shift);
+    applyToShift(shiftId, 'current-user'); // TODO: Get real user ID
+    console.log('Applied to shift:', shiftId);
   };
 
   const handleAssign = (shiftId) => {
@@ -124,6 +123,25 @@ export default function ShiftTable({ shifts, showActions = true }) {
           </li>
         ))}
       </ul>
+      
+      {/* Series Application Button */}
+      {showActions && shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length > 1 && (
+        <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+          <button
+            onClick={() => setShowSeriesModal(true)}
+            className="inline-flex items-center rounded-md bg-brand-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-secondary/80"
+          >
+            Serienbewerbung ({shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length} Dienste)
+          </button>
+        </div>
+      )}
+      
+      {/* Series Application Modal */}
+      <SeriesApplicationModal
+        isOpen={showSeriesModal}
+        onClose={() => setShowSeriesModal(false)}
+        shifts={shifts}
+      />
     </div>
-  )
+  );
 }
