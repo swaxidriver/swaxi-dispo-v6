@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { useShifts } from '../contexts/ShiftContext';
+// useShifts is defined in its own hook file, not exported from ShiftContext.jsx
+import { useShifts } from '../contexts/useShifts';
 import { sharePointService } from '../services/sharePointService';
 
 export default function TestPage() {
-  const { state, testConnection, createShift } = useShifts();
+  const { state } = useShifts();
+  // Local helpers since ShiftContext doesn't expose these directly yet
+  const testConnection = async () => sharePointService.isSharePointAvailable();
+  const createShift = async (shift) => sharePointService.createShift(shift);
   const [testResults, setTestResults] = useState([]);
   const [testing, setTesting] = useState(false);
 
