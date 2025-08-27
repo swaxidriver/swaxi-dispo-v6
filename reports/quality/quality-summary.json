@@ -1,30 +1,175 @@
 {
   "stats": {
     "tests": {
-      "total": 168,
-      "failed": 0,
-      "passed": 167
+      "total": 184,
+      "failed": 23,
+      "passed": 160
     },
     "suites": {
-      "total": 58,
-      "failed": 0
+      "total": 59,
+      "failed": 8
     },
     "lint": {
-      "errors": 0,
-      "filesWithErrors": 0
+      "errors": 5,
+      "filesWithErrors": 1
     },
     "coverage": {
-      "statements": 79.56,
-      "branches": 70.69,
-      "functions": 78.98,
-      "lines": 81.65
+      "statements": 75.16,
+      "branches": 65.71,
+      "functions": 72.3,
+      "lines": 77.19
     }
   },
   "thresholds": {
-    "statements": 63,
-    "branches": 58,
-    "functions": 63,
-    "lines": 63
+    "statements": 0,
+    "branches": 0,
+    "functions": 0,
+    "lines": 0
   },
-  "actionItems": []
+  "actionItems": [
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal focus management has correct accessibility attributes",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal focus management stores focused element when modal opens",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal focus management restores focus to trigger element when modal closes",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal focus management focus remains trapped within modal during interaction",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal focus management returns focus to trigger button when closed via close button",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today's weekday",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/shiftCreation.integration.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Calendar page renders week header and shifts",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Calendar page navigates weeks forward and back",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Calendar page resets to today",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Calendar page shows create shift button for manager role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Dashboard page renders heading and analytics",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Dashboard page filters by status (open, assigned, cancelled)",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Dashboard page shows auto assign button when user can manage shifts",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable actions invokes applyToShift when Bewerben clicked",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable actions invokes assignShift when Zuweisen clicked for manager role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable actions calls cancelShift when Absagen clicked on assigned shift",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable actions disables Bewerben when not logged in",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable actions disables Zuweisen when status not open",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/SeriesApplicationModal.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "SeriesApplicationModal disables submit when no selection and enables after selecting one",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/SeriesApplicationModal.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Shift assignment & notifications assigns a shift and updates status",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftAssignNotifications.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable renders shifts correctly",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "ShiftTable handles apply action",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.test.jsx"
+    },
+    {
+      "priority": 2,
+      "type": "lint-rule",
+      "rule": "no-undef",
+      "count": 5
+    }
+  ]
 }
