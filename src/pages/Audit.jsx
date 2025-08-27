@@ -1,35 +1,35 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const demoAuditLog = [
   {
     id: 1,
-    user: 'System',
-    action: 'Schicht erstellt',
-    details: 'Frühdienst • Anna Weber • SW-X 234',
-    timestamp: '2025-08-25 08:23:45',
-    type: 'create'
+    user: "System",
+    action: "Schicht erstellt",
+    details: "Frühdienst • Anna Weber • SW-X 234",
+    timestamp: "2025-08-25 08:23:45",
+    type: "create",
   },
   {
     id: 2,
-    user: 'Max Mustermann',
-    action: 'Fahrzeugstatus geändert',
-    details: 'SW-X 345 • Wartung',
-    timestamp: '2025-08-25 08:15:12',
-    type: 'update'
+    user: "Max Mustermann",
+    action: "Fahrzeugstatus geändert",
+    details: "SW-X 345 • Wartung",
+    timestamp: "2025-08-25 08:15:12",
+    type: "update",
   },
   {
     id: 3,
-    user: 'Lisa Schmidt',
-    action: 'Urlaubsantrag eingereicht',
-    details: '01.09.2025 - 14.09.2025',
-    timestamp: '2025-08-25 08:01:33',
-    type: 'request'
+    user: "Lisa Schmidt",
+    action: "Urlaubsantrag eingereicht",
+    details: "01.09.2025 - 14.09.2025",
+    timestamp: "2025-08-25 08:01:33",
+    type: "request",
   },
-]
+];
 
 export default function Audit() {
-  const [logs] = useState(demoAuditLog)
-  const [filter, setFilter] = useState('all')
+  const [logs] = useState(demoAuditLog);
+  const [filter, setFilter] = useState("all");
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -52,7 +52,7 @@ export default function Audit() {
       <div className="bg-white shadow overflow-hidden sm:rounded-md">
         <ul className="divide-y divide-gray-200">
           {logs
-            .filter(log => filter === 'all' || log.type === filter)
+            .filter((log) => filter === "all" || log.type === filter)
             .map((log) => (
               <li key={log.id}>
                 <div className="px-4 py-4 sm:px-6">
@@ -61,26 +61,26 @@ export default function Audit() {
                       {log.action}
                     </div>
                     <div className="ml-2 flex-shrink-0 flex">
-                      <span className={classNames(
-                        log.type === 'create' ? 'bg-green-100 text-green-800' :
-                        log.type === 'update' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800',
-                        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
-                      )}>
+                      <span
+                        className={classNames(
+                          log.type === "create"
+                            ? "bg-green-100 text-green-800"
+                            : log.type === "update"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-yellow-100 text-yellow-800",
+                          "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+                        )}
+                      >
                         {log.user}
                       </span>
                     </div>
                   </div>
                   <div className="mt-2 sm:flex sm:justify-between">
                     <div className="sm:flex">
-                      <div className="text-sm text-gray-500">
-                        {log.details}
-                      </div>
+                      <div className="text-sm text-gray-500">{log.details}</div>
                     </div>
                     <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                      <span>
-                        {log.timestamp}
-                      </span>
+                      <span>{log.timestamp}</span>
                     </div>
                   </div>
                 </div>
@@ -89,9 +89,9 @@ export default function Audit() {
         </ul>
       </div>
     </div>
-  )
+  );
 }
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }

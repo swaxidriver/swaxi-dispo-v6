@@ -3,36 +3,52 @@
 // and replay them when connectivity returns.
 // Actions shape: { id, type: 'create'|'apply'|'assign', payload, ts }
 
-const KEY = 'offline_queue'
+const KEY = "offline_queue";
 
 function loadQueue() {
-  try { return JSON.parse(localStorage.getItem(KEY) || '[]') } catch { return [] }
+  try {
+    return JSON.parse(localStorage.getItem(KEY) || "[]");
+  } catch {
+    return [];
+  }
 }
 
 function saveQueue(q) {
-  try { localStorage.setItem(KEY, JSON.stringify(q)) } catch { /* ignore */ }
+  try {
+    localStorage.setItem(KEY, JSON.stringify(q));
+  } catch {
+    /* ignore */
+  }
 }
 
-let queue = loadQueue()
+let queue = loadQueue();
 
 export function enqueue(action) {
-  queue.push(action)
-  saveQueue(queue)
+  queue.push(action);
+  saveQueue(queue);
 }
 
 export function drain(handler) {
-  const current = [...queue]
-  queue = []
-  saveQueue(queue)
-  return current
-    .reduce(async (p, act) => {
-      await p
-      try { await handler(act) } catch { /* requeue on failure? (future) */ }
-      return Promise.resolve()
-    }, Promise.resolve())
+  const current = [...queue];
+  queue = [];
+  saveQueue(queue);
+  return current.reduce(async (p, act) => {
+    await p;
+    try {
+      await handler(act);
+    } catch {
+      /* requeue on failure? (future) */
+    }
+    return Promise.resolve();
+  }, Promise.resolve());
 }
 
-export function peekQueue() { return [...queue] }
+export function peekQueue() {
+  return [...queue];
+}
 
 // Test-only helper to reset queue state between tests
-export function clearQueueForTests() { queue = []; saveQueue(queue) }
+export function clearQueueForTests() {
+  queue = [];
+  saveQueue(queue);
+}

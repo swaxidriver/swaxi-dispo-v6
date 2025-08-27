@@ -37,7 +37,6 @@ All notable changes to this project will be documented in this file.
 - Introduce test categorization folders (unit/, integration/, accessibility/).
 - Consider migrating offline queue tests to isolated integration suite.
 
-
 ## [0.2.0] - 2025-08-26
 
 ### Added (0.2.0)

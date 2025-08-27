@@ -1,34 +1,36 @@
-import { useShifts } from '../contexts/useShifts'
-import { SHIFT_STATUS } from '../utils/constants'
+import { useShifts } from "../contexts/useShifts";
+import { SHIFT_STATUS } from "../utils/constants";
 
 export default function MiniAnalytics() {
   const { state } = useShifts();
-  
+
   const stats = [
     {
-      name: 'Offene Dienste',
-      value: state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      name: "Offene Dienste",
+      value: state.shifts.filter((s) => s.status === SHIFT_STATUS.OPEN).length,
+      color: "text-blue-600",
+      bgColor: "bg-blue-100",
     },
     {
-      name: 'Zugewiesene Dienste',
-      value: state.shifts.filter(s => s.status === SHIFT_STATUS.ASSIGNED).length,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      name: "Zugewiesene Dienste",
+      value: state.shifts.filter((s) => s.status === SHIFT_STATUS.ASSIGNED)
+        .length,
+      color: "text-green-600",
+      bgColor: "bg-green-100",
     },
     {
-      name: 'Abgesagte Dienste',
-      value: state.shifts.filter(s => s.status === SHIFT_STATUS.CANCELLED).length,
-      color: 'text-red-600',
-      bgColor: 'bg-red-100'
+      name: "Abgesagte Dienste",
+      value: state.shifts.filter((s) => s.status === SHIFT_STATUS.CANCELLED)
+        .length,
+      color: "text-red-600",
+      bgColor: "bg-red-100",
     },
     {
-      name: 'Aktive Konflikte',
-      value: state.shifts.filter(s => s.conflicts?.length > 0).length,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
-    }
+      name: "Aktive Konflikte",
+      value: state.shifts.filter((s) => s.conflicts?.length > 0).length,
+      color: "text-yellow-600",
+      bgColor: "bg-yellow-100",
+    },
   ];
 
   return (
@@ -42,7 +44,9 @@ export default function MiniAnalytics() {
             <div className={`absolute rounded-md ${stat.bgColor} p-3`}>
               <div className={`h-6 w-6 ${stat.color}`} aria-hidden="true" />
             </div>
-            <p className="ml-16 truncate text-sm font-medium text-gray-500">{stat.name}</p>
+            <p className="ml-16 truncate text-sm font-medium text-gray-500">
+              {stat.name}
+            </p>
           </dt>
           <dd className="ml-16 flex items-baseline pb-6 sm:pb-7">
             <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
@@ -50,5 +54,5 @@ export default function MiniAnalytics() {
         </div>
       ))}
     </dl>
-  )
+  );
 }

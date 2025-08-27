@@ -128,12 +128,12 @@ Schichtzeiten werden rein als `HH:MM` Strings verarbeitet und mittels `toMinutes
 
 Konflikte werden pro Schicht dynamisch berechnet (`computeShiftConflicts` in `src/utils/shifts.js`). Aktuelle Codes:
 
-| Code | Beschreibung |
-|------|--------------|
-| `TIME_OVERLAP` | Zeitliche Überlappung mit mind. einer anderen Schicht |
-| `DOUBLE_APPLICATION` | Ein Benutzer hat sich auf überlappende Schichten beworben |
-| `ASSIGNMENT_COLLISION` | Überlappende Schichten derselben Person zugewiesen |
-| `LOCATION_MISMATCH` | Überlappende zugewiesene Schichten gleicher Person aber widersprüchlicher Arbeitsort |
+| Code                   | Beschreibung                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `TIME_OVERLAP`         | Zeitliche Überlappung mit mind. einer anderen Schicht                                |
+| `DOUBLE_APPLICATION`   | Ein Benutzer hat sich auf überlappende Schichten beworben                            |
+| `ASSIGNMENT_COLLISION` | Überlappende Schichten derselben Person zugewiesen                                   |
+| `LOCATION_MISMATCH`    | Überlappende zugewiesene Schichten gleicher Person aber widersprüchlicher Arbeitsort |
 
 UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping auf verständlichere Texte / Icons möglich.
 
@@ -144,7 +144,7 @@ UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping 
 - **`sharePointService.js`** - Intelligente SharePoint Integration mit automatischem Fallback
 - **`ShiftContext.jsx`** - Zentrale Datenverwaltung mit dual-source support
 - **`ConnectionStatus.jsx`** - Real-time Status-Anzeige der Datenquelle
-**`firebaseConfig.js` (stub)** - Firebase aktuell deaktiviert / Platzhalter. Re-Aktivierung geplant.
+  **`firebaseConfig.js` (stub)** - Firebase aktuell deaktiviert / Platzhalter. Re-Aktivierung geplant.
 
 ### **📊 Analytics & Monitoring**
 
@@ -189,11 +189,11 @@ npm run lint
 
 Layered Strategy (v2):
 
-| Layer | Pfad | Zweck | Tools |
-|-------|------|-------|-------|
-| Unit | `src/tests/unit` | Pure Funktionen, Reducer, kleine Komponenten | Jest + RTL |
-| Integration | `src/tests/integration` | Kontext + Services + Persistence Zusammenspiel | Jest + RTL + fake-indexeddb |
-| Accessibility | `src/tests/a11y` | Semantik, Kontraste, Fokus-Fluss | jest-axe + Custom Matcher |
+| Layer         | Pfad                    | Zweck                                          | Tools                       |
+| ------------- | ----------------------- | ---------------------------------------------- | --------------------------- |
+| Unit          | `src/tests/unit`        | Pure Funktionen, Reducer, kleine Komponenten   | Jest + RTL                  |
+| Integration   | `src/tests/integration` | Kontext + Services + Persistence Zusammenspiel | Jest + RTL + fake-indexeddb |
+| Accessibility | `src/tests/a11y`        | Semantik, Kontraste, Fokus-Fluss               | jest-axe + Custom Matcher   |
 
 Custom Matcher: `expect(container).toHaveNoA11yViolations()` (siehe `jest.setup.js`).
 
@@ -236,14 +236,14 @@ Features:
 Example:
 
 ```jsx
-import ErrorBoundary from './components/ErrorBoundary'
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function Root() {
-   return (
-      <ErrorBoundary>
-         <AppRoutes />
-      </ErrorBoundary>
-   )
+  return (
+    <ErrorBoundary>
+      <AppRoutes />
+    </ErrorBoundary>
+  );
 }
 ```
 
@@ -253,7 +253,6 @@ Telemetry & Logger Tipps:
 - `dispatchErrorTelemetry(payload)` wird vom `ErrorBoundary` genutzt; gibt `true` (gesendet) oder `false` (kein Handler) zurück.
 - `setLoggerSilent(true)` für eingebettete Iframes / Storybook.
 - Remote Logging: eigenen Handler registrieren oder in Handler intern `fetch('/error-log', { method:'POST', body: JSON.stringify(payload) })` verwenden.
-
 
 ## 🚀 Deployment
 
@@ -332,7 +331,7 @@ User Action → ShiftContext → sharePointService
 - **`HYBRID_TESTING_GUIDE.md`** - Sofort testbare Features
 - **`docs/archive/SHAREPOINT_SETUP.md`** - (Archiv) SharePoint Integration Guide
 - (Archiv) Historische Backlogs jetzt unter `docs/archive/` (`BACKLOG.md`, `PRIORITIZED_BACKLOG.md`)
-**Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
+  **Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
 
 ### Historische Planung / Backlog
 

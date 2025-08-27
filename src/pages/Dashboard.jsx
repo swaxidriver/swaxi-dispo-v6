@@ -1,22 +1,22 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { useShifts } from '../contexts/useShifts'
-import { useAuth } from '../contexts/useAuth'
-import { ROLES } from '../utils/constants'
-import { canManageShifts } from '../utils/auth'
-import MiniAnalytics from '../components/MiniAnalytics'
-import ShiftTable from '../components/ShiftTable'
-import NotificationMenu from '../components/NotificationMenu'
-import ThemeToggle from '../components/ThemeToggle'
-import ConnectionStatus from '../components/ConnectionStatus'
+import { useShifts } from "../contexts/useShifts";
+import { useAuth } from "../contexts/useAuth";
+import { ROLES } from "../utils/constants";
+import { canManageShifts } from "../utils/auth";
+import MiniAnalytics from "../components/MiniAnalytics";
+import ShiftTable from "../components/ShiftTable";
+import NotificationMenu from "../components/NotificationMenu";
+import ThemeToggle from "../components/ThemeToggle";
+import ConnectionStatus from "../components/ConnectionStatus";
 
 function QuickFilters({ onChange }) {
   const filters = [
-    { id: 'today', name: 'Heute' },
-    { id: '7days', name: '7 Tage' },
-    { id: 'open', name: 'Offen' },
-    { id: 'assigned', name: 'Zugewiesen' },
-    { id: 'cancelled', name: 'Abgesagt' },
+    { id: "today", name: "Heute" },
+    { id: "7days", name: "7 Tage" },
+    { id: "open", name: "Offen" },
+    { id: "assigned", name: "Zugewiesen" },
+    { id: "cancelled", name: "Abgesagt" },
   ];
 
   return (
@@ -37,26 +37,26 @@ function QuickFilters({ onChange }) {
 export default function Dashboard() {
   const { state } = useShifts();
   const { user } = useAuth();
-  const [filter, setFilter] = useState('today');
+  const [filter, setFilter] = useState("today");
   const userRole = user?.role || ROLES.ANALYST; // fallback to lowest privilege if unauthenticated
 
-  const filteredShifts = state.shifts.filter(shift => {
+  const filteredShifts = state.shifts.filter((shift) => {
     const shiftDate = new Date(shift.date);
     const today = new Date();
-    
+
     switch (filter) {
-      case 'today':
+      case "today":
         return shiftDate.toDateString() === today.toDateString();
-      case '7days': {
+      case "7days": {
         const sevenDaysFromNow = new Date(today.setDate(today.getDate() + 7));
         return shiftDate <= sevenDaysFromNow;
       }
-      case 'open':
-        return shift.status === 'open';
-      case 'assigned':
-        return shift.status === 'assigned';
-      case 'cancelled':
-        return shift.status === 'cancelled';
+      case "open":
+        return shift.status === "open";
+      case "assigned":
+        return shift.status === "assigned";
+      case "cancelled":
+        return shift.status === "cancelled";
       default:
         return true;
     }
@@ -82,7 +82,11 @@ export default function Dashboard() {
           {canManageShifts(userRole) && (
             <button
               type="button"
-              onClick={() => alert('Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉')}
+              onClick={() =>
+                alert(
+                  "Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉",
+                )
+              }
               className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90"
             >
               Automatisch zuteilen
@@ -104,5 +108,5 @@ export default function Dashboard() {
         <ShiftTable shifts={filteredShifts} />
       </div>
     </div>
-  )
+  );
 }

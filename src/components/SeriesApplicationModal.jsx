@@ -1,23 +1,29 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { useShifts } from '../contexts/useShifts';
-import { useAuth } from '../contexts/useAuth';
-import { SHIFT_STATUS } from '../utils/constants';
+import { useShifts } from "../contexts/useShifts";
+import { useAuth } from "../contexts/useAuth";
+import { SHIFT_STATUS } from "../utils/constants";
 
-export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] }) {
+export default function SeriesApplicationModal({
+  isOpen,
+  onClose,
+  shifts = [],
+}) {
   const { applyToSeries } = useShifts();
   const auth = useAuth(); // may be undefined in isolated tests
   const [selectedShifts, setSelectedShifts] = useState([]);
   // Preserve legacy default "current-user" to keep existing tests stable
-  const [userId] = useState(auth?.user?.id || 'current-user');
+  const [userId] = useState(auth?.user?.id || "current-user");
 
-  const availableShifts = shifts.filter(shift => shift.status === SHIFT_STATUS.OPEN);
+  const availableShifts = shifts.filter(
+    (shift) => shift.status === SHIFT_STATUS.OPEN,
+  );
 
   const handleShiftToggle = (shiftId) => {
-    setSelectedShifts(prev => 
-      prev.includes(shiftId) 
-        ? prev.filter(id => id !== shiftId)
-        : [...prev, shiftId]
+    setSelectedShifts((prev) =>
+      prev.includes(shiftId)
+        ? prev.filter((id) => id !== shiftId)
+        : [...prev, shiftId],
     );
   };
 
@@ -31,31 +37,31 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
 
   const selectAllSameType = (type) => {
     const sameTypeShifts = availableShifts
-      .filter(shift => shift.type === type)
-      .map(shift => shift.id);
-    setSelectedShifts(prev => [...new Set([...prev, ...sameTypeShifts])]);
+      .filter((shift) => shift.type === type)
+      .map((shift) => shift.id);
+    setSelectedShifts((prev) => [...new Set([...prev, ...sameTypeShifts])]);
   };
 
   const selectAllWeekdays = () => {
     const weekdayShifts = availableShifts
-      .filter(shift => {
+      .filter((shift) => {
         const date = new Date(shift.date);
         const day = date.getDay();
         return day >= 1 && day <= 4; // Monday to Thursday
       })
-      .map(shift => shift.id);
-    setSelectedShifts(prev => [...new Set([...prev, ...weekdayShifts])]);
+      .map((shift) => shift.id);
+    setSelectedShifts((prev) => [...new Set([...prev, ...weekdayShifts])]);
   };
 
   const selectAllWeekends = () => {
     const weekendShifts = availableShifts
-      .filter(shift => {
+      .filter((shift) => {
         const date = new Date(shift.date);
         const day = date.getDay();
         return day === 0 || day === 5 || day === 6; // Friday, Saturday, Sunday
       })
-      .map(shift => shift.id);
-    setSelectedShifts(prev => [...new Set([...prev, ...weekendShifts])]);
+      .map((shift) => shift.id);
+    setSelectedShifts((prev) => [...new Set([...prev, ...weekendShifts])]);
   };
 
   if (!isOpen) return null;
@@ -72,31 +78,31 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600"
             >
-              <span className="sr-only">Schließen</span>
-              ✕
+              <span className="sr-only">Schließen</span>✕
             </button>
           </div>
 
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-3">
-              Bewerben Sie sich für mehrere Dienste gleichzeitig. Wählen Sie die gewünschten Dienste aus oder nutzen Sie die Schnellauswahl.
+              Bewerben Sie sich für mehrere Dienste gleichzeitig. Wählen Sie die
+              gewünschten Dienste aus oder nutzen Sie die Schnellauswahl.
             </p>
-            
+
             <div className="flex flex-wrap gap-2 mb-4">
               <button
-                onClick={() => selectAllSameType('evening')}
+                onClick={() => selectAllSameType("evening")}
                 className="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200"
               >
                 Alle Abend-Dienste
               </button>
               <button
-                onClick={() => selectAllSameType('night')}
+                onClick={() => selectAllSameType("night")}
                 className="px-3 py-1 text-xs bg-purple-100 text-purple-800 rounded-full hover:bg-purple-200"
               >
                 Alle Nacht-Dienste
               </button>
               <button
-                onClick={() => selectAllSameType('early')}
+                onClick={() => selectAllSameType("early")}
                 className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200"
               >
                 Alle Früh-Dienste
@@ -118,7 +124,9 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
 
           <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
             {availableShifts.length === 0 ? (
-              <p className="text-center text-gray-500 py-4">Keine offenen Dienste verfügbar</p>
+              <p className="text-center text-gray-500 py-4">
+                Keine offenen Dienste verfügbar
+              </p>
             ) : (
               <ul className="divide-y divide-gray-200">
                 {availableShifts.map((shift) => (
@@ -132,12 +140,12 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
                       />
                       <div className="ml-3 flex-1">
                         <div className="text-sm font-medium text-gray-900">
-                          {shift.date instanceof Date 
-                            ? shift.date.toLocaleDateString('de-DE', { 
-                                weekday: 'short', 
-                                day: '2-digit', 
-                                month: '2-digit' 
-                              }) 
+                          {shift.date instanceof Date
+                            ? shift.date.toLocaleDateString("de-DE", {
+                                weekday: "short",
+                                day: "2-digit",
+                                month: "2-digit",
+                              })
                             : shift.date}
                         </div>
                         <div className="text-sm text-gray-500">
@@ -153,7 +161,8 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
 
           <div className="mt-6 flex justify-between items-center">
             <p className="text-sm text-gray-600">
-              {selectedShifts.length} Dienst{selectedShifts.length !== 1 ? 'e' : ''} ausgewählt
+              {selectedShifts.length} Dienst
+              {selectedShifts.length !== 1 ? "e" : ""} ausgewählt
             </p>
             <div className="flex space-x-3">
               <button

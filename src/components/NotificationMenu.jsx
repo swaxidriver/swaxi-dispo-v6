@@ -1,10 +1,10 @@
-import { Fragment } from 'react'
-import { Menu, Transition } from '@headlessui/react'
-import { BellIcon } from '@heroicons/react/24/outline'
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { BellIcon } from "@heroicons/react/24/outline";
 
 // linter reference
-const _refs = [Menu, Transition, BellIcon]
-import { useShifts } from '../contexts/useShifts'
+const _refs = [Menu, Transition, BellIcon];
+import { useShifts } from "../contexts/useShifts";
 
 export default function NotificationMenu() {
   const { state, markNotificationRead, markAllNotificationsRead } = useShifts();
@@ -31,33 +31,46 @@ export default function NotificationMenu() {
         <Menu.Items className="absolute right-0 z-10 mt-2 w-80 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           {state.notifications?.length > 0 && (
             <div className="px-3 py-1 flex justify-end border-b border-gray-100 text-xs">
-              <button onClick={markAllNotificationsRead} className="text-blue-600 hover:underline">Alle gelesen</button>
+              <button
+                onClick={markAllNotificationsRead}
+                className="text-blue-600 hover:underline"
+              >
+                Alle gelesen
+              </button>
             </div>
           )}
-          {state.notifications && state.notifications.map((notification) => (
-            <Menu.Item key={notification.id}>
-              {({ active }) => (
-                <div
-                  className={`
-                    ${active ? 'bg-gray-100' : ''}
+          {state.notifications &&
+            state.notifications.map((notification) => (
+              <Menu.Item key={notification.id}>
+                {({ active }) => (
+                  <div
+                    className={`
+                    ${active ? "bg-gray-100" : ""}
                     px-4 py-2 text-sm text-gray-700
                   `}
-                >
-                  <p className="font-medium flex justify-between items-center">
-                    <span>{notification.title}</span>
-                    {!notification.isRead && (
-                      <button onClick={() => markNotificationRead(notification.id)} className="ml-2 text-xs text-blue-600 hover:underline">Gelesen</button>
-                    )}
-                  </p>
-                  <p className="text-gray-500">{notification.message}</p>
-                  <p className="text-xs text-gray-400 mt-1 flex justify-between items-center">
-                    <span>{notification.timestamp}</span>
-                    {!notification.isRead && <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />}
-                  </p>
-                </div>
-              )}
-            </Menu.Item>
-          ))}
+                  >
+                    <p className="font-medium flex justify-between items-center">
+                      <span>{notification.title}</span>
+                      {!notification.isRead && (
+                        <button
+                          onClick={() => markNotificationRead(notification.id)}
+                          className="ml-2 text-xs text-blue-600 hover:underline"
+                        >
+                          Gelesen
+                        </button>
+                      )}
+                    </p>
+                    <p className="text-gray-500">{notification.message}</p>
+                    <p className="text-xs text-gray-400 mt-1 flex justify-between items-center">
+                      <span>{notification.timestamp}</span>
+                      {!notification.isRead && (
+                        <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
+                      )}
+                    </p>
+                  </div>
+                )}
+              </Menu.Item>
+            ))}
           {(!state.notifications || state.notifications.length === 0) && (
             <div className="px-4 py-2 text-sm text-gray-500">
               Keine neuen Benachrichtigungen
@@ -66,5 +79,5 @@ export default function NotificationMenu() {
         </Menu.Items>
       </Transition>
     </Menu>
-  )
+  );
 }

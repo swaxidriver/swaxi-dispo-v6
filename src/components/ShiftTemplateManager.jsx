@@ -1,50 +1,51 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { useShiftTemplates } from '../contexts/useShiftTemplates'
+import { useShiftTemplates } from "../contexts/useShiftTemplates";
 
 function ShiftTemplateManager() {
-  const { templates, addTemplate, updateTemplate, deleteTemplate } = useShiftTemplates()
-  const [editingTemplate, setEditingTemplate] = useState(null)
+  const { templates, addTemplate, updateTemplate, deleteTemplate } =
+    useShiftTemplates();
+  const [editingTemplate, setEditingTemplate] = useState(null);
   const [formState, setFormState] = useState({
-    name: '',
-    startTime: '',
-    endTime: '',
+    name: "",
+    startTime: "",
+    endTime: "",
     days: [],
-  })
+  });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormState({ ...formState, [name]: value })
-  }
+    const { name, value } = e.target;
+    setFormState({ ...formState, [name]: value });
+  };
 
   const handleDayChange = (day) => {
     const newDays = formState.days.includes(day)
       ? formState.days.filter((d) => d !== day)
-      : [...formState.days, day]
-    setFormState({ ...formState, days: newDays })
-  }
+      : [...formState.days, day];
+    setFormState({ ...formState, days: newDays });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (editingTemplate) {
-      updateTemplate({ ...formState, id: editingTemplate.id })
+      updateTemplate({ ...formState, id: editingTemplate.id });
     } else {
-      addTemplate(formState)
+      addTemplate(formState);
     }
-    resetForm()
-  }
+    resetForm();
+  };
 
   const handleEdit = (template) => {
-    setEditingTemplate(template)
-    setFormState(template)
-  }
+    setEditingTemplate(template);
+    setFormState(template);
+  };
 
   const resetForm = () => {
-    setEditingTemplate(null)
-    setFormState({ name: '', startTime: '', endTime: '', days: [] })
-  }
+    setEditingTemplate(null);
+    setFormState({ name: "", startTime: "", endTime: "", days: [] });
+  };
 
-  const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+  const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg">
@@ -87,8 +88,8 @@ function ShiftTemplateManager() {
                 onClick={() => handleDayChange(day)}
                 className={`px-4 py-2 rounded ${
                   formState.days.includes(day)
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200'
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200"
                 }`}
               >
                 {day}
@@ -97,8 +98,11 @@ function ShiftTemplateManager() {
           </div>
         </div>
         <div className="mt-4">
-          <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
-            {editingTemplate ? 'Update Template' : 'Add Template'}
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            {editingTemplate ? "Update Template" : "Add Template"}
           </button>
           {editingTemplate && (
             <button
@@ -115,16 +119,28 @@ function ShiftTemplateManager() {
         <h3 className="text-lg font-bold mb-2">Existing Templates</h3>
         <ul>
           {templates.map((template) => (
-            <li key={template.id} className="flex justify-between items-center p-2 border-b">
+            <li
+              key={template.id}
+              className="flex justify-between items-center p-2 border-b"
+            >
               <div>
                 <p className="font-semibold">{template.name}</p>
-                <p>{template.days.join(', ')}: {template.startTime} - {template.endTime}</p>
+                <p>
+                  {template.days.join(", ")}: {template.startTime} -{" "}
+                  {template.endTime}
+                </p>
               </div>
               <div>
-                <button onClick={() => handleEdit(template)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
+                <button
+                  onClick={() => handleEdit(template)}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                >
                   Edit
                 </button>
-                <button onClick={() => deleteTemplate(template.id)} className="bg-red-500 text-white px-2 py-1 rounded">
+                <button
+                  onClick={() => deleteTemplate(template.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
+                >
                   Delete
                 </button>
               </div>
@@ -133,7 +149,7 @@ function ShiftTemplateManager() {
         </ul>
       </div>
     </div>
-  )
+  );
 }
 
-export default ShiftTemplateManager
+export default ShiftTemplateManager;

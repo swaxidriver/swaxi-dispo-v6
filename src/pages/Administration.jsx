@@ -1,6 +1,6 @@
-import ShiftTemplateManager from '../components/ShiftTemplateManager'
-import { ShiftTemplateProvider } from '../contexts/ShiftTemplateContext'
-import RoleManagement from '../components/RoleManagement'
+import ShiftTemplateManager from "../components/ShiftTemplateManager";
+import { ShiftTemplateProvider } from "../contexts/ShiftTemplateContext";
+import RoleManagement from "../components/RoleManagement";
 
 function Administration() {
   return (
@@ -13,7 +13,7 @@ function Administration() {
         <RoleManagement />
       </div>
     </div>
-  )
+  );
 }
 
-export default Administration
+export default Administration;
