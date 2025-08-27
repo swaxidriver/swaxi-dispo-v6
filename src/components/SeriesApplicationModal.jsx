@@ -11,6 +11,8 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
   // Preserve legacy default "current-user" to keep existing tests stable
   const [userId] = useState(auth?.user?.id || 'current-user');
 
+  const lastActiveRef = useRef(null);
+
   // Focus management: save last active element when modal opens, restore when closes
   useEffect(() => {
     if (isOpen) {
