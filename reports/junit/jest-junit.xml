@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.946">
-  <testsuite name="ErrorBoundary" errors="0" failures="0" skipped="0" timestamp="2025-08-27T12:03:43" time="0.603" tests="1">
-    <testcase classname="ErrorBoundary renders fallback UI and dispatches telemetry on error" name="ErrorBoundary renders fallback UI and dispatches telemetry on error" time="0.071">
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="0.949">
+  <testsuite name="telemetry registration based on feature flag" errors="0" failures="0" skipped="0" timestamp="2025-08-27T12:10:01" time="0.596" tests="3">
+    <testcase classname="telemetry registration based on feature flag registers handler when VITE_ENABLE_TELEMETRY is true" name="telemetry registration based on feature flag registers handler when VITE_ENABLE_TELEMETRY is true" time="0.005">
+    </testcase>
+    <testcase classname="telemetry registration based on feature flag does not register handler when VITE_ENABLE_TELEMETRY is false" name="telemetry registration based on feature flag does not register handler when VITE_ENABLE_TELEMETRY is false" time="0.002">
+    </testcase>
+    <testcase classname="telemetry registration based on feature flag defaults to false when VITE_ENABLE_TELEMETRY is not set" name="telemetry registration based on feature flag defaults to false when VITE_ENABLE_TELEMETRY is not set" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

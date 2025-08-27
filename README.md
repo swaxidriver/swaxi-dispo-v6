@@ -231,7 +231,7 @@ Features:
 - Friendly fallback UI with reload button (role="alert")
 - Structured error object (message, stack, componentStack, timestamp, version)
 - Delegated logging via `utils/logger.js` (`logError`, `logInfo`) – auto-silenced unter Jest
-- Leichtgewichtiges Fehler-Telemetrie Utility `src/utils/errorTelemetry.js` (`registerErrorTelemetry`, `dispatchErrorTelemetry`) mit boolean Rückgabewert
+- Enhanced Fehler-Telemetrie Utility `src/utils/errorTelemetry.js` mit debounce, offline fallback und boolean Rückgabewert
 
 Example:
 
@@ -247,12 +247,56 @@ function Root() {
 }
 ```
 
-Telemetry & Logger Tipps:
+**Telemetry Aktivierung & Konfiguration:**
 
-- `registerErrorTelemetry(handler)` einmalig beim App-Bootstrapping.
-- `dispatchErrorTelemetry(payload)` wird vom `ErrorBoundary` genutzt; gibt `true` (gesendet) oder `false` (kein Handler) zurück.
-- `setLoggerSilent(true)` für eingebettete Iframes / Storybook.
-- Remote Logging: eigenen Handler registrieren oder in Handler intern `fetch('/error-log', { method:'POST', body: JSON.stringify(payload) })` verwenden.
+Telemetrie muss explizit aktiviert werden via Environment Variable:
+
+```bash
+# Aktiviert Error Telemetry Handler
+VITE_ENABLE_TELEMETRY=true
+
+# Deaktiviert (default)
+VITE_ENABLE_TELEMETRY=false
+```
+
+**Features:**
+
+- **🚫 Zero Overhead**: Kein Handler registriert wenn `VITE_ENABLE_TELEMETRY=false`
+- **⏱️ Intelligent Debouncing**: Sammelt Errors in 2-Sekunden Fenstern zu Batches
+- **📡 Offline Fallback**: Nutzt `console.groupCollapsed` wenn offline und kein Handler
+- **🔄 Automatic Batching**: Mehrere Errors werden automatisch gruppiert
+- **📊 Boolean Return**: `dispatchErrorTelemetry()` gibt `true`/`false` zurück
+
+**Implementation Example:**
+
+```javascript
+// Wird automatisch in main.jsx registriert wenn VITE_ENABLE_TELEMETRY=true
+registerErrorTelemetry((payload) => {
+  // payload.type === 'batch' für gruppierte Errors
+  // payload.count === Anzahl der Errors in diesem Batch
+  // payload.errors === Array der einzelnen Error Objekte
+  
+  // Remote logging implementation
+  fetch('/api/errors', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {}) // Silent fail für Telemetry
+})
+
+// Manueller Dispatch (meist durch ErrorBoundary)
+const success = dispatchErrorTelemetry({ 
+  message: 'Custom error',
+  timestamp: new Date().toISOString()
+})
+console.log(success ? 'Telemetry sent' : 'No handler or offline')
+```
+
+**Logger Tipps:**
+
+- `setLoggerSilent(true)` für eingebettete Iframes / Storybook
+- Errors werden automatisch in 2s Fenstern gesammelt um Spam zu vermeiden
+- Offline Modus zeigt Errors in Browser Console falls kein remote Handler verfügbar
 
 
 ## 🚀 Deployment

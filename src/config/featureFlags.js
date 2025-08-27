@@ -25,7 +25,8 @@ function readEnv(name, fallback) {
 }
 
 export const ENABLE_SHAREPOINT = String(readEnv('VITE_ENABLE_SHAREPOINT', 'false')).toLowerCase() === 'true'
+export const ENABLE_TELEMETRY = String(readEnv('VITE_ENABLE_TELEMETRY', 'false')).toLowerCase() === 'true'
 
-export function describeFlags() { return { ENABLE_SHAREPOINT } }
+export function describeFlags() { return { ENABLE_SHAREPOINT, ENABLE_TELEMETRY } }
 
-export default { ENABLE_SHAREPOINT }
+export default { ENABLE_SHAREPOINT, ENABLE_TELEMETRY }
