@@ -1,8 +1,9 @@
 // src/services/migrationService.js
 import { collection, writeBatch, doc, getDocs } from 'firebase/firestore';
 
-import { db } from './firebaseConfig';
 import { logInfo, logError } from '../utils/logger';
+
+import { db } from './firebaseConfig';
 
 export class MigrationService {
   async exportLocalStorageData() {
@@ -29,27 +30,34 @@ export class MigrationService {
   }
 
   async importToFirebase(jsonData) {
-    const batch = writeBatch(db);
     let processedCount = 0;
+    const BATCH_SIZE = 500; // Firestore batch limit
 
     try {
-      // Import shifts
+      // Import shifts in batches
       if (jsonData.shifts && Array.isArray(jsonData.shifts)) {
-        jsonData.shifts.forEach((shift) => {
-          const shiftRef = doc(collection(db, 'shifts'));
-          batch.set(shiftRef, {
-            ...shift,
-            id: shiftRef.id,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            migratedFrom: 'localStorage'
-          });
-          processedCount++;
-        });
+        const shifts = jsonData.shifts;
+        
+        for (let i = 0; i < shifts.length; i += BATCH_SIZE) {
+          const batch = writeBatch(db);
+          const batchShifts = shifts.slice(i, i + BATCH_SIZE);
+          
+          for (const shift of batchShifts) {
+            const shiftRef = doc(collection(db, 'shifts'));
+            batch.set(shiftRef, {
+              ...shift,
+              id: shiftRef.id,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              migratedFrom: 'localStorage'
+            });
+            processedCount++;
+          }
+          
+          await batch.commit();
+          logInfo(`✅ Migrated batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batchShifts.length} records`);
+        }
       }
-
-      // Commit in batches of 500 (Firestore limit)
-      await batch.commit();
       
       logInfo(`✅ Successfully migrated ${processedCount} records to Firebase`);
       return { success: true, count: processedCount };
