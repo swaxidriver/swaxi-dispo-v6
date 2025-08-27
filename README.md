@@ -44,6 +44,14 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 - **HeadlessUI** - Accessible UI-Komponenten
 - **HeroIcons** - Beautiful SVG Icons
 
+### **Typography & Design**
+
+- **Manrope** - Self-hosted variable font (400-700 weights) with optimized loading
+- **Font-display: swap** - Prevents FOIT (Flash of Invisible Text) >100ms
+- **Font-smoothing** - Enhanced antialiased rendering on WebKit/Gecko
+- **Responsive line-height** - Improved readability with 1.6 base scale
+- **Design tokens** - Centralized CSS variables for consistent theming
+
 ### **Data Layer**
 
 - **IndexedDB / In-Memory** – Aktive Modi für lokale Demo & Tests
