@@ -99,4 +99,93 @@ describe('SharePointService', () => {
     const ok = await svc.isSharePointAvailable()
     expect(ok).toBe(false)
   })
+
+  // updateShift success path
+  test('updateShift returns success on successful update', async () => {
+    mockFetchSequence([
+      { json: { d: { GetContextWebInformation: { FormDigestValue: 'TOKEN456' } } } }, // token
+      { ok: true } // update response
+    ])
+    const svc = new SharePointService()
+    const result = await svc.updateShift(1, { status: 'assigned' })
+    expect(result.success).toBe(true)
+  })
+
+  // updateShift fallback path
+  test('updateShift falls back to localStorage on error', async () => {
+    localStorage.setItem('swaxi-dispo-state', JSON.stringify({ shifts: [{ id: 1, status: 'open' }] }))
+    mockFetchSequence([new Error('update fail')])
+    const svc = new SharePointService()
+    const result = await svc.updateShift(1, { status: 'assigned' })
+    expect(result.success).toBe(true)
+  })
+
+  // getUsers success path
+  test('getUsers returns transformed users on success', async () => {
+    const sampleUser = {
+      Id: 1,
+      Title: 'Test User',
+      Email: 'test@stadtwerke.de', 
+      Role: 'disponent',
+      Active: true,
+      Created: '2025-08-26T00:00:00.000Z'
+    }
+    mockFetchSequence([
+      { json: { d: { results: [sampleUser] } } }
+    ])
+    const svc = new SharePointService()
+    const users = await svc.getUsers()
+    expect(users).toHaveLength(1)
+    expect(users[0].name).toBe('Test User')
+    expect(users[0].email).toBe('test@stadtwerke.de')
+  })
+
+  // getUsers fallback path
+  test('getUsers falls back to localStorage on error', async () => {
+    mockFetchSequence([new Error('users fail')])
+    const svc = new SharePointService()
+    const users = await svc.getUsers()
+    expect(users).toHaveLength(3) // default demo users
+    expect(users[0].role).toBe('admin')
+  })
+
+  // logAudit success path  
+  test('logAudit logs to SharePoint on success', async () => {
+    mockFetchSequence([
+      { json: { d: { GetContextWebInformation: { FormDigestValue: 'TOKEN789' } } } }, // token
+      { ok: true } // audit log response
+    ])
+    const svc = new SharePointService()
+    // This method doesn't return anything, so we just verify it doesn't throw
+    await expect(svc.logAudit('shift_created', { shiftId: 1 })).resolves.toBeUndefined()
+  })
+
+  // logAudit fallback path
+  test('logAudit falls back gracefully on error', async () => {
+    mockFetchSequence([new Error('audit fail')])
+    const svc = new SharePointService()
+    // This method should handle errors gracefully and not throw
+    await expect(svc.logAudit('shift_updated', { shiftId: 2 })).resolves.toBeUndefined()
+  })
+
+  // getCurrentUserEmail method
+  test('getCurrentUserEmail returns stored email or default', () => {
+    const svc = new SharePointService()
+    // Test default case
+    expect(svc.getCurrentUserEmail()).toBe('dev@stadtwerke-augsburg.de')
+    
+    // Test with stored email
+    localStorage.setItem('current-user-email', 'user@test.de')
+    expect(svc.getCurrentUserEmail()).toBe('user@test.de')
+  })
+
+  // getUsersFromLocalStorage method
+  test('getUsersFromLocalStorage returns demo users', () => {
+    const svc = new SharePointService()
+    const users = svc.getUsersFromLocalStorage()
+    expect(users).toHaveLength(3)
+    expect(users[0].name).toBe('Admin User')
+    expect(users[1].role).toBe('chief')
+    expect(users[2].role).toBe('disponent')
+  })
 })

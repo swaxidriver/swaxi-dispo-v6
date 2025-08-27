@@ -22,15 +22,15 @@ export default {
   // Granular coverage ratchet: raise global slightly; enforce higher targets on stable areas.
   coverageThreshold: {
     global: {
-      statements: 63,
-      branches: 58,
-      functions: 63,
-      lines: 63,
+      statements: 66,
+      branches: 60,
+      functions: 66,
+      lines: 66,
     },
     // Stricter for core pure logic (utils, services generation) – easier to keep high
     './src/utils/': {
       statements: 80,
-  branches: 80,
+      branches: 80,
       functions: 90,
       lines: 80,
     },
@@ -39,6 +39,13 @@ export default {
       branches: 70,
       functions: 80,
       lines: 80,
+    },
+    // SharePoint service has good test coverage for integration logic
+    './src/services/sharePointService.js': {
+      statements: 60,
+      branches: 50,
+      functions: 60,
+      lines: 60,
     },
   },
   reporters: [
