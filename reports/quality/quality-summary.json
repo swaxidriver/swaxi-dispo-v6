@@ -1,30 +1,67 @@
 {
   "stats": {
     "tests": {
-      "total": 65,
+      "total": 91,
       "failed": 0,
-      "passed": 64
+      "passed": 90
     },
     "suites": {
-      "total": 30,
-      "failed": 0
+      "total": 56,
+      "failed": 22
     },
     "lint": {
       "errors": 0,
       "filesWithErrors": 0
     },
     "coverage": {
-      "statements": 71.85,
-      "branches": 65.59,
-      "functions": 70.14,
-      "lines": 73.12
+      "statements": 42.92,
+      "branches": 35.86,
+      "functions": 43.87,
+      "lines": 43.31
     }
   },
   "thresholds": {
-    "statements": 60,
-    "branches": 55,
-    "functions": 60,
-    "lines": 60
+    "statements": 63,
+    "branches": 58,
+    "functions": 63,
+    "lines": 63
   },
-  "actionItems": []
+  "actionItems": [
+    {
+      "priority": 3,
+      "type": "coverage-below",
+      "metric": "statements",
+      "value": 42.92,
+      "threshold": 63,
+      "delta": -20.08,
+      "below": true
+    },
+    {
+      "priority": 3,
+      "type": "coverage-below",
+      "metric": "branches",
+      "value": 35.86,
+      "threshold": 58,
+      "delta": -22.14,
+      "below": true
+    },
+    {
+      "priority": 3,
+      "type": "coverage-below",
+      "metric": "functions",
+      "value": 43.87,
+      "threshold": 63,
+      "delta": -19.130000000000003,
+      "below": true
+    },
+    {
+      "priority": 3,
+      "type": "coverage-below",
+      "metric": "lines",
+      "value": 43.31,
+      "threshold": 63,
+      "delta": -19.689999999999998,
+      "below": true
+    }
+  ]
 }
