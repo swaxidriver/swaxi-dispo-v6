@@ -14,7 +14,7 @@
 import { createContext, useReducer, useEffect, useCallback, useMemo, useRef } from 'react'
 
 import { getShiftRepository } from '../repository/repositoryFactory'
-import { checkShiftConflicts } from '../utils/shifts'
+import { checkShiftConflicts, overlaps } from '../utils/shifts'
 import { validateShiftArray } from '../utils/validation'
 
 import { SHIFT_STATUS } from '../utils/constants'
@@ -257,7 +257,8 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const createShift = useCallback((partial) => {
     // partial: { date, type, start, end, workLocation }
     const date = partial.date instanceof Date ? partial.date : new Date(partial.date)
-    const naturalId = `${date.toISOString().slice(0,10)}_${partial.type}`
+    const dateIso = date.toISOString().slice(0,10) // Normalize to ISO string for consistency
+    const naturalId = buildShiftId(dateIso, partial.type) // Use consistent ID generation
     if (state.shifts.find(s => s.id === naturalId)) {
       return { ok: false, reason: 'duplicate' }
     }
@@ -270,9 +271,35 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     const resolvedLocation = partial.workLocation == null ? 'office' : partial.workLocation
     // Add internal uid for future references (e.g., editing when natural key changes)
     const uid = generateId('shf_')
-  const shift = { id: naturalId, uid, date, type: partial.type, start: partial.start, end: partial.end, status: SHIFT_STATUS.OPEN, assignedTo: null, workLocation: resolvedLocation, conflicts: [], pendingSync: false }
+    const shift = { 
+      id: naturalId, 
+      uid, 
+      date: dateIso, // Store as ISO string for consistency 
+      type: partial.type, 
+      start: partial.start, 
+      end: partial.end, 
+      status: SHIFT_STATUS.OPEN, 
+      assignedTo: null, 
+      workLocation: resolvedLocation, 
+      conflicts: [], 
+      pendingSync: false 
+    }
     shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
     dispatch({ type: 'ADD_SHIFT', payload: shift })
+    
+    // Recompute conflicts for existing shifts that overlap with the new shift
+    // This ensures all shifts show conflicts bidirectionally
+    const overlappingShifts = state.shifts.filter(existingShift => 
+      overlaps(shift.start, shift.end, existingShift.start, existingShift.end)
+    )
+    
+    overlappingShifts.forEach(existingShift => {
+      const updatedShift = {
+        ...existingShift,
+        conflicts: checkShiftConflicts(existingShift, [...state.shifts, shift], state.applications)
+      }
+      dispatch({ type: 'UPDATE_SHIFT', payload: updatedShift })
+    })
     dispatch({ type: 'ADD_NOTIFICATION', payload: { id: `create_${naturalId}_${Date.now()}`, title: 'Dienst erstellt', message: `${partial.type} ${partial.start}-${partial.end}`, timestamp: new Date().toLocaleString(), isRead: false } })
     const attempt = repoRef.current?.create?.(shift)
     if (attempt && typeof attempt.then === 'function') {
