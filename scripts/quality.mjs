@@ -73,9 +73,7 @@ try {
   if (match) {
     const objText = '{' + match[1] + '}'
     // More efficient cleanup: combine regex operations and handle edge cases
-    const cleaned = objText
-      .replace(/\/\/.*$/gm, '') // Remove single-line comments
-      .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments  
+      .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments
       .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
       .replace(/(\w+):/g, '"$1":') // Quote unquoted keys
     
