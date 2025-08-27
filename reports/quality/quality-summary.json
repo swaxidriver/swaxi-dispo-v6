@@ -1,12 +1,12 @@
 {
   "stats": {
     "tests": {
-      "total": 65,
+      "total": 139,
       "failed": 0,
-      "passed": 64
+      "passed": 138
     },
     "suites": {
-      "total": 30,
+      "total": 56,
       "failed": 0
     },
     "lint": {
@@ -14,17 +14,17 @@
       "filesWithErrors": 0
     },
     "coverage": {
-      "statements": 71.85,
-      "branches": 65.59,
-      "functions": 70.14,
-      "lines": 73.12
+      "statements": 79.69,
+      "branches": 70.72,
+      "functions": 79.95,
+      "lines": 81.81
     }
   },
   "thresholds": {
-    "statements": 60,
-    "branches": 55,
-    "functions": 60,
-    "lines": 60
+    "statements": 63,
+    "branches": 58,
+    "functions": 63,
+    "lines": 63
   },
   "actionItems": []
 }
