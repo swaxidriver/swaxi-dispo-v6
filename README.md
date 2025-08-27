@@ -376,7 +376,35 @@ Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farb
 
 - Basis-Styling über Hilfsklassen (`btn`, `card`, `input`) in `index.css`.
 - Direkter Zugriff über `var(--color-*)` für Spezialfälle.
+- **Neu**: Semantic Tailwind utilities via mapped tokens (siehe unten).
 - Schriftfamilie: Primär Manrope (Fallback Inter/System) – jetzt lokal via `@fontsource/manrope` (nicht mehr extern geladen).
+
+#### Tailwind Token Utilities
+
+Seit v0.3.1 sind semantische Design-Tokens als Tailwind-Utilities verfügbar:
+
+```jsx
+{/* Background colors */}
+<div className="bg-surface">Card background</div>
+<div className="bg-primary">Primary background</div>
+<div className="bg-accent">Accent background</div>
+<div className="bg-ok">Success background</div>
+<div className="bg-warn">Warning background</div>
+<div className="bg-danger">Error background</div>
+
+{/* Text colors */}
+<p className="text-text">Default text</p>
+<p className="text-muted">Muted text</p>
+
+{/* Border colors */}
+<div className="border border-border">Default border</div>
+<div className="border-2 border-primary">Primary border</div>
+
+{/* Font family */}
+<div className="font-sans">Uses design token font stack</div>
+```
+
+Diese Klassen verweisen auf CSS-Variablen und funktionieren automatisch mit Light/Dark Mode.
 
 ### Migration Alt → Neu
 
@@ -407,7 +435,7 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 
 - Erhöhung der Coverage Thresholds (iterativ)
 - (Erledigt) Entfernen alter Sass Variablen / `main.scss`
+- (Erledigt) Tailwind Theme Mapping der Tokens (für Variants)
 - (Neu) Fehler-Telemetrie Stub (`registerErrorTelemetry`) für zukünftige Remote Collection
 - Export der Tokens als JSON für Figma / Storybook
-- Tailwind Theme Mapping der Tokens (für Variants)
 - Optionale visuelle Regression Tests (Playwright + percy)

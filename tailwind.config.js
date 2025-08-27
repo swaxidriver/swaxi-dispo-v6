@@ -20,14 +20,25 @@ export default {
         'brand-bg': '#f8fafc',
         'brand-border': '#e2e8f0',
         'brand-text': '#0f172a',
-        'muted': '#64748b',
-        'ok': '#16a34a',
-        'warn': '#f59e0b',
         'err': '#dc2626',
+        /* Semantic design token mappings to CSS variables */
+        'primary': 'var(--color-primary)',
+        'primary-emphasis': 'var(--color-primary-emphasis)',
+        'accent': 'var(--color-accent)',
+        'surface': 'var(--color-surface)',
+        'bg': 'var(--color-bg)',
+        'border': 'var(--color-border)',
+        'text': 'var(--color-text)',
+        'muted': 'var(--color-muted)',
+        'ok': 'var(--color-ok)',
+        'warn': 'var(--color-warn)',
+        'danger': 'var(--color-err)',
       },
       fontFamily: {
-        /* Modern geometric humanist font */
-        sans: ['Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        /* Modern geometric humanist font with CSS variable fallback */
+        sans: ['var(--font-sans)', 'Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        /* Legacy direct mapping for backward compatibility */
+        'sans-legacy': ['Manrope', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       fontSize: {
         '2xs': '0.625rem',

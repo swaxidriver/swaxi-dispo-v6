@@ -3,6 +3,7 @@ import { useState } from 'react';
 // useShifts is defined in its own hook file, not exported from ShiftContext.jsx
 import { useShifts } from '../contexts/useShifts';
 import { sharePointService } from '../services/sharePointService';
+import TokenExample from '../components/TokenExample';
 
 export default function TestPage() {
   const { state } = useShifts();
@@ -110,6 +111,11 @@ export default function TestPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Hybrid-Modus Testen</h1>
+        
+        {/* Design Token Examples */}
+        <div className="mb-8">
+          <TokenExample />
+        </div>
         
         {/* Current Status */}
         <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
