@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { useShifts } from '../contexts/useShifts';
 import { useAuth } from '../contexts/useAuth';
@@ -11,6 +11,21 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
   // Preserve legacy default "current-user" to keep existing tests stable
   const [userId] = useState(auth?.user?.id || 'current-user');
 
+  // Focus management: save last active element when modal opens, restore when closes
+  useEffect(() => {
+    if (isOpen) {
+      lastActiveRef.current = document.activeElement;
+    }
+    // When modal closes, restore focus to last active element
+    if (!isOpen && lastActiveRef.current) {
+      // Use setTimeout to ensure focus after modal unmount
+      setTimeout(() => {
+        if (lastActiveRef.current && typeof lastActiveRef.current.focus === 'function') {
+          lastActiveRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [isOpen]);
   const availableShifts = shifts.filter(shift => shift.status === SHIFT_STATUS.OPEN);
 
   const handleShiftToggle = (shiftId) => {
@@ -61,11 +76,11 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" role="dialog" aria-modal="true" aria-labelledby="series-modal-title" aria-describedby="series-modal-desc">
+      <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" role="document">
         <div className="mt-3">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 id="series-modal-title" className="text-lg font-medium text-gray-900">
               Serienbewerbung
             </h3>
             <button
@@ -78,7 +93,7 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
           </div>
 
           <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-3">
+            <p id="series-modal-desc" className="text-sm text-gray-600 mb-3">
               Bewerben Sie sich für mehrere Dienste gleichzeitig. Wählen Sie die gewünschten Dienste aus oder nutzen Sie die Schnellauswahl.
             </p>
             
