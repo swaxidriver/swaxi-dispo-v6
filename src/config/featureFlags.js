@@ -15,7 +15,7 @@ function readEnv(name, fallback) {
   try {
     const importMeta = eval('typeof import !== "undefined" ? import.meta : undefined')
     if (importMeta && importMeta.env && name in importMeta.env) return importMeta.env[name]
-  } catch (e) {
+  } catch (_e) {
     // Fallback to process.env if import.meta fails
   }
   
