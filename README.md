@@ -301,7 +301,7 @@ npm run build
 
 ### **🔧 SharePoint (derzeit deaktiviert)**
 
-Feature Flag: `VITE_ENABLE_SHAREPOINT=false` – echte Requests unterdrückt; bei gesetztem Backend `sharepoint` erfolgt automatischer Fallback auf IndexedDB.
+Feature Flag: `VITE_ENABLE_SHAREPOINT=false` – echte Requests unterdrückt; bei gesetztem Backend `sharepoint` erfolgt automatischer Fallback auf IndexedDB. Die UI zeigt dann im Status-Widget ein kleines Badge "SP deaktiviert".
 
 Re-Aktivierung:
 
