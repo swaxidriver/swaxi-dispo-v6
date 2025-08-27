@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="139" failures="0" errors="0" time="9.193">
-  <testsuite name="undefined" errors="0" failures="0" skipped="1" timestamp="2025-08-27T08:45:24" time="0.865" tests="1">
-    <testcase classname=" MigrationService tests deferred until Firebase enabled" name=" MigrationService tests deferred until Firebase enabled" time="0">
-      <skipped/>
+<testsuites name="jest tests" tests="139" failures="0" errors="0" time="11.84">
+  <testsuite name="SharePointService" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:07" time="1.268" tests="6">
+    <testcase classname="SharePointService getShifts returns transformed data on success" name="SharePointService getShifts returns transformed data on success" time="0.008">
+    </testcase>
+    <testcase classname="SharePointService getShifts falls back to localStorage on fetch error" name="SharePointService getShifts falls back to localStorage on fetch error" time="0.002">
+    </testcase>
+    <testcase classname="SharePointService createShift returns transformed shift on success" name="SharePointService createShift returns transformed shift on success" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService createShift fallback to localStorage on failing token fetch" name="SharePointService createShift fallback to localStorage on failing token fetch" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService isSharePointAvailable returns true when response ok" name="SharePointService isSharePointAvailable returns true when response ok" time="0.001">
+    </testcase>
+    <testcase classname="SharePointService isSharePointAvailable returns false on error" name="SharePointService isSharePointAvailable returns false on error" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="ShiftContext heartbeat ping failure transition" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:24" time="1.066" tests="1">
-    <testcase classname="ShiftContext heartbeat ping failure transition transitions online -&gt; offline when subsequent ping fails" name="ShiftContext heartbeat ping failure transition transitions online -&gt; offline when subsequent ping fails" time="0.039">
+  <testsuite name="offline queue integration" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:07" time="2.803" tests="2">
+    <testcase classname="offline queue integration failed create is queued and pendingSync then drained when online" name="offline queue integration failed create is queued and pendingSync then drained when online" time="0.09">
+    </testcase>
+    <testcase classname="offline queue integration apply action enqueued on failure and retried" name="offline queue integration apply action enqueued on failure and retried" time="0.026">
     </testcase>
   </testsuite>
-  <testsuite name="ShiftTemplateManager" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:24" time="1.172" tests="3">
-    <testcase classname="ShiftTemplateManager adds a new template" name="ShiftTemplateManager adds a new template" time="0.233">
+  <testsuite name="AutosaveManager" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:07" time="2.988" tests="5">
+    <testcase classname="AutosaveManager creates an initial snapshot and shows autosave indicator" name="AutosaveManager creates an initial snapshot and shows autosave indicator" time="0.082">
     </testcase>
-    <testcase classname="ShiftTemplateManager edits existing template" name="ShiftTemplateManager edits existing template" time="0.075">
+    <testcase classname="AutosaveManager adds multiple snapshots over time (interval advance)" name="AutosaveManager adds multiple snapshots over time (interval advance)" time="0.027">
     </testcase>
-    <testcase classname="ShiftTemplateManager deletes template" name="ShiftTemplateManager deletes template" time="0.036">
+    <testcase classname="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" name="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" time="0.024">
     </testcase>
-  </testsuite>
-  <testsuite name="ThemeToggle" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:25" time="0.617" tests="2">
-    <testcase classname="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" name="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" time="0.102">
+    <testcase classname="AutosaveManager can dismiss recovery panel via Überspringen" name="AutosaveManager can dismiss recovery panel via Überspringen" time="0.022">
     </testcase>
-    <testcase classname="ThemeToggle sets data-theme attribute on documentElement when toggled" name="ThemeToggle sets data-theme attribute on documentElement when toggled" time="0.021">
+    <testcase classname="AutosaveManager restores snapshot shifts into context" name="AutosaveManager restores snapshot shifts into context" time="0.096">
     </testcase>
   </testsuite>
-  <testsuite name="MigrationService" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.354" tests="6">
-    <testcase classname="MigrationService exports local storage data and creates a blob URL" name="MigrationService exports local storage data and creates a blob URL" time="0.006">
+  <testsuite name="ShiftTable actions" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:08" time="1.904" tests="5">
+    <testcase classname="ShiftTable actions invokes applyToShift when Bewerben clicked" name="ShiftTable actions invokes applyToShift when Bewerben clicked" time="0.075">
     </testcase>
-    <testcase classname="MigrationService imports shifts to firebase" name="MigrationService imports shifts to firebase" time="0">
+    <testcase classname="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" name="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" time="0.011">
+    </testcase>
+    <testcase classname="ShiftTable actions calls cancelShift when Absagen clicked on assigned shift" name="ShiftTable actions calls cancelShift when Absagen clicked on assigned shift" time="0.01">
+    </testcase>
+    <testcase classname="ShiftTable actions disables Bewerben when not logged in" name="ShiftTable actions disables Bewerben when not logged in" time="0.02">
+    </testcase>
+    <testcase classname="ShiftTable actions disables Zuweisen when status not open" name="ShiftTable actions disables Zuweisen when status not open" time="0.016">
+    </testcase>
+  </testsuite>
+  <testsuite name="MigrationService" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:09" time="0.444" tests="6">
+    <testcase classname="MigrationService exports local storage data and creates a blob URL" name="MigrationService exports local storage data and creates a blob URL" time="0.008">
+    </testcase>
+    <testcase classname="MigrationService imports shifts to firebase" name="MigrationService imports shifts to firebase" time="0.001">
     </testcase>
     <testcase classname="MigrationService handles import error" name="MigrationService handles import error" time="0.001">
     </testcase>
@@ -34,85 +55,55 @@
     </testcase>
     <testcase classname="MigrationService creates backup" name="MigrationService creates backup" time="0.002">
     </testcase>
-    <testcase classname="MigrationService propagates backup failure" name="MigrationService propagates backup failure" time="0.017">
+    <testcase classname="MigrationService propagates backup failure" name="MigrationService propagates backup failure" time="0.019">
     </testcase>
   </testsuite>
-  <testsuite name="FeedbackModal accessibility basics" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.531" tests="1">
-    <testcase classname="FeedbackModal accessibility basics traps focus and blocks empty submit" name="FeedbackModal accessibility basics traps focus and blocks empty submit" time="0.16">
+  <testsuite name="ShiftContext integration basics" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:10" time="0.532" tests="1">
+    <testcase classname="ShiftContext integration basics initializes shifts and supports core actions" name="ShiftContext integration basics initializes shifts and supports core actions" time="0.068">
     </testcase>
   </testsuite>
-  <testsuite name="LiveVersionBanner" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.402" tests="2">
-    <testcase classname="LiveVersionBanner renders with demo badge and localStorage icon" name="LiveVersionBanner renders with demo badge and localStorage icon" time="0.055">
-    </testcase>
-    <testcase classname="LiveVersionBanner dismiss button hides banner and stores flag" name="LiveVersionBanner dismiss button hides banner and stores flag" time="0.041">
+  <testsuite name="ShiftContext heartbeat ping failure transition" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:10" time="0.383" tests="1">
+    <testcase classname="ShiftContext heartbeat ping failure transition transitions online -&gt; offline when subsequent ping fails" name="ShiftContext heartbeat ping failure transition transitions online -&gt; offline when subsequent ping fails" time="0.032">
     </testcase>
   </testsuite>
-  <testsuite name="Navigation accessibility" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.473" tests="1">
-    <testcase classname="Navigation accessibility has no axe violations" name="Navigation accessibility has no axe violations" time="0.144">
+  <testsuite name="SeriesApplicationModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:10" time="0.52" tests="2">
+    <testcase classname="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" name="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" time="0.103">
+    </testcase>
+    <testcase classname="SeriesApplicationModal disables submit when no selection and enables after selecting one" name="SeriesApplicationModal disables submit when no selection and enables after selecting one" time="0.037">
     </testcase>
   </testsuite>
-  <testsuite name="Login" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.379" tests="2">
-    <testcase classname="Login renders role buttons when logged out and logs in on click" name="Login renders role buttons when logged out and logs in on click" time="0.053">
-    </testcase>
-    <testcase classname="Login shows welcome and logout when user present" name="Login shows welcome and logout when user present" time="0.012">
+  <testsuite name="Shift creation via template (Schicht anlegen)" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:10" time="1.1" tests="1">
+    <testcase classname="Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today&apos;s weekday" name="Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today&apos;s weekday" time="0.26">
     </testcase>
   </testsuite>
-  <testsuite name="Navigation" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.437" tests="2">
-    <testcase classname="Navigation shows login link (Anmelden) when not authenticated" name="Navigation shows login link (Anmelden) when not authenticated" time="0.04">
+  <testsuite name="ShiftTemplateManager" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:10" time="0.709" tests="3">
+    <testcase classname="ShiftTemplateManager adds a new template" name="ShiftTemplateManager adds a new template" time="0.272">
     </testcase>
-    <testcase classname="Navigation shows admin links and logout when admin" name="Navigation shows admin links and logout when admin" time="0.039">
+    <testcase classname="ShiftTemplateManager edits existing template" name="ShiftTemplateManager edits existing template" time="0.059">
     </testcase>
-  </testsuite>
-  <testsuite name="RoleManagement runtime safety" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.323" tests="1">
-    <testcase classname="RoleManagement runtime safety renders empty state when no users prop provided" name="RoleManagement runtime safety renders empty state when no users prop provided" time="0.023">
+    <testcase classname="ShiftTemplateManager deletes template" name="ShiftTemplateManager deletes template" time="0.023">
     </testcase>
   </testsuite>
-  <testsuite name="Dark theme toggle (a11y precondition)" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:26" time="0.5" tests="1">
-    <testcase classname="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" name="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" time="0.035">
+  <testsuite name="ConnectionStatus" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:11" time="0.401" tests="4">
+    <testcase classname="ConnectionStatus shows sharepoint connected state (green)" name="ConnectionStatus shows sharepoint connected state (green)" time="0.026">
+    </testcase>
+    <testcase classname="ConnectionStatus shows localStorage offline mode with tip (yellow)" name="ConnectionStatus shows localStorage offline mode with tip (yellow)" time="0.006">
+    </testcase>
+    <testcase classname="ConnectionStatus shows error state (red) when sharepoint not online" name="ConnectionStatus shows error state (red) when sharepoint not online" time="0.005">
+    </testcase>
+    <testcase classname="ConnectionStatus clicking test button triggers handler (smoke)" name="ConnectionStatus clicking test button triggers handler (smoke)" time="0.034">
     </testcase>
   </testsuite>
-  <testsuite name="shiftGenerationService.generateShifts" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.364" tests="2">
-    <testcase classname="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" name="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" time="0.004">
+  <testsuite name="ActiveRoleBadge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:11" time="0.648" tests="3">
+    <testcase classname="ActiveRoleBadge renders nothing when no user" name="ActiveRoleBadge renders nothing when no user" time="0.012">
     </testcase>
-    <testcase classname="shiftGenerationService.generateShifts returns empty array when no templates match any days" name="shiftGenerationService.generateShifts returns empty array when no templates match any days" time="0">
+    <testcase classname="ActiveRoleBadge shows role badge for each role" name="ActiveRoleBadge shows role badge for each role" time="0.021">
     </testcase>
-  </testsuite>
-  <testsuite name="RoleManagement" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.365" tests="1">
-    <testcase classname="RoleManagement renders users and allows editing manageable role" name="RoleManagement renders users and allows editing manageable role" time="0.047">
+    <testcase classname="ActiveRoleBadge shows admin only nav items and hides for analyst" name="ActiveRoleBadge shows admin only nav items and hides for analyst" time="0.037">
     </testcase>
   </testsuite>
-  <testsuite name="ErrorBoundary" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.35" tests="1">
-    <testcase classname="ErrorBoundary renders fallback UI and dispatches telemetry on error" name="ErrorBoundary renders fallback UI and dispatches telemetry on error" time="0.053">
-    </testcase>
-  </testsuite>
-  <testsuite name="FeedbackModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.315" tests="1">
-    <testcase classname="FeedbackModal submits feedback and closes" name="FeedbackModal submits feedback and closes" time="0.063">
-    </testcase>
-  </testsuite>
-  <testsuite name="VersionBadge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.343" tests="1">
-    <testcase classname="VersionBadge renders version badge with defined version" name="VersionBadge renders version badge with defined version" time="0.021">
-    </testcase>
-  </testsuite>
-  <testsuite name="IndexedDBShiftRepository" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:27" time="0.275" tests="1">
-    <testcase classname="IndexedDBShiftRepository CRUD + domain operations" name="IndexedDBShiftRepository CRUD + domain operations" time="0.016">
-    </testcase>
-  </testsuite>
-  <testsuite name="Deterministic Seed" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.276" tests="1">
-    <testcase classname="Deterministic Seed snapshot of initial seed shifts remains stable" name="Deterministic Seed snapshot of initial seed shifts remains stable" time="0.009">
-    </testcase>
-  </testsuite>
-  <testsuite name="AuthProvider" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.327" tests="2">
-    <testcase classname="AuthProvider logs in and persists user, then restores on reload" name="AuthProvider logs in and persists user, then restores on reload" time="0.036">
-    </testcase>
-    <testcase classname="AuthProvider logout clears user and storage" name="AuthProvider logout clears user and storage" time="0.009">
-    </testcase>
-  </testsuite>
-  <testsuite name="ThemeContext tokens" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.319" tests="1">
-    <testcase classname="ThemeContext tokens toggles data-theme attribute and persists" name="ThemeContext tokens toggles data-theme attribute and persists" time="0.028">
-    </testcase>
-  </testsuite>
-  <testsuite name="Time &amp; Conflict Utilities" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.243" tests="5">
-    <testcase classname="Time &amp; Conflict Utilities toMinutes parses HH:MM" name="Time &amp; Conflict Utilities toMinutes parses HH:MM" time="0.002">
+  <testsuite name="Time &amp; Conflict Utilities" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:12" time="0.31" tests="5">
+    <testcase classname="Time &amp; Conflict Utilities toMinutes parses HH:MM" name="Time &amp; Conflict Utilities toMinutes parses HH:MM" time="0.006">
     </testcase>
     <testcase classname="Time &amp; Conflict Utilities computeDuration normal and over-midnight" name="Time &amp; Conflict Utilities computeDuration normal and over-midnight" time="0.001">
     </testcase>
@@ -123,100 +114,58 @@
     <testcase classname="Time &amp; Conflict Utilities computeShiftConflicts DOUBLE_APPLICATION &amp; ASSIGNMENT_COLLISION &amp; LOCATION_MISMATCH" name="Time &amp; Conflict Utilities computeShiftConflicts DOUBLE_APPLICATION &amp; ASSIGNMENT_COLLISION &amp; LOCATION_MISMATCH" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="conflicts mapping utilities" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.236" tests="4">
-    <testcase classname="conflicts mapping utilities CONFLICT_LABELS keys stable" name="conflicts mapping utilities CONFLICT_LABELS keys stable" time="0.003">
+  <testsuite name="Dashboard page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:11" time="0.938" tests="3">
+    <testcase classname="Dashboard page renders heading and analytics" name="Dashboard page renders heading and analytics" time="0.097">
     </testcase>
-    <testcase classname="conflicts mapping utilities describeConflicts maps known codes and preserves unknown" name="conflicts mapping utilities describeConflicts maps known codes and preserves unknown" time="0.001">
+    <testcase classname="Dashboard page filters by status (open, assigned, cancelled)" name="Dashboard page filters by status (open, assigned, cancelled)" time="0.199">
     </testcase>
-    <testcase classname="conflicts mapping utilities firstConflictTooltip concatenates labels" name="conflicts mapping utilities firstConflictTooltip concatenates labels" time="0.001">
-    </testcase>
-    <testcase classname="conflicts mapping utilities empty arrays produce empty tooltip" name="conflicts mapping utilities empty arrays produce empty tooltip" time="0">
+    <testcase classname="Dashboard page shows auto assign button when user can manage shifts" name="Dashboard page shows auto assign button when user can manage shifts" time="0.051">
     </testcase>
   </testsuite>
-  <testsuite name="test data factories" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.295" tests="3">
-    <testcase classname="test data factories buildUser applies defaults and unique ids" name="test data factories buildUser applies defaults and unique ids" time="0.004">
+  <testsuite name="NotificationMenu" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:12" time="0.6" tests="2">
+    <testcase classname="NotificationMenu marks single notification read" name="NotificationMenu marks single notification read" time="0.102">
     </testcase>
-    <testcase classname="test data factories buildShift allows overrides and defaults" name="test data factories buildShift allows overrides and defaults" time="0.002">
-    </testcase>
-    <testcase classname="test data factories buildApplication sets relations and allows override" name="test data factories buildApplication sets relations and allows override" time="0.001">
+    <testcase classname="NotificationMenu marks all notifications read" name="NotificationMenu marks all notifications read" time="0.041">
     </testcase>
   </testsuite>
-  <testsuite name="role capability helpers" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.222" tests="16">
-    <testcase classname="role capability helpers canManageShifts(admin)" name="role capability helpers canManageShifts(admin)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canManageShifts(chief)" name="role capability helpers canManageShifts(chief)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canManageShifts(disponent)" name="role capability helpers canManageShifts(disponent)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canManageShifts(analyst)" name="role capability helpers canManageShifts(analyst)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canAssignShifts(admin)" name="role capability helpers canAssignShifts(admin)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canAssignShifts(chief)" name="role capability helpers canAssignShifts(chief)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canAssignShifts(disponent)" name="role capability helpers canAssignShifts(disponent)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canAssignShifts(analyst)" name="role capability helpers canAssignShifts(analyst)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canManageTemplates(admin)" name="role capability helpers canManageTemplates(admin)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canManageTemplates(chief)" name="role capability helpers canManageTemplates(chief)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canManageTemplates(disponent)" name="role capability helpers canManageTemplates(disponent)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canManageTemplates(analyst)" name="role capability helpers canManageTemplates(analyst)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canViewAnalytics(admin)" name="role capability helpers canViewAnalytics(admin)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canViewAnalytics(chief)" name="role capability helpers canViewAnalytics(chief)" time="0.001">
-    </testcase>
-    <testcase classname="role capability helpers canViewAnalytics(disponent)" name="role capability helpers canViewAnalytics(disponent)" time="0">
-    </testcase>
-    <testcase classname="role capability helpers canViewAnalytics(analyst)" name="role capability helpers canViewAnalytics(analyst)" time="0.001">
+  <testsuite name="Shift assignment &amp; notifications" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:12" time="0.419" tests="1">
+    <testcase classname="Shift assignment &amp; notifications assigns a shift and updates status" name="Shift assignment &amp; notifications assigns a shift and updates status" time="0.06">
     </testcase>
   </testsuite>
-  <testsuite name="error telemetry utility" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.282" tests="3">
-    <testcase classname="error telemetry utility invokes registered handler with payload" name="error telemetry utility invokes registered handler with payload" time="0.003">
+  <testsuite name="Calendar page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:11" time="1.226" tests="4">
+    <testcase classname="Calendar page renders week header and shifts" name="Calendar page renders week header and shifts" time="0.162">
     </testcase>
-    <testcase classname="error telemetry utility swallows errors in handler" name="error telemetry utility swallows errors in handler" time="0.001">
+    <testcase classname="Calendar page navigates weeks forward and back" name="Calendar page navigates weeks forward and back" time="0.223">
     </testcase>
-    <testcase classname="error telemetry utility returns false when no handler registered" name="error telemetry utility returns false when no handler registered" time="0">
+    <testcase classname="Calendar page resets to today" name="Calendar page resets to today" time="0.173">
     </testcase>
-  </testsuite>
-  <testsuite name="auth permission helpers" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.2" tests="2">
-    <testcase classname="auth permission helpers role hierarchy enforces expected permissions" name="auth permission helpers role hierarchy enforces expected permissions" time="0.004">
-    </testcase>
-    <testcase classname="auth permission helpers no higher role incorrectly gains audit permission" name="auth permission helpers no higher role incorrectly gains audit permission" time="0.001">
+    <testcase classname="Calendar page shows create shift button for manager role" name="Calendar page shows create shift button for manager role" time="0.113">
     </testcase>
   </testsuite>
-  <testsuite name="shiftReducer" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.271" tests="4">
-    <testcase classname="shiftReducer returns state for unknown action" name="shiftReducer returns state for unknown action" time="0.003">
+  <testsuite name="shiftGenerationService.generateShifts" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.445" tests="2">
+    <testcase classname="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" name="shiftGenerationService.generateShifts generates shifts for matching weekday templates over 10 days" time="0.006">
     </testcase>
-    <testcase classname="shiftReducer adds a shift" name="shiftReducer adds a shift" time="0.002">
-    </testcase>
-    <testcase classname="shiftReducer updates a shift" name="shiftReducer updates a shift" time="0.001">
-    </testcase>
-    <testcase classname="shiftReducer assigns a shift (ASSIGN_SHIFT)" name="shiftReducer assigns a shift (ASSIGN_SHIFT)" time="0.001">
+    <testcase classname="shiftGenerationService.generateShifts returns empty array when no templates match any days" name="shiftGenerationService.generateShifts returns empty array when no templates match any days" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="logger" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:28" time="0.314" tests="2">
-    <testcase classname="logger emits when not silent" name="logger emits when not silent" time="0.003">
+  <testsuite name="CreateShiftModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:12" time="0.523" tests="3">
+    <testcase classname="CreateShiftModal creates a shift and closes" name="CreateShiftModal creates a shift and closes" time="0.093">
     </testcase>
-    <testcase classname="logger suppresses when silent" name="logger suppresses when silent" time="0.001">
+    <testcase classname="CreateShiftModal shows validation error when missing date" name="CreateShiftModal shows validation error when missing date" time="0.047">
     </testcase>
-  </testsuite>
-  <testsuite name="Status Model" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.257" tests="3">
-    <testcase classname="Status Model allowed transitions" name="Status Model allowed transitions" time="0.003">
-    </testcase>
-    <testcase classname="Status Model disallowed transitions" name="Status Model disallowed transitions" time="0.001">
-    </testcase>
-    <testcase classname="Status Model assertTransition throws on invalid" name="Status Model assertTransition throws on invalid" time="0.009">
+    <testcase classname="CreateShiftModal shows validation error when missing work location" name="CreateShiftModal shows validation error when missing work location" time="0.031">
     </testcase>
   </testsuite>
-  <testsuite name="shiftReducer notifications &amp; filters" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.316" tests="5">
+  <testsuite name="AuthProvider" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.349" tests="2">
+    <testcase classname="AuthProvider logs in and persists user, then restores on reload" name="AuthProvider logs in and persists user, then restores on reload" time="0.033">
+    </testcase>
+    <testcase classname="AuthProvider logout clears user and storage" name="AuthProvider logout clears user and storage" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="shiftReducer notifications &amp; filters" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.27" tests="5">
     <testcase classname="shiftReducer notifications &amp; filters adds a notification" name="shiftReducer notifications &amp; filters adds a notification" time="0.004">
     </testcase>
-    <testcase classname="shiftReducer notifications &amp; filters marks one notification read" name="shiftReducer notifications &amp; filters marks one notification read" time="0.001">
+    <testcase classname="shiftReducer notifications &amp; filters marks one notification read" name="shiftReducer notifications &amp; filters marks one notification read" time="0">
     </testcase>
     <testcase classname="shiftReducer notifications &amp; filters marks all notifications read" name="shiftReducer notifications &amp; filters marks all notifications read" time="0.001">
     </testcase>
@@ -225,170 +174,221 @@
     <testcase classname="shiftReducer notifications &amp; filters updates filters" name="shiftReducer notifications &amp; filters updates filters" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="SharePointService" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.222" tests="6">
-    <testcase classname="SharePointService getShifts returns transformed data on success" name="SharePointService getShifts returns transformed data on success" time="0.005">
+  <testsuite name="auth permission helpers" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.249" tests="2">
+    <testcase classname="auth permission helpers role hierarchy enforces expected permissions" name="auth permission helpers role hierarchy enforces expected permissions" time="0.003">
     </testcase>
-    <testcase classname="SharePointService getShifts falls back to localStorage on fetch error" name="SharePointService getShifts falls back to localStorage on fetch error" time="0.001">
-    </testcase>
-    <testcase classname="SharePointService createShift returns transformed shift on success" name="SharePointService createShift returns transformed shift on success" time="0.002">
-    </testcase>
-    <testcase classname="SharePointService createShift fallback to localStorage on failing token fetch" name="SharePointService createShift fallback to localStorage on failing token fetch" time="0.001">
-    </testcase>
-    <testcase classname="SharePointService isSharePointAvailable returns true when response ok" name="SharePointService isSharePointAvailable returns true when response ok" time="0.001">
-    </testcase>
-    <testcase classname="SharePointService isSharePointAvailable returns false on error" name="SharePointService isSharePointAvailable returns false on error" time="0.001">
+    <testcase classname="auth permission helpers no higher role incorrectly gains audit permission" name="auth permission helpers no higher role incorrectly gains audit permission" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="validation utils" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.189" tests="2">
+  <testsuite name="shiftReducer" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.292" tests="4">
+    <testcase classname="shiftReducer returns state for unknown action" name="shiftReducer returns state for unknown action" time="0.002">
+    </testcase>
+    <testcase classname="shiftReducer adds a shift" name="shiftReducer adds a shift" time="0.001">
+    </testcase>
+    <testcase classname="shiftReducer updates a shift" name="shiftReducer updates a shift" time="0.001">
+    </testcase>
+    <testcase classname="shiftReducer assigns a shift (ASSIGN_SHIFT)" name="shiftReducer assigns a shift (ASSIGN_SHIFT)" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="ThemeToggle" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.402" tests="2">
+    <testcase classname="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" name="ThemeToggle renders moon icon initially (light mode) and toggles to sun icon (dark mode)" time="0.041">
+    </testcase>
+    <testcase classname="ThemeToggle sets data-theme attribute on documentElement when toggled" name="ThemeToggle sets data-theme attribute on documentElement when toggled" time="0.012">
+    </testcase>
+  </testsuite>
+  <testsuite name="LiveVersionBanner" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.47" tests="2">
+    <testcase classname="LiveVersionBanner renders with demo badge and localStorage icon" name="LiveVersionBanner renders with demo badge and localStorage icon" time="0.038">
+    </testcase>
+    <testcase classname="LiveVersionBanner dismiss button hides banner and stores flag" name="LiveVersionBanner dismiss button hides banner and stores flag" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="FeedbackModal accessibility basics" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:13" time="0.401" tests="1">
+    <testcase classname="FeedbackModal accessibility basics traps focus and blocks empty submit" name="FeedbackModal accessibility basics traps focus and blocks empty submit" time="0.05">
+    </testcase>
+  </testsuite>
+  <testsuite name="FeedbackModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.467" tests="1">
+    <testcase classname="FeedbackModal submits feedback and closes" name="FeedbackModal submits feedback and closes" time="0.069">
+    </testcase>
+  </testsuite>
+  <testsuite name="Administration page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.408" tests="1">
+    <testcase classname="Administration page renders heading and child managers" name="Administration page renders heading and child managers" time="0.027">
+    </testcase>
+  </testsuite>
+  <testsuite name="TestPage" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.583" tests="2">
+    <testcase classname="TestPage renders heading and status blocks" name="TestPage renders heading and status blocks" time="0.038">
+    </testcase>
+    <testcase classname="TestPage runs tests and shows results" name="TestPage runs tests and shows results" time="0.055">
+    </testcase>
+  </testsuite>
+  <testsuite name="IndexedDBShiftRepository" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.247" tests="1">
+    <testcase classname="IndexedDBShiftRepository CRUD + domain operations" name="IndexedDBShiftRepository CRUD + domain operations" time="0.018">
+    </testcase>
+  </testsuite>
+  <testsuite name="Login" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.351" tests="2">
+    <testcase classname="Login renders role buttons when logged out and logs in on click" name="Login renders role buttons when logged out and logs in on click" time="0.032">
+    </testcase>
+    <testcase classname="Login shows welcome and logout when user present" name="Login shows welcome and logout when user present" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="Shift create persistence" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:14" time="0.42" tests="1">
+    <testcase classname="Shift create persistence marks shift pendingSync when repository create fails" name="Shift create persistence marks shift pendingSync when repository create fails" time="0.082">
+    </testcase>
+  </testsuite>
+  <testsuite name="Navigation" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.333" tests="2">
+    <testcase classname="Navigation shows login link (Anmelden) when not authenticated" name="Navigation shows login link (Anmelden) when not authenticated" time="0.037">
+    </testcase>
+    <testcase classname="Navigation shows admin links and logout when admin" name="Navigation shows admin links and logout when admin" time="0.028">
+    </testcase>
+  </testsuite>
+  <testsuite name="ShiftTable" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.359" tests="2">
+    <testcase classname="ShiftTable renders shifts correctly" name="ShiftTable renders shifts correctly" time="0.021">
+    </testcase>
+    <testcase classname="ShiftTable handles apply action" name="ShiftTable handles apply action" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="Shift domain guards" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.362" tests="1">
+    <testcase classname="Shift domain guards duplicate shift detection returns reason duplicate" name="Shift domain guards duplicate shift detection returns reason duplicate" time="0.073">
+    </testcase>
+  </testsuite>
+  <testsuite name="RoleManagement" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.395" tests="1">
+    <testcase classname="RoleManagement renders users and allows editing manageable role" name="RoleManagement renders users and allows editing manageable role" time="0.041">
+    </testcase>
+  </testsuite>
+  <testsuite name="Dark theme toggle (a11y precondition)" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.4" tests="1">
+    <testcase classname="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" name="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" time="0.029">
+    </testcase>
+  </testsuite>
+  <testsuite name="ThemeContext tokens" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.332" tests="1">
+    <testcase classname="ThemeContext tokens toggles data-theme attribute and persists" name="ThemeContext tokens toggles data-theme attribute and persists" time="0.027">
+    </testcase>
+  </testsuite>
+  <testsuite name="ErrorBoundary" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.305" tests="1">
+    <testcase classname="ErrorBoundary renders fallback UI and dispatches telemetry on error" name="ErrorBoundary renders fallback UI and dispatches telemetry on error" time="0.039">
+    </testcase>
+  </testsuite>
+  <testsuite name="role capability helpers" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:15" time="0.278" tests="16">
+    <testcase classname="role capability helpers canManageShifts(admin)" name="role capability helpers canManageShifts(admin)" time="0.002">
+    </testcase>
+    <testcase classname="role capability helpers canManageShifts(chief)" name="role capability helpers canManageShifts(chief)" time="0.001">
+    </testcase>
+    <testcase classname="role capability helpers canManageShifts(disponent)" name="role capability helpers canManageShifts(disponent)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canManageShifts(analyst)" name="role capability helpers canManageShifts(analyst)" time="0.001">
+    </testcase>
+    <testcase classname="role capability helpers canAssignShifts(admin)" name="role capability helpers canAssignShifts(admin)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canAssignShifts(chief)" name="role capability helpers canAssignShifts(chief)" time="0.002">
+    </testcase>
+    <testcase classname="role capability helpers canAssignShifts(disponent)" name="role capability helpers canAssignShifts(disponent)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canAssignShifts(analyst)" name="role capability helpers canAssignShifts(analyst)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canManageTemplates(admin)" name="role capability helpers canManageTemplates(admin)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canManageTemplates(chief)" name="role capability helpers canManageTemplates(chief)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canManageTemplates(disponent)" name="role capability helpers canManageTemplates(disponent)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canManageTemplates(analyst)" name="role capability helpers canManageTemplates(analyst)" time="0.001">
+    </testcase>
+    <testcase classname="role capability helpers canViewAnalytics(admin)" name="role capability helpers canViewAnalytics(admin)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canViewAnalytics(chief)" name="role capability helpers canViewAnalytics(chief)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canViewAnalytics(disponent)" name="role capability helpers canViewAnalytics(disponent)" time="0">
+    </testcase>
+    <testcase classname="role capability helpers canViewAnalytics(analyst)" name="role capability helpers canViewAnalytics(analyst)" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="conflicts mapping utilities" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.213" tests="4">
+    <testcase classname="conflicts mapping utilities CONFLICT_LABELS keys stable" name="conflicts mapping utilities CONFLICT_LABELS keys stable" time="0.002">
+    </testcase>
+    <testcase classname="conflicts mapping utilities describeConflicts maps known codes and preserves unknown" name="conflicts mapping utilities describeConflicts maps known codes and preserves unknown" time="0.001">
+    </testcase>
+    <testcase classname="conflicts mapping utilities firstConflictTooltip concatenates labels" name="conflicts mapping utilities firstConflictTooltip concatenates labels" time="0.001">
+    </testcase>
+    <testcase classname="conflicts mapping utilities empty arrays produce empty tooltip" name="conflicts mapping utilities empty arrays produce empty tooltip" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="test data factories" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.282" tests="3">
+    <testcase classname="test data factories buildUser applies defaults and unique ids" name="test data factories buildUser applies defaults and unique ids" time="0.003">
+    </testcase>
+    <testcase classname="test data factories buildShift allows overrides and defaults" name="test data factories buildShift allows overrides and defaults" time="0.001">
+    </testcase>
+    <testcase classname="test data factories buildApplication sets relations and allows override" name="test data factories buildApplication sets relations and allows override" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="validation utils" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.229" tests="2">
     <testcase classname="validation utils accepts a well-formed shift" name="validation utils accepts a well-formed shift" time="0.002">
     </testcase>
     <testcase classname="validation utils filters malformed shifts" name="validation utils filters malformed shifts" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="ID Generator" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.26" tests="2">
-    <testcase classname="ID Generator monotonic increasing with zero padding" name="ID Generator monotonic increasing with zero padding" time="0.004">
+  <testsuite name="logger" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.244" tests="2">
+    <testcase classname="logger emits when not silent" name="logger emits when not silent" time="0.002">
+    </testcase>
+    <testcase classname="logger suppresses when silent" name="logger suppresses when silent" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Audit page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.428" tests="2">
+    <testcase classname="Audit page renders heading and all logs initially" name="Audit page renders heading and all logs initially" time="0.043">
+    </testcase>
+    <testcase classname="Audit page filters by type" name="Audit page filters by type" time="0.021">
+    </testcase>
+  </testsuite>
+  <testsuite name="error telemetry utility" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.272" tests="3">
+    <testcase classname="error telemetry utility invokes registered handler with payload" name="error telemetry utility invokes registered handler with payload" time="0.003">
+    </testcase>
+    <testcase classname="error telemetry utility swallows errors in handler" name="error telemetry utility swallows errors in handler" time="0">
+    </testcase>
+    <testcase classname="error telemetry utility returns false when no handler registered" name="error telemetry utility returns false when no handler registered" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="ConnectionStatus feature flag badge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.296" tests="1">
+    <testcase classname="ConnectionStatus feature flag badge renders SP deaktiviert badge when sharepoint flag off" name="ConnectionStatus feature flag badge renders SP deaktiviert badge when sharepoint flag off" time="0.042">
+    </testcase>
+  </testsuite>
+  <testsuite name="Status Model" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.295" tests="3">
+    <testcase classname="Status Model allowed transitions" name="Status Model allowed transitions" time="0.002">
+    </testcase>
+    <testcase classname="Status Model disallowed transitions" name="Status Model disallowed transitions" time="0.001">
+    </testcase>
+    <testcase classname="Status Model assertTransition throws on invalid" name="Status Model assertTransition throws on invalid" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="ID Generator" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="0.257" tests="2">
+    <testcase classname="ID Generator monotonic increasing with zero padding" name="ID Generator monotonic increasing with zero padding" time="0.003">
     </testcase>
     <testcase classname="ID Generator persists counter value" name="ID Generator persists counter value" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="Shift domain guards" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.445" tests="1">
-    <testcase classname="Shift domain guards duplicate shift detection returns reason duplicate" name="Shift domain guards duplicate shift detection returns reason duplicate" time="0.102">
+  <testsuite name="Navigation accessibility" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:16" time="0.522" tests="1">
+    <testcase classname="Navigation accessibility has no axe violations" name="Navigation accessibility has no axe violations" time="0.178">
     </testcase>
   </testsuite>
-  <testsuite name="ShiftContext isOnline heartbeat" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.351" tests="1">
-    <testcase classname="ShiftContext isOnline heartbeat sets isOnline boolean after heartbeat" name="ShiftContext isOnline heartbeat sets isOnline boolean after heartbeat" time="0.048">
+  <testsuite name="ShiftContext isOnline heartbeat" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="0.434" tests="1">
+    <testcase classname="ShiftContext isOnline heartbeat sets isOnline boolean after heartbeat" name="ShiftContext isOnline heartbeat sets isOnline boolean after heartbeat" time="0.043">
     </testcase>
   </testsuite>
-  <testsuite name="Shift creation via template (Schicht anlegen)" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:29" time="0.569" tests="1">
-    <testcase classname="Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today&apos;s weekday" name="Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today&apos;s weekday" time="0.205">
+  <testsuite name="RoleManagement runtime safety" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="0.318" tests="1">
+    <testcase classname="RoleManagement runtime safety renders empty state when no users prop provided" name="RoleManagement runtime safety renders empty state when no users prop provided" time="0.014">
     </testcase>
   </testsuite>
-  <testsuite name="offline queue integration" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.391" tests="2">
-    <testcase classname="offline queue integration failed create is queued and pendingSync then drained when online" name="offline queue integration failed create is queued and pendingSync then drained when online" time="0.056">
-    </testcase>
-    <testcase classname="offline queue integration apply action enqueued on failure and retried" name="offline queue integration apply action enqueued on failure and retried" time="0.027">
+  <testsuite name="VersionBadge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="0.274" tests="1">
+    <testcase classname="VersionBadge renders version badge with defined version" name="VersionBadge renders version badge with defined version" time="0.024">
     </testcase>
   </testsuite>
-  <testsuite name="TestPage" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.421" tests="2">
-    <testcase classname="TestPage renders heading and status blocks" name="TestPage renders heading and status blocks" time="0.038">
-    </testcase>
-    <testcase classname="TestPage runs tests and shows results" name="TestPage runs tests and shows results" time="0.047">
+  <testsuite name="Deterministic Seed" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="0.264" tests="1">
+    <testcase classname="Deterministic Seed snapshot of initial seed shifts remains stable" name="Deterministic Seed snapshot of initial seed shifts remains stable" time="0.015">
     </testcase>
   </testsuite>
-  <testsuite name="ShiftTable" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.368" tests="2">
-    <testcase classname="ShiftTable renders shifts correctly" name="ShiftTable renders shifts correctly" time="0.028">
-    </testcase>
-    <testcase classname="ShiftTable handles apply action" name="ShiftTable handles apply action" time="0.01">
+  <testsuite name="Accessibility smoke test" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:10:17" time="1.042" tests="1">
+    <testcase classname="Accessibility smoke test has no obvious a11y violations on dashboard route" name="Accessibility smoke test has no obvious a11y violations on dashboard route" time="0.411">
     </testcase>
   </testsuite>
-  <testsuite name="Accessibility smoke test" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.852" tests="1">
-    <testcase classname="Accessibility smoke test has no obvious a11y violations on dashboard route" name="Accessibility smoke test has no obvious a11y violations on dashboard route" time="0.424">
-    </testcase>
-  </testsuite>
-  <testsuite name="ShiftTable actions" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.419" tests="5">
-    <testcase classname="ShiftTable actions invokes applyToShift when Bewerben clicked" name="ShiftTable actions invokes applyToShift when Bewerben clicked" time="0.025">
-    </testcase>
-    <testcase classname="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" name="ShiftTable actions invokes assignShift when Zuweisen clicked for manager role" time="0.012">
-    </testcase>
-    <testcase classname="ShiftTable actions calls cancelShift when Absagen clicked on assigned shift" name="ShiftTable actions calls cancelShift when Absagen clicked on assigned shift" time="0.009">
-    </testcase>
-    <testcase classname="ShiftTable actions disables Bewerben when not logged in" name="ShiftTable actions disables Bewerben when not logged in" time="0.007">
-    </testcase>
-    <testcase classname="ShiftTable actions disables Zuweisen when status not open" name="ShiftTable actions disables Zuweisen when status not open" time="0.005">
-    </testcase>
-  </testsuite>
-  <testsuite name="Shift create persistence" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:30" time="0.391" tests="1">
-    <testcase classname="Shift create persistence marks shift pendingSync when repository create fails" name="Shift create persistence marks shift pendingSync when repository create fails" time="0.073">
-    </testcase>
-  </testsuite>
-  <testsuite name="ShiftContext integration basics" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.386" tests="1">
-    <testcase classname="ShiftContext integration basics initializes shifts and supports core actions" name="ShiftContext integration basics initializes shifts and supports core actions" time="0.068">
-    </testcase>
-  </testsuite>
-  <testsuite name="Shift assignment &amp; notifications" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.335" tests="1">
-    <testcase classname="Shift assignment &amp; notifications assigns a shift and updates status" name="Shift assignment &amp; notifications assigns a shift and updates status" time="0.047">
-    </testcase>
-  </testsuite>
-  <testsuite name="SeriesApplicationModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.453" tests="2">
-    <testcase classname="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" name="SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut" time="0.097">
-    </testcase>
-    <testcase classname="SeriesApplicationModal disables submit when no selection and enables after selecting one" name="SeriesApplicationModal disables submit when no selection and enables after selecting one" time="0.023">
-    </testcase>
-  </testsuite>
-  <testsuite name="NotificationMenu" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.5" tests="2">
-    <testcase classname="NotificationMenu marks single notification read" name="NotificationMenu marks single notification read" time="0.079">
-    </testcase>
-    <testcase classname="NotificationMenu marks all notifications read" name="NotificationMenu marks all notifications read" time="0.031">
-    </testcase>
-  </testsuite>
-  <testsuite name="Dashboard page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.657" tests="3">
-    <testcase classname="Dashboard page renders heading and analytics" name="Dashboard page renders heading and analytics" time="0.088">
-    </testcase>
-    <testcase classname="Dashboard page filters by status (open, assigned, cancelled)" name="Dashboard page filters by status (open, assigned, cancelled)" time="0.139">
-    </testcase>
-    <testcase classname="Dashboard page shows auto assign button when user can manage shifts" name="Dashboard page shows auto assign button when user can manage shifts" time="0.054">
-    </testcase>
-  </testsuite>
-  <testsuite name="ConnectionStatus" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.309" tests="4">
-    <testcase classname="ConnectionStatus shows sharepoint connected state (green)" name="ConnectionStatus shows sharepoint connected state (green)" time="0.019">
-    </testcase>
-    <testcase classname="ConnectionStatus shows localStorage offline mode with tip (yellow)" name="ConnectionStatus shows localStorage offline mode with tip (yellow)" time="0.005">
-    </testcase>
-    <testcase classname="ConnectionStatus shows error state (red) when sharepoint not online" name="ConnectionStatus shows error state (red) when sharepoint not online" time="0.004">
-    </testcase>
-    <testcase classname="ConnectionStatus clicking test button triggers handler (smoke)" name="ConnectionStatus clicking test button triggers handler (smoke)" time="0.036">
-    </testcase>
-  </testsuite>
-  <testsuite name="CreateShiftModal" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:31" time="0.487" tests="3">
-    <testcase classname="CreateShiftModal creates a shift and closes" name="CreateShiftModal creates a shift and closes" time="0.071">
-    </testcase>
-    <testcase classname="CreateShiftModal shows validation error when missing date" name="CreateShiftModal shows validation error when missing date" time="0.05">
-    </testcase>
-    <testcase classname="CreateShiftModal shows validation error when missing work location" name="CreateShiftModal shows validation error when missing work location" time="0.021">
-    </testcase>
-  </testsuite>
-  <testsuite name="ConnectionStatus feature flag badge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.292" tests="1">
-    <testcase classname="ConnectionStatus feature flag badge renders SP deaktiviert badge when sharepoint flag off" name="ConnectionStatus feature flag badge renders SP deaktiviert badge when sharepoint flag off" time="0.028">
-    </testcase>
-  </testsuite>
-  <testsuite name="AutosaveManager" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.504" tests="5">
-    <testcase classname="AutosaveManager creates an initial snapshot and shows autosave indicator" name="AutosaveManager creates an initial snapshot and shows autosave indicator" time="0.037">
-    </testcase>
-    <testcase classname="AutosaveManager adds multiple snapshots over time (interval advance)" name="AutosaveManager adds multiple snapshots over time (interval advance)" time="0.016">
-    </testcase>
-    <testcase classname="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" name="AutosaveManager opens recovery panel when snapshots exist &amp; unsaved work flag present" time="0.028">
-    </testcase>
-    <testcase classname="AutosaveManager can dismiss recovery panel via Überspringen" name="AutosaveManager can dismiss recovery panel via Überspringen" time="0.022">
-    </testcase>
-    <testcase classname="AutosaveManager restores snapshot shifts into context" name="AutosaveManager restores snapshot shifts into context" time="0.063">
-    </testcase>
-  </testsuite>
-  <testsuite name="Audit page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.387" tests="2">
-    <testcase classname="Audit page renders heading and all logs initially" name="Audit page renders heading and all logs initially" time="0.037">
-    </testcase>
-    <testcase classname="Audit page filters by type" name="Audit page filters by type" time="0.028">
-    </testcase>
-  </testsuite>
-  <testsuite name="Calendar page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.809" tests="4">
-    <testcase classname="Calendar page renders week header and shifts" name="Calendar page renders week header and shifts" time="0.127">
-    </testcase>
-    <testcase classname="Calendar page navigates weeks forward and back" name="Calendar page navigates weeks forward and back" time="0.16">
-    </testcase>
-    <testcase classname="Calendar page resets to today" name="Calendar page resets to today" time="0.133">
-    </testcase>
-    <testcase classname="Calendar page shows create shift button for manager role" name="Calendar page shows create shift button for manager role" time="0.1">
-    </testcase>
-  </testsuite>
-  <testsuite name="Administration page" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:32" time="0.362" tests="1">
-    <testcase classname="Administration page renders heading and child managers" name="Administration page renders heading and child managers" time="0.017">
-    </testcase>
-  </testsuite>
-  <testsuite name="ActiveRoleBadge" errors="0" failures="0" skipped="0" timestamp="2025-08-27T08:45:33" time="0.348" tests="3">
-    <testcase classname="ActiveRoleBadge renders nothing when no user" name="ActiveRoleBadge renders nothing when no user" time="0.01">
-    </testcase>
-    <testcase classname="ActiveRoleBadge shows role badge for each role" name="ActiveRoleBadge shows role badge for each role" time="0.009">
-    </testcase>
-    <testcase classname="ActiveRoleBadge shows admin only nav items and hides for analyst" name="ActiveRoleBadge shows admin only nav items and hides for analyst" time="0.021">
+  <testsuite name="undefined" errors="0" failures="0" skipped="1" timestamp="2025-08-27T09:10:18" time="0.196" tests="1">
+    <testcase classname=" MigrationService tests deferred until Firebase enabled" name=" MigrationService tests deferred until Firebase enabled" time="0">
+      <skipped/>
     </testcase>
   </testsuite>
 </testsuites>
