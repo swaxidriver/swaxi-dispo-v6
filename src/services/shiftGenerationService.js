@@ -1,4 +1,5 @@
 import { addDays, format, getDay } from 'date-fns'
+import { buildShiftId } from '../contexts/ShiftContextCore'
 
 const dayMapping = {
   Su: 0,
@@ -20,9 +21,10 @@ export function generateShifts(templates) {
 
     templates.forEach((template) => {
       if (template.days.map(d => dayMapping[d]).includes(dayOfWeek)) {
+        const dateStr = format(date, 'yyyy-MM-dd')
         newShifts.push({
-          id: `${format(date, 'yyyy-MM-dd')}-${template.name}`,
-          date: format(date, 'yyyy-MM-dd'),
+          id: buildShiftId(dateStr, template.name), // Use consistent ID format
+          date: dateStr,
           name: template.name,
           startTime: template.startTime,
           endTime: template.endTime,
