@@ -71,8 +71,10 @@ export function computeShiftConflicts(target, others, applications) {
           hasAssignmentCollision = true
           if (targetWorkLocation && overlap.workLocation && overlap.workLocation !== targetWorkLocation) {
             hasLocationMismatch = true
-            break // Found both conflicts, no need to continue
           }
+        }
+        if (hasAssignmentCollision && hasLocationMismatch) {
+          break // Found both conflicts, no need to continue
         }
       }
       
