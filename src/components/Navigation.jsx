@@ -24,6 +24,7 @@ export default function Navigation() {
   { name: 'Kalender', href: '/calendar' },
   isAdmin && { name: 'Verwaltung', href: '/admin' },
   isAdmin && { name: 'Audit', href: '/audit' },
+  { name: 'Einstellungen', href: '/settings' },
   { name: '🧪 Test', href: '/test' },
   ].filter(Boolean)
 

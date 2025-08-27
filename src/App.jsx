@@ -7,6 +7,8 @@ import { ShiftProvider } from './contexts/ShiftContext'
 import { FeedbackProvider } from './contexts/FeedbackContext'
 import FeedbackModal from './components/FeedbackModal'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { ToastProvider } from './contexts/ToastContext'
+import ToastContainer from './components/ToastContainer'
 import Navigation from './components/Navigation'
 import LiveVersionBanner from './components/LiveVersionBanner'
 import AutosaveManager from './components/AutosaveManager'
@@ -15,6 +17,7 @@ import Calendar from './pages/Calendar'
 import Administration from './pages/Administration'
 import Audit from './pages/Audit'
 import TestPage from './pages/TestPage'
+import Settings from './pages/Settings'
 import Login from './components/Login'
 import './App.css'
 
@@ -53,42 +56,46 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <ShiftProvider>
-          <FeedbackProvider onNewFeedback={(entry) => {
-            // push into notifications via ShiftContext dispatch (available under provider tree)
-            // we cannot import hook at module top (ordering) so do dynamic inside callback
-            try {
-              const evt = new CustomEvent('swaxi-feedback', { detail: entry })
-              window.dispatchEvent(evt)
-            } catch { /* ignore */ }
-          }}>
-          <Router basename="/swaxi-dispo-v6">
-            <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
-              <LiveVersionBanner />
-              <Navigation />
-              <ErrorBoundary>
-                <main id="main-content" className="flex-1" role="main">
-                  {ready ? (
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/calendar" element={<Calendar />} />
-                      <Route path="/admin" element={<Administration />} />
-                      <Route path="/audit" element={<Audit />} />
-                      <Route path="/test" element={<TestPage />} />
-                      <Route path="/login" element={<Login />} />
-                    </Routes>
-                  ) : <LoadingSkeleton />}
-                </main>
-              </ErrorBoundary>
-              <Footer />
-              <AutosaveManager />
-              {/* Global polite aria-live region for lightweight announcements / toasts */}
-              <div id="aria-live-root" className="sr-only" aria-live="polite" />
-              <FeedbackModal />
-            </div>
-          </Router>
-          </FeedbackProvider>
-        </ShiftProvider>
+        <ToastProvider>
+          <ShiftProvider>
+            <FeedbackProvider onNewFeedback={(entry) => {
+              // push into notifications via ShiftContext dispatch (available under provider tree)
+              // we cannot import hook at module top (ordering) so do dynamic inside callback
+              try {
+                const evt = new CustomEvent('swaxi-feedback', { detail: entry })
+                window.dispatchEvent(evt)
+              } catch { /* ignore */ }
+            }}>
+            <Router basename="/swaxi-dispo-v6">
+              <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
+                <LiveVersionBanner />
+                <Navigation />
+                <ErrorBoundary>
+                  <main id="main-content" className="flex-1" role="main">
+                    {ready ? (
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/admin" element={<Administration />} />
+                        <Route path="/audit" element={<Audit />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/test" element={<TestPage />} />
+                        <Route path="/login" element={<Login />} />
+                      </Routes>
+                    ) : <LoadingSkeleton />}
+                  </main>
+                </ErrorBoundary>
+                <Footer />
+                <AutosaveManager />
+                {/* Global polite aria-live region for lightweight announcements / toasts */}
+                <div id="aria-live-root" className="sr-only" aria-live="polite" />
+                <FeedbackModal />
+                <ToastContainer />
+              </div>
+            </Router>
+            </FeedbackProvider>
+          </ShiftProvider>
+        </ToastProvider>
       </ThemeProvider>
     </AuthProvider>
   )

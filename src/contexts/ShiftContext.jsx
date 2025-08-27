@@ -24,6 +24,7 @@ import { enqueue, drain as drainQueue, peekQueue } from '../services/offlineQueu
 import { STATUS, assertTransition } from '../domain/status'
 import { generateId } from '../utils/id'
 import { useShiftTemplates } from './useShiftTemplates'
+import { autoAssignShifts, getAssignmentStats } from '../services/autoAssignService'
 
 const ShiftContext = createContext(null)
 
@@ -250,6 +251,43 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     }
   }, [state.shifts, state.applications])
 
+  const runAutoAssign = useCallback(() => {
+    const openShifts = state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN && !s.assignedTo)
+    if (openShifts.length === 0) {
+      dispatch({ type: 'ADD_NOTIFICATION', payload: { 
+        id: `auto_assign_${Date.now()}`, 
+        title: 'Auto-Zuweisung', 
+        message: 'Keine offenen Dienste zum Zuweisen verfügbar', 
+        timestamp: new Date().toLocaleString(), 
+        isRead: false 
+      }})
+      return { assigned: 0, total: 0, stats: null }
+    }
+
+    const recommendations = autoAssignShifts(openShifts, state.shifts, state.applications)
+    const stats = getAssignmentStats(recommendations)
+    
+    // Apply successful assignments
+    let assignedCount = 0
+    recommendations.forEach(rec => {
+      if (rec.recommendedUser) {
+        assignShift(rec.shiftId, rec.recommendedUser.name || rec.recommendedUser.id)
+        assignedCount++
+      }
+    })
+    
+    // Add summary notification
+    dispatch({ type: 'ADD_NOTIFICATION', payload: { 
+      id: `auto_assign_${Date.now()}`, 
+      title: 'Auto-Zuweisung', 
+      message: `${assignedCount} von ${openShifts.length} Diensten automatisch zugewiesen`, 
+      timestamp: new Date().toLocaleString(), 
+      isRead: false 
+    }})
+    
+    return { assigned: assignedCount, total: openShifts.length, stats }
+  }, [state.shifts, state.applications, assignShift])
+
   const markNotificationRead = useCallback((id) => dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id }), [])
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
 
@@ -355,12 +393,13 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     assignShift,
   cancelShift,
     createShift,
+    runAutoAssign,
     markNotificationRead,
     markAllNotificationsRead,
   getOpenShifts: () => state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN),
   getConflictedShifts: () => state.shifts.filter(s => s.conflicts?.length),
   restoreFromSnapshot,
-  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, cancelShift, createShift, markNotificationRead, markAllNotificationsRead, restoreFromSnapshot])
+  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, cancelShift, createShift, runAutoAssign, markNotificationRead, markAllNotificationsRead, restoreFromSnapshot])
 
   return <ShiftContext.Provider value={value}>{children}</ShiftContext.Provider>
 }

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 
 import { useShifts } from '../contexts/useShifts'
+import { useToast } from '../contexts/useToast'
 import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canTransition, STATUS } from '../domain/status'
@@ -12,6 +13,7 @@ import _SeriesApplicationModal from './SeriesApplicationModal'
 
 export default function ShiftTable({ shifts, showActions = true }) {
   const { applyToShift, assignShift, cancelShift } = useShifts();
+  const { addToast } = useToast();
   const [showSeriesModal, setShowSeriesModal] = useState(false);
   const auth = useContext(AuthContext)
   const userRole = auth?.user?.role || 'analyst'
@@ -32,15 +34,18 @@ export default function ShiftTable({ shifts, showActions = true }) {
   const handleApply = (shiftId) => {
     if(!auth?.user) return; // must be logged in
     applyToShift(shiftId, auth.user.name || auth.user.role);
+    addToast(`Bewerbung für Dienst ${shiftId} eingereicht`, { type: 'success' });
   };
 
   const handleAssign = (shiftId) => {
     if(!auth?.user) return
     assignShift(shiftId, auth.user.name || auth.user.role)
+    addToast(`Dienst ${shiftId} zugewiesen`, { type: 'success' });
   };
 
   const handleCancel = (shiftId) => {
     cancelShift?.(shiftId)
+    addToast(`Dienst ${shiftId} abgesagt`, { type: 'info' });
   };
 
   return (
