@@ -1,17 +1,18 @@
-/* Import design tokens */
+/* Import design tokens first (prevent PostCSS @import warnings) */
 @import './styles/tokens.css';
-/* Local self-hosted Manrope font (weights 400-700) */
-@import '@fontsource/manrope/400.css';
-@import '@fontsource/manrope/500.css';
-@import '@fontsource/manrope/600.css';
-@import '@fontsource/manrope/700.css';
+/* Self-hosted Manrope font with optimized loading */
+@import './styles/fonts.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root { font-family: var(--font-sans); }
+  :root { 
+    font-family: var(--font-sans);
+    /* Improved base line-height scale for better readability */
+    line-height: 1.6;
+  }
 
   body {
     background: var(--color-bg);
@@ -19,6 +20,11 @@
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+    /* Font smoothing for improved typography rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enhanced text rendering */
+    text-rendering: optimizeLegibility;
   }
 
   /* Modern Scrollbar */
