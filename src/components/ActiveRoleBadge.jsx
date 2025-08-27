@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, memo } from 'react'
 
 // AuthContext is exported as default from AuthContext.jsx
 import AuthContext from '../contexts/AuthContext'
@@ -14,7 +14,7 @@ function roleStyle(role) {
   }
 }
 
-export default function ActiveRoleBadge({ className = '' }) {
+function ActiveRoleBadge({ className = '' }) {
   const auth = useContext(AuthContext)
   const role = auth?.user?.role
   if (!role) return null
@@ -28,3 +28,5 @@ export default function ActiveRoleBadge({ className = '' }) {
     </span>
   )
 }
+
+export default memo(ActiveRoleBadge)

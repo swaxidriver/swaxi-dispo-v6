@@ -1,8 +1,10 @@
+import { memo } from 'react'
+
 /* global __APP_VERSION__, __APP_COMMIT__, __APP_BUILD__, __APP_BUILD_TIME__ */
 // VersionBadge: small build/version metadata pill injected at build time via Vite define
 // Values come from vite.config.js defines (__APP_VERSION__, __APP_COMMIT__, __APP_BUILD__)
 // Shows semantic version; hover reveals commit + build meta for diagnostics.
-export default function VersionBadge({ className = '' }) {
+function VersionBadge({ className = '' }) {
   const version = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'
   const commit = typeof __APP_COMMIT__ !== 'undefined' ? __APP_COMMIT__ : 'local'
   const build = typeof __APP_BUILD__ !== 'undefined' ? __APP_BUILD__ : '0'
@@ -17,3 +19,5 @@ export default function VersionBadge({ className = '' }) {
     >v{version}</span>
   )
 }
+
+export default memo(VersionBadge)
