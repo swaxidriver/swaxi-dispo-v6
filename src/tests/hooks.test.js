@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react'
+
 import { useAsyncOperation, useFormState, useLocalStorage } from '../hooks'
 
 describe('Custom Hooks', () => {
@@ -33,7 +34,7 @@ describe('Custom Hooks', () => {
       await act(async () => {
         try {
           await result.current.execute()
-        } catch (error) {
+        } catch (_error) {
           // Expected to throw
         }
       })
@@ -65,7 +66,7 @@ describe('Custom Hooks', () => {
       await act(async () => {
         try {
           await result.current.execute()
-        } catch (error) {
+        } catch (_error) {
           // Expected to throw
         }
       })

@@ -11,9 +11,10 @@ function readEnv(name, fallback) {
   }
   
   // In browser/Vite environment, use import.meta.env or process.env
-  // Use eval to prevent Jest from parsing import.meta at module load time
+  // Use dynamic property access to prevent Jest from parsing import.meta at module load time
   try {
-    const importMeta = eval('typeof import !== "undefined" ? import.meta : undefined')
+    const getImportMeta = new Function('return typeof import !== "undefined" ? import.meta : undefined')
+    const importMeta = getImportMeta()
     if (importMeta && importMeta.env && name in importMeta.env) return importMeta.env[name]
   } catch (_e) {
     // Fallback to process.env if import.meta fails

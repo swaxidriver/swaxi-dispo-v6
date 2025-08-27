@@ -1,8 +1,9 @@
 // src/services/migrationService.js
 import { collection, writeBatch, doc, getDocs } from 'firebase/firestore';
 
-import { db } from './firebaseConfig';
 import { logInfo, logError } from '../utils/logger';
+
+import { db } from './firebaseConfig';
 
 export class MigrationService {
   async exportLocalStorageData() {

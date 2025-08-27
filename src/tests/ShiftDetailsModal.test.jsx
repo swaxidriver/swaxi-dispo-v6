@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+
 import ShiftDetailsModal from '../components/ShiftDetailsModal'
 
 const mockShift = {
