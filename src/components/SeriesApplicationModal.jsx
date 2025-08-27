@@ -10,8 +10,22 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
   const [selectedShifts, setSelectedShifts] = useState([]);
   // Preserve legacy default "current-user" to keep existing tests stable
   const [userId] = useState(auth?.user?.id || 'current-user');
-  const lastActiveRef = useRef(null);
 
+  // Focus management: save last active element when modal opens, restore when closes
+  useEffect(() => {
+    if (isOpen) {
+      lastActiveRef.current = document.activeElement;
+    }
+    // When modal closes, restore focus to last active element
+    if (!isOpen && lastActiveRef.current) {
+      // Use setTimeout to ensure focus after modal unmount
+      setTimeout(() => {
+        if (lastActiveRef.current && typeof lastActiveRef.current.focus === 'function') {
+          lastActiveRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [isOpen]);
   const availableShifts = shifts.filter(shift => shift.status === SHIFT_STATUS.OPEN);
 
   const handleShiftToggle = (shiftId) => {
