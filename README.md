@@ -402,11 +402,59 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 3. Semantische Benennung: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen
 4. Unterschied `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
 
+### Programmatic Token Consumption
+
+Design tokens are available as machine-readable JSON for integration with external tools:
+
+**Location**: `src/tokens.json`
+
+**Structure**:
+```json
+{
+  "light": {
+    "colors": { "color-primary": "#222F88", ... },
+    "typography": { "font-sans": "Manrope, Inter, ...", ... },
+    "radii": { "radius-sm": "4px", ... },
+    "shadows": { "shadow-sm": "0 1px 2px rgba(0,0,0,0.06)", ... }
+  },
+  "dark": {
+    "colors": { "color-primary": "#8094ff", ... }
+  },
+  "meta": { "source": "src/styles/tokens.css", "version": "1.0.0" }
+}
+```
+
+**Regeneration**: `npm run build:tokens`
+
+**Use Cases**:
+- **Figma Sync**: Import color palettes and typography scales
+- **Storybook Integration**: Consume tokens for design system documentation
+- **Build Tools**: Generate platform-specific token formats (iOS, Android)
+- **Design QA**: Automated validation against design specs
+
+**Example JavaScript usage**:
+```javascript
+import tokens from './src/tokens.json';
+
+// Access light theme colors
+const primaryColor = tokens.light.colors['color-primary']; // "#222F88"
+const surfaceColor = tokens.light.colors['color-surface'];  // "#ffffff"
+
+// Access dark theme colors
+const darkPrimary = tokens.dark.colors['color-primary'];    // "#8094ff"
+
+// Access typography
+const fontFamily = tokens.light.typography['font-sans'];
+const textSizes = tokens.light.typography; // { text-xs: "0.75rem", ... }
+```
+
+**Stability**: Changes to tokens.json are protected by Jest snapshot tests to prevent accidental drift.
+
 ### Geplante Erweiterungen
 
 - Erhöhung der Coverage Thresholds (iterativ)
 - (Erledigt) Entfernen alter Sass Variablen / `main.scss`
 - (Neu) Fehler-Telemetrie Stub (`registerErrorTelemetry`) für zukünftige Remote Collection
-- Export der Tokens als JSON für Figma / Storybook
+- (Erledigt) Export der Tokens als JSON für Figma / Storybook
 - Tailwind Theme Mapping der Tokens (für Variants)
 - Optionale visuelle Regression Tests (Playwright + percy)

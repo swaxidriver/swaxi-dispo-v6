@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:tokens": "node scripts/build-tokens.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
   "test": "jest",
