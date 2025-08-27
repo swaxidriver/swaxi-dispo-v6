@@ -33,8 +33,9 @@
 }
 
 [data-theme='dark'] {
-  --color-primary: #3b4da3;
-  --color-primary-emphasis: #2c3a7a;
+  /* Adjusted for WCAG contrast vs dark bg (#0f172a): ensure >=4.5:1 */
+  --color-primary: #8094ff; /* new primary */
+  --color-primary-emphasis: #5d72d6; /* previous primary becomes emphasis */
   --color-accent: #27ADE7;
   --color-bg: #0f172a;
   --color-surface: #1e293b;

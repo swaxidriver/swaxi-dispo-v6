@@ -17,6 +17,17 @@
     <meta property="og:url" content="https://swaxi.example.com/" />
   <meta property="og:image" content="/vite.svg" />
   <!-- Local Manrope font loaded via @fontsource in src/index.css (external Google Fonts removed) -->
+  <script>
+    /* Apply persisted or system theme early to avoid FOUC */
+    (function(){
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored === 'dark' || stored === 'light' ? stored : (prefers ? 'dark':'light');
+        document.documentElement.dataset.theme = theme;
+      } catch(e) { /* ignore */ }
+    })();
+  </script>
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Swaxi Dispo" />
     <meta name="twitter:description" content="Hybride Dienstplanung – funktioniert offline & online." />
