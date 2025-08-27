@@ -25,6 +25,17 @@
   --text-md: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-16: 64px;
+
+  /* Border & Effects */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 10px;
@@ -52,3 +63,12 @@
 .token-border { border-color: var(--color-border); }
 .token-text-muted { color: var(--color-muted); }
 .token-heading { font-weight: 600; letter-spacing: .5px; }
+
+/* Spacing Utility Classes */
+.space-1 { --space: var(--space-1); }
+.space-2 { --space: var(--space-2); }
+.space-3 { --space: var(--space-3); }
+.space-4 { --space: var(--space-4); }
+.space-6 { --space: var(--space-6); }
+.space-8 { --space: var(--space-8); }
+.space-16 { --space: var(--space-16); }

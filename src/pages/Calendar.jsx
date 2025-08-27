@@ -46,7 +46,7 @@ function getShiftSpanForDay(shift, dayDate) {
   const minutesFromDayStart = (visibleStart - dayStart) / 60000
   const visibleMinutes = (visibleEnd - visibleStart) / 60000
   const top = (minutesFromDayStart / DAY_MINUTES) * DAY_HEIGHT
-  const height = Math.max(visibleMinutes / DAY_MINUTES * DAY_HEIGHT, 12) // minimum height
+  const height = Math.max(visibleMinutes / DAY_MINUTES * DAY_HEIGHT, 12) // minimum height: --space-3 (12px)
   return { top, height }
 }
 

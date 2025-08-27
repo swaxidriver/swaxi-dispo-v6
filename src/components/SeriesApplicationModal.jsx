@@ -77,9 +77,9 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" role="dialog" aria-modal="true" aria-labelledby="series-modal-title" aria-describedby="series-modal-desc">
-      <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" role="document">
-        <div className="mt-3">
-          <div className="flex items-center justify-between mb-4">
+      <div className="relative mx-auto border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" style={{ top: 'var(--space-16)', padding: 'var(--space-4)' }} role="document">
+        <div style={{ marginTop: 'var(--space-3)' }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-4)' }}>
             <h3 id="series-modal-title" className="text-lg font-medium text-gray-900">
               Serienbewerbung
             </h3>
@@ -92,39 +92,44 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
             </button>
           </div>
 
-          <div className="mb-4">
-            <p id="series-modal-desc" className="text-sm text-gray-600 mb-3">
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <p id="series-modal-desc" className="text-sm text-gray-600" style={{ marginBottom: 'var(--space-3)' }}>
               Bewerben Sie sich für mehrere Dienste gleichzeitig. Wählen Sie die gewünschten Dienste aus oder nutzen Sie die Schnellauswahl.
             </p>
             
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap" style={{ gap: 'var(--space-2)', marginBottom: 'var(--space-4)' }}>
               <button
                 onClick={() => selectAllSameType('evening')}
-                className="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200"
+                className="text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200"
+                style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}
               >
                 Alle Abend-Dienste
               </button>
               <button
                 onClick={() => selectAllSameType('night')}
-                className="px-3 py-1 text-xs bg-purple-100 text-purple-800 rounded-full hover:bg-purple-200"
+                className="text-xs bg-purple-100 text-purple-800 rounded-full hover:bg-purple-200"
+                style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}
               >
                 Alle Nacht-Dienste
               </button>
               <button
                 onClick={() => selectAllSameType('early')}
-                className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200"
+                className="text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200"
+                style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}
               >
                 Alle Früh-Dienste
               </button>
               <button
                 onClick={selectAllWeekdays}
-                className="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200"
+                className="text-xs bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200"
+                style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}
               >
                 Mo-Do
               </button>
               <button
                 onClick={selectAllWeekends}
-                className="px-3 py-1 text-xs bg-orange-100 text-orange-800 rounded-full hover:bg-orange-200"
+                className="text-xs bg-orange-100 text-orange-800 rounded-full hover:bg-orange-200"
+                style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}
               >
                 Fr-So
               </button>
@@ -133,11 +138,11 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
 
           <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-md">
             {availableShifts.length === 0 ? (
-              <p className="text-center text-gray-500 py-4">Keine offenen Dienste verfügbar</p>
+              <p className="text-center text-gray-500" style={{ paddingTop: 'var(--space-4)', paddingBottom: 'var(--space-4)' }}>Keine offenen Dienste verfügbar</p>
             ) : (
               <ul className="divide-y divide-gray-200">
                 {availableShifts.map((shift) => (
-                  <li key={shift.id} className="p-3">
+                  <li key={shift.id} style={{ padding: 'var(--space-3)' }}>
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -145,7 +150,7 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
                         onChange={() => handleShiftToggle(shift.id)}
                         className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                       />
-                      <div className="ml-3 flex-1">
+                      <div className="flex-1" style={{ marginLeft: 'var(--space-3)' }}>
                         <div className="text-sm font-medium text-gray-900">
                           {shift.date instanceof Date 
                             ? shift.date.toLocaleDateString('de-DE', { 
@@ -166,21 +171,23 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
             )}
           </div>
 
-          <div className="mt-6 flex justify-between items-center">
+          <div className="flex justify-between items-center" style={{ marginTop: 'var(--space-6)' }}>
             <p className="text-sm text-gray-600">
               {selectedShifts.length} Dienst{selectedShifts.length !== 1 ? 'e' : ''} ausgewählt
             </p>
-            <div className="flex space-x-3">
+            <div className="flex" style={{ gap: 'var(--space-3)' }}>
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
               >
                 Abbrechen
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={selectedShifts.length === 0}
-                className="btn btn-primary px-4 py-2 text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="btn btn-primary text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
+                style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
               >
                 Bewerben
               </button>
