@@ -36,7 +36,7 @@ jest-cache/
 *.tgz
 
 # Optional: test/quality reports (uncomment if you decide not to track them)
-# reports/
+reports/
 
 
 # Editor directories and files
