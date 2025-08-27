@@ -1,10 +1,7 @@
 /* Import design tokens */
 @import './styles/tokens.css';
-/* Local self-hosted Manrope font (weights 400-700) */
-@import '@fontsource/manrope/400.css';
-@import '@fontsource/manrope/500.css';
-@import '@fontsource/manrope/600.css';
-@import '@fontsource/manrope/700.css';
+/* Self-hosted Manrope font with optimized loading */
+@import './styles/fonts.css';
 
 @tailwind base;
 @tailwind components;
@@ -19,6 +16,11 @@
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+    /* Modern font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
   }
 
   /* Modern Scrollbar */

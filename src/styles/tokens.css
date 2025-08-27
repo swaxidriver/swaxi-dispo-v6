@@ -25,6 +25,13 @@
   --text-md: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
+  
+  /* Line height scale for improved readability */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 10px;

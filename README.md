@@ -375,7 +375,12 @@ Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farb
 
 - Basis-Styling über Hilfsklassen (`btn`, `card`, `input`) in `index.css`.
 - Direkter Zugriff über `var(--color-*)` für Spezialfälle.
-- Schriftfamilie: Primär Manrope (Fallback Inter/System) – jetzt lokal via `@fontsource/manrope` (nicht mehr extern geladen).
+- **Typography**: Manrope font family (weights 400-700) mit optimierter Ladetechnik:
+  - Self-hosted in `/public/fonts/` (woff2 format)
+  - `font-display: swap` für sofortige Fallback-Anzeige (verhindert FOIT)
+  - Improved font rendering: antialiased, optimizeLegibility
+  - Refined line-height scale (`--leading-tight` bis `--leading-loose`)
+  - Font preloading für kritische Schriftschnitte (400, 600)
 
 ### Migration Alt → Neu
 

@@ -9,6 +9,11 @@
     <meta name="theme-color" content="#0f172a" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png" />
+    
+    <!-- Preload critical Manrope font weights for better performance -->
+    <link rel="preload" href="/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/manrope-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+    
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="canonical" href="https://swaxi.example.com/" />
     <meta property="og:title" content="Swaxi Dispo" />
@@ -16,7 +21,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://swaxi.example.com/" />
   <meta property="og:image" content="/vite.svg" />
-  <!-- Local Manrope font loaded via @fontsource in src/index.css (external Google Fonts removed) -->
+  <!-- Self-hosted Manrope fonts with font-display: swap for optimal loading -->
   <script>
     /* Apply persisted or system theme early to avoid FOUC */
     (function(){
