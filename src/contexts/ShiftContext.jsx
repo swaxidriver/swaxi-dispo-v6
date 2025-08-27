@@ -18,7 +18,7 @@ import { checkShiftConflicts } from '../utils/shifts'
 import { validateShiftArray } from '../utils/validation'
 
 import { SHIFT_STATUS } from '../utils/constants'
-import { initialState, shiftReducer } from './ShiftContextCore'
+import { initialState, shiftReducer, buildShiftId } from './ShiftContextCore'
 import { applyInitialSeedIfEmpty } from '../seed/initialData'
 import { enqueue, drain as drainQueue, peekQueue } from '../services/offlineQueue'
 import { STATUS, assertTransition } from '../domain/status'
@@ -136,11 +136,11 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
           const code = weekdayMap[date.getDay()]
           if (!t.days.includes(code)) return
         }
-        const id = `${iso}_${t.name}`
+        const id = buildShiftId(iso, t.name) // Use consistent ID generation
         if (!state.shifts.find(s => s.id === id)) {
           additions.push({
             id,
-            date,
+            date: iso, // Store as ISO string for consistency
             type: t.name,
             start: t.startTime,
             end: t.endTime,
@@ -148,6 +148,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
             assignedTo: null,
             workLocation: 'office',
             conflicts: [],
+            uid: generateId('shf_'), // Add unique ID for future editing support
           })
         }
       })
