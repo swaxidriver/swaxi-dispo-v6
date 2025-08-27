@@ -14,7 +14,7 @@ Date: 2025-08-27
 - Self-hosted Manrope via `@fontsource/manrope`; removed Google Fonts link.
 - Added early inline script to apply persisted/system theme to prevent FOUC.
 - Introduced contrast audit script (`npm run audit:contrast`).
-- Adjusted dark theme primary tokens: `--color-primary: #8094ff`, `--color-primary-emphasis: #5d72d6`.
+- Adjusted dark theme primary tokens: `--color-primary: #8094ff`, `--color-primary-emphasis: #5d72d6` (first pass) then `#4f67d2` (second pass) to meet button text contrast.
 
 ## Remaining Tasks
 
@@ -25,7 +25,7 @@ Date: 2025-08-27
 
 ## Verification
 
-Run `npm run audit:contrast` → all pairs PASS.
+Re-run after second emphasis adjustment (`#4f67d2`): all contrast pairs PASS (button text ratio ≈5.00).
 
 ---
 Tracking document; consider converting to GitHub issue if external tracker preferred.

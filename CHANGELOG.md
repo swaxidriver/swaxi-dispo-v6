@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 
 - Modernized primary font from Lato to Manrope; updated typography across app.
 - Switched to self-hosted Manrope via @fontsource (removed external Google Fonts link).
-- Adjusted dark theme primary tokens (`--color-primary`, `--color-primary-emphasis`) for WCAG AA contrast (now #8094ff / #5d72d6).
+- Adjusted dark theme primary tokens (`--color-primary`, `--color-primary-emphasis`) for WCAG AA contrast (now #8094ff / #4f67d2, superseding earlier #5d72d6 attempt).
 - Navigation shows application version (v0.3.0+) alongside brand for diagnostics.
 - Replaced remaining `brand-*` Tailwind utility usage in components/pages with token-driven classes (Sass leftovers isolated).
 - Introduced layered test scripts: `test:unit`, `test:integration`, `test:a11y`.

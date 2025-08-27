@@ -6,9 +6,12 @@ const pairs = [
   { name: 'text vs bg (light)', fg: '#0f172a', bg: '#f8fafc', min: 4.5 },
   { name: 'muted vs bg (light)', fg: '#64748b', bg: '#f8fafc', min: 3 },
   { name: 'primary vs bg (light)', fg: '#222F88', bg: '#f8fafc', min: 4.5 },
+  { name: 'text vs primary button (light)', fg: '#ffffff', bg: '#222F88', min: 4.5 },
   { name: 'text vs bg (dark)', fg: '#f1f5f9', bg: '#0f172a', min: 4.5 },
   { name: 'muted vs bg (dark)', fg: '#94a3b8', bg: '#0f172a', min: 3 },
   { name: 'primary vs bg (dark)', fg: '#8094ff', bg: '#0f172a', min: 4.5 },
+  // NOTE: Keep this in sync with --color-primary-emphasis in tokens.css
+  { name: 'text vs primary button (dark)', fg: '#ffffff', bg: '#4f67d2', min: 4.5 },
 ]
 
 function hexToRgb(hex) {
