@@ -1,9 +1,10 @@
 /* global process */
+import { ENABLE_SHAREPOINT } from '../config/featureFlags'
+import { logInfo } from '../utils/logger'
+
 import { InMemoryShiftRepository } from './InMemoryShiftRepository'
 import { SharePointShiftRepository } from './SharePointShiftRepository'
 import { IndexedDBShiftRepository } from './IndexedDBShiftRepository'
-import { ENABLE_SHAREPOINT } from '../config/featureFlags'
-import { logInfo } from '../utils/logger'
 
 // Avoid using `import.meta` directly so Jest (CJS) can parse this file.
 function getEnvVar(name) {

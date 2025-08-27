@@ -1,4 +1,4 @@
-import { logError, logInfo, setLoggerSilent } from '../../utils/logger'
+import { logInfo, logError, setLoggerSilent } from '../../utils/logger'
 
 describe('logger', () => {
   const origError = console.error
