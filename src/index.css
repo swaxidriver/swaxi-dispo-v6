@@ -4,6 +4,11 @@
 
 /* Import design tokens */
 @import './styles/tokens.css';
+/* Local self-hosted Manrope font (weights 400-700) */
+@import '@fontsource/manrope/400.css';
+@import '@fontsource/manrope/500.css';
+@import '@fontsource/manrope/600.css';
+@import '@fontsource/manrope/700.css';
 
 @layer base {
   :root { font-family: var(--font-sans); }
