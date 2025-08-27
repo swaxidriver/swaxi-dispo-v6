@@ -125,11 +125,21 @@ export function autoAssignShifts(openShifts, allShifts, applications = [], users
       const testShift = { ...shift, assignedTo: user.id, status: 'assigned' }
       
       // Simple conflict check: no overlapping shifts for the same user on the same day
-      const hasConflict = allShifts.some(existingShift => 
-        existingShift.assignedTo === user.id &&
-        existingShift.id !== shift.id &&
-        existingShift.date?.toDateString() === shift.date?.toDateString()
-      )
+      const hasConflict = allShifts.some(existingShift => {
+        if (existingShift.assignedTo !== user.id || existingShift.id === shift.id) {
+          return false
+        }
+        
+        // Convert date to Date object if it's a string
+        const existingDate = existingShift.date instanceof Date 
+          ? existingShift.date 
+          : new Date(existingShift.date)
+        const shiftDate = shift.date instanceof Date 
+          ? shift.date 
+          : new Date(shift.date)
+          
+        return existingDate.toDateString() === shiftDate.toDateString()
+      })
       
       // Skip if there are conflicts
       if (hasConflict) {

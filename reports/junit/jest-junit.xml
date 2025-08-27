@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="6" failures="0" errors="0" time="1.321">
-  <testsuite name="Toast System" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:26:39" time="0.965" tests="6">
-    <testcase classname="Toast System displays success toast message" name="Toast System displays success toast message" time="0.084">
+<testsuites name="jest tests" tests="8" failures="0" errors="0" time="1.1">
+  <testsuite name="Auto-Assignment Service" errors="0" failures="0" skipped="0" timestamp="2025-08-27T09:29:38" time="0.737" tests="8">
+    <testcase classname="Auto-Assignment Service assigns open shifts to available users" name="Auto-Assignment Service assigns open shifts to available users" time="0.003">
     </testcase>
-    <testcase classname="Toast System displays error toast with alert role" name="Toast System displays error toast with alert role" time="0.017">
+    <testcase classname="Auto-Assignment Service prefers users who have applied to shifts" name="Auto-Assignment Service prefers users who have applied to shifts" time="0.001">
     </testcase>
-    <testcase classname="Toast System displays info toast message" name="Toast System displays info toast message" time="0.008">
+    <testcase classname="Auto-Assignment Service respects work location preferences" name="Auto-Assignment Service respects work location preferences" time="0.001">
     </testcase>
-    <testcase classname="Toast System allows dismissing toast messages" name="Toast System allows dismissing toast messages" time="0.012">
+    <testcase classname="Auto-Assignment Service avoids assignments that would cause conflicts" name="Auto-Assignment Service avoids assignments that would cause conflicts" time="0">
     </testcase>
-    <testcase classname="Toast System clears all toasts" name="Toast System clears all toasts" time="0.015">
+    <testcase classname="Auto-Assignment Service handles case with no suitable assignments" name="Auto-Assignment Service handles case with no suitable assignments" time="0">
     </testcase>
-    <testcase classname="Toast System throws error when useToast is used outside provider" name="Toast System throws error when useToast is used outside provider" time="0.018">
+    <testcase classname="Auto-Assignment Service distributes shifts fairly among users" name="Auto-Assignment Service distributes shifts fairly among users" time="0.001">
+    </testcase>
+    <testcase classname="Auto-Assignment Service getAssignmentStats calculates correct statistics" name="Auto-Assignment Service getAssignmentStats calculates correct statistics" time="0.002">
+    </testcase>
+    <testcase classname="Auto-Assignment Service getAssignmentStats handles empty recommendations" name="Auto-Assignment Service getAssignmentStats handles empty recommendations" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>
