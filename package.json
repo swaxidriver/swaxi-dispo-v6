@@ -18,6 +18,7 @@
     "quality": "node scripts/quality.mjs",
   "check:imports": "node scripts/check-imports.mjs",
   "lint:tokens": "node scripts/check-raw-colors.mjs",
+  "lint:spacing": "node scripts/check-spacing.cjs",
   "audit:contrast": "node scripts/contrast-audit.mjs",
     "debug": "node --inspect-brk ./node_modules/.bin/jest --runInBand"
   },

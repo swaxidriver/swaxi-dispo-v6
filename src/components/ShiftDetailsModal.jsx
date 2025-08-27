@@ -79,7 +79,7 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="flex min-h-full items-center justify-center text-center" style={{ padding: 'var(--space-lg)' }}>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -89,8 +89,8 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <div className="flex justify-between items-start mb-4">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all" style={{ padding: 'var(--space-xl)' }}>
+                <div className="flex justify-between items-start" style={{ marginBottom: 'var(--space-lg)' }}>
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                     Schichtdetails
                   </Dialog.Title>
@@ -104,11 +104,11 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
                   </button>
                 </div>
 
-                <div className="space-y-4">
+                <div style={{ gap: 'var(--space-lg)' }} className="space-y-4">
                   {/* Basic Info */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-500">Status</span>
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`}>
+                    <span className={`inline-flex text-xs font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`} style={{ paddingLeft: 'var(--space-sm)', paddingRight: 'var(--space-sm)', paddingTop: 'var(--space-xs)', paddingBottom: 'var(--space-xs)' }}>
                       {shift.status === 'open' ? 'Offen' : 
                        shift.status === 'assigned' ? 'Zugewiesen' : 
                        shift.status === 'pending' ? 'Ausstehend' : shift.status}
@@ -116,7 +116,7 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
                   </div>
 
                   {/* Date and Time */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center" style={{ gap: 'var(--space-sm)' }}>
                     <ClockIcon className="h-5 w-5 text-gray-400" />
                     <div>
                       <div className="text-sm font-medium text-gray-900">
@@ -130,7 +130,7 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
                       <div className="text-sm text-gray-500">
                         {shift.start} - {shift.end} 
                         {duration > 0 && (
-                          <span className="ml-2">
+                          <span style={{ marginLeft: 'var(--space-sm)' }}>
                             ({durationHours}h {durationMinutes > 0 ? `${durationMinutes}m` : ''})
                           </span>
                         )}
@@ -140,7 +140,7 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
 
                   {/* Location */}
                   {shift.workLocation && (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center" style={{ gap: 'var(--space-sm)' }}>
                       <MapPinIcon className="h-5 w-5 text-gray-400" />
                       <div>
                         <div className="text-sm font-medium text-gray-900">Arbeitsort</div>
@@ -151,7 +151,7 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
 
                   {/* Assigned User */}
                   {shift.assignedTo && (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center" style={{ gap: 'var(--space-sm)' }}>
                       <UserIcon className="h-5 w-5 text-gray-400" />
                       <div>
                         <div className="text-sm font-medium text-gray-900">Zugewiesen an</div>
@@ -170,12 +170,12 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
 
                   {/* Conflicts */}
                   {hasConflicts && (
-                    <div className="border-t pt-4">
-                      <div className="text-sm font-medium text-red-600 mb-2">Konflikte erkannt</div>
-                      <ul className="space-y-1">
+                    <div className="border-t" style={{ paddingTop: 'var(--space-lg)' }}>
+                      <div className="text-sm font-medium text-red-600" style={{ marginBottom: 'var(--space-sm)' }}>Konflikte erkannt</div>
+                      <ul style={{ gap: 'var(--space-xs)' }} className="space-y-1">
                         {conflictDescriptions.map((desc, index) => (
                           <li key={index} className="text-sm text-red-500 flex items-center">
-                            <span className="w-2 h-2 bg-red-400 rounded-full mr-2"></span>
+                            <span className="w-2 h-2 bg-red-400 rounded-full" style={{ marginRight: 'var(--space-sm)' }}></span>
                             {desc}
                           </li>
                         ))}
@@ -185,13 +185,14 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
                 </div>
 
                 {/* Actions */}
-                <div className="mt-6 flex space-x-3">
+                <div className="flex" style={{ marginTop: 'var(--space-xl)', gap: 'var(--space-md)' }}>
                   {canApply && (
                     <button
                       type="button"
                       disabled={isApplying || hasConflicts}
                       onClick={handleApply}
-                      className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ paddingLeft: 'var(--space-lg)', paddingRight: 'var(--space-lg)', paddingTop: 'var(--space-sm)', paddingBottom: 'var(--space-sm)' }}
                     >
                       {isApplying ? 'Bewerbe...' : 'Bewerben'}
                     </button>
@@ -202,7 +203,8 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
                       type="button"
                       disabled={isAssigning}
                       onClick={handleAssign}
-                      className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-green-600 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ paddingLeft: 'var(--space-lg)', paddingRight: 'var(--space-lg)', paddingTop: 'var(--space-sm)', paddingBottom: 'var(--space-sm)' }}
                     >
                       {isAssigning ? 'Zuweisen...' : 'Zuweisen'}
                     </button>
@@ -210,7 +212,8 @@ function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentU
 
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    style={{ paddingLeft: 'var(--space-lg)', paddingRight: 'var(--space-lg)', paddingTop: 'var(--space-sm)', paddingBottom: 'var(--space-sm)' }}
                     onClick={onClose}
                   >
                     Schließen

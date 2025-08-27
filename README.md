@@ -401,6 +401,37 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 2. Keine Hex-Werte direkt in JSX
 3. Semantische Benennung: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen
 4. Unterschied `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
+5. **Spacing Scale verwenden**: Standardisierte Abstände nutzen statt willkürliche Pixelwerte
+
+### Spacing Scale
+
+Das Design System verwendet eine einheitliche Spacing Scale für konsistente Abstände:
+
+```css
+--space-xs: 4px;   /* Tailwind 1 - Kleine interne Abstände */
+--space-sm: 8px;   /* Tailwind 2 - Kompakte Abstände */
+--space-md: 12px;  /* Tailwind 3 - Standard-Abstände */
+--space-lg: 16px;  /* Tailwind 4 - Komponenten-Abstände */
+--space-xl: 24px;  /* Tailwind 6 - Layout-Abstände */
+--space-2xl: 32px; /* Tailwind 8 - Große Abstände */
+```
+
+**Verwendung:**
+```jsx
+// Inline Styles mit CSS Custom Properties
+<div style={{ padding: 'var(--space-lg)', gap: 'var(--space-md)' }}>
+
+// Utility Klassen für gängige Patterns
+<div className="gap-lg space-md">
+```
+
+**Mapping zu Tailwind:**
+- `px-1` → `--space-xs` (4px)
+- `px-2` → `--space-sm` (8px)  
+- `px-3` → `--space-md` (12px)
+- `px-4` → `--space-lg` (16px)
+- `px-6` → `--space-xl` (24px)
+- `px-8` → `--space-2xl` (32px)
 
 ### Geplante Erweiterungen
 
