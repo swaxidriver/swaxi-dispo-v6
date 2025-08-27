@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" errors="0" time="0.946">
-  <testsuite name="ErrorBoundary" errors="0" failures="0" skipped="0" timestamp="2025-08-27T12:03:43" time="0.603" tests="1">
-    <testcase classname="ErrorBoundary renders fallback UI and dispatches telemetry on error" name="ErrorBoundary renders fallback UI and dispatches telemetry on error" time="0.071">
-    </testcase>
-  </testsuite>
-</testsuites>
