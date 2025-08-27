@@ -75,17 +75,38 @@ function collectExports(ast, code) {
   return names
 }
 
+// Cache for file content and parsed AST to avoid re-reading and re-parsing
+const fileCache = new Map() // file -> { code, ast, exports }
+
+async function getFileInfo(file) {
+  if (fileCache.has(file)) {
+    return fileCache.get(file)
+  }
+  
+  try {
+    const code = await readFile(file, 'utf8')
+    const ast = parseCode(code, file)
+    const exports = collectExports(ast, code)
+    const info = { code, ast, exports }
+    fileCache.set(file, info)
+    return info
+  } catch (e) {
+    console.warn('[file-parse] failed', path.relative(root, file), e.message)
+    const info = { code: '', ast: null, exports: new Set() }
+    fileCache.set(file, info)
+    return info
+  }
+}
+
 async function buildExportCache() {
   const files = await fg(['src/**/*.{js,jsx,ts,tsx}'], { cwd: root, absolute: true, ignore: ['**/*.d.ts'] })
+  // Pre-populate cache for all files
+  await Promise.all(files.map(file => getFileInfo(file)))
+  
+  // Build export cache from cached data
   for (const file of files) {
-    try {
-      const code = await readFile(file, 'utf8')
-      const ast = parseCode(code, file)
-      exportCache.set(file, collectExports(ast, code))
-    } catch (e) {
-      console.warn('[export-scan] parse failed', path.relative(root, file), e.message)
-      exportCache.set(file, new Set()) // still set to avoid repeated work
-    }
+    const info = fileCache.get(file)
+    exportCache.set(file, info.exports)
   }
 }
 
@@ -109,15 +130,12 @@ async function check() {
   await buildExportCache()
   const files = await fg(['src/**/*.{js,jsx,ts,tsx}'], { cwd: root, absolute: true, ignore: ['**/*.d.ts'] })
   let problems = 0
+  
   for (const file of files) {
-    let code
-    try { code = await readFile(file, 'utf8') } catch { continue }
-    let ast
-    try { ast = parseCode(code, file) } catch (e) {
-      console.warn('[import-scan] parse failed', path.relative(root, file), e.message)
-      continue
-    }
-    for (const node of ast.program.body) {
+    const info = await getFileInfo(file)
+    if (!info.ast) continue // Skip files that failed to parse
+    
+    for (const node of info.ast.program.body) {
       if (node.type !== 'ImportDeclaration') continue
       const spec = node.source.value
       if (spec.startsWith('http') || spec.startsWith('data:')) continue
@@ -136,6 +154,7 @@ async function check() {
       }
     }
   }
+  
   if (problems) {
     console.error(`\nImport integrity check failed with ${problems} issue(s).`)
     process.exit(1)

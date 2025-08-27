@@ -32,12 +32,16 @@ if (existsSync(eslintTmp)) {
   try { eslintResults = JSON.parse(readFileSync(eslintTmp, 'utf8')) } catch { /* ignore */ }
 }
 const lintErrors = []
+const lintErrorByRule = {}
 for (const file of eslintResults) {
   for (const m of file.messages) {
-    if (m.severity === 2) lintErrors.push({ filePath: file.filePath, ruleId: m.ruleId, message: m.message, line: m.line })
+    if (m.severity === 2) {
+      lintErrors.push({ filePath: file.filePath, ruleId: m.ruleId, message: m.message, line: m.line })
+      const ruleId = m.ruleId || 'unknown'
+      lintErrorByRule[ruleId] = (lintErrorByRule[ruleId] || 0) + 1
+    }
   }
 }
-const lintErrorByRule = lintErrors.reduce((acc, e) => { acc[e.ruleId || 'unknown'] = (acc[e.ruleId || 'unknown'] || 0) + 1; return acc }, {})
 
 // 2. Jest (JSON + coverage summary). We run once; rely on existing jest.config thresholds.
 const jestJson = path.join(reportsDir, 'jest-results.json')
@@ -48,18 +52,34 @@ if (existsSync(jestJson)) {
   try { jestData = JSON.parse(readFileSync(jestJson,'utf8')) } catch { /* ignore */ }
 }
 
-const failingTests = (jestData.testResults || []).flatMap(tr => tr.assertionResults.filter(a => a.status === 'failed').map(a => ({ fullName: a.fullName, file: tr.name })))
+// More efficient failing tests extraction
+const failingTests = []
+if (jestData.testResults) {
+  for (const tr of jestData.testResults) {
+    for (const a of tr.assertionResults) {
+      if (a.status === 'failed') {
+        failingTests.push({ fullName: a.fullName, file: tr.name })
+      }
+    }
+  }
+}
 
 // 3. Coverage near-threshold detection (use global thresholds from jest.config.js heuristically)
 let thresholds = { statements: 0, branches: 0, functions: 0, lines: 0 }
 try {
   const jestConfigSource = readFileSync(path.join(projectRoot, 'jest.config.js'), 'utf8')
-  const match = jestConfigSource.match(/coverageThreshold:[\s\S]*?global:[\s\S]*?{([\s\S]*?)}[\s\S]*?}/)
+  // More efficient regex with non-greedy matching and improved pattern
+  const match = jestConfigSource.match(/coverageThreshold:\s*{\s*global:\s*{\s*([^}]+)\s*}/s)
   if (match) {
     const objText = '{' + match[1] + '}'
-    // naive parse: replace comments and trailing commas
-    const cleaned = objText.replace(/\/\/.*$/gm,'').replace(/,(\s*[}\]])/g,'$1')
-    // eval in sandbox-ish function
+    // More efficient cleanup: combine regex operations and handle edge cases
+    const cleaned = objText
+      .replace(/\/\/.*$/gm, '') // Remove single-line comments
+      .replace(/\/\*[\s\S]*?\*\//g, '') // Remove multi-line comments  
+      .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+      .replace(/(\w+):/g, '"$1":') // Quote unquoted keys
+    
+    // Use Function constructor for safer evaluation
     thresholds = Function('return ' + cleaned)()
   }
 } catch { /* ignore */ }

@@ -45,11 +45,44 @@ export const CONFLICT_CODES = Object.freeze({
 
 export function computeShiftConflicts(target, others, applications) {
   const conflicts = []
-  const overlapping = others.filter(o => overlaps(target.start, target.end, o.start, o.end))
-  if (overlapping.length) conflicts.push(CONFLICT_CODES.TIME_OVERLAP)
+  
+  // Find overlapping shifts in a single pass
+  const overlapping = []
+  for (const other of others) {
+    if (overlaps(target.start, target.end, other.start, other.end)) {
+      overlapping.push(other)
+    }
+  }
+  
+  if (overlapping.length) {
+    conflicts.push(CONFLICT_CODES.TIME_OVERLAP)
+    
+    // For efficiency, cache assignedTo checks since we'll use them multiple times
+    const targetAssignedTo = target.assignedTo
+    const targetWorkLocation = target.workLocation
+    
+    if (targetAssignedTo) {
+      let hasAssignmentCollision = false
+      let hasLocationMismatch = false
+      
+      // Check assignment collision and location mismatch in single loop
+      for (const overlap of overlapping) {
+        if (overlap.assignedTo === targetAssignedTo) {
+          hasAssignmentCollision = true
+          if (targetWorkLocation && overlap.workLocation && overlap.workLocation !== targetWorkLocation) {
+            hasLocationMismatch = true
+            break // Found both conflicts, no need to continue
+          }
+        }
+      }
+      
+      if (hasAssignmentCollision) conflicts.push(CONFLICT_CODES.ASSIGNMENT_COLLISION)
+      if (hasLocationMismatch) conflicts.push(CONFLICT_CODES.LOCATION_MISMATCH)
+    }
+  }
 
   // DOUBLE_APPLICATION refined: if any user applied to target AND an overlapping shift
-  if (applications && applications.length) {
+  if (applications?.length && overlapping.length) {
     const targetApps = applications.filter(a => a.shiftId === target.id)
     if (targetApps.length) {
       const userIds = new Set(targetApps.map(a => a.userId))
@@ -59,18 +92,6 @@ export function computeShiftConflicts(target, others, applications) {
     }
   }
 
-  // ASSIGNMENT_COLLISION: overlapping shift assigned to same person
-  if (target.assignedTo) {
-    if (overlapping.some(o => o.assignedTo && o.assignedTo === target.assignedTo)) {
-      conflicts.push(CONFLICT_CODES.ASSIGNMENT_COLLISION)
-    }
-  }
-  // LOCATION_MISMATCH: any overlapping assigned shift for same user with different location value
-  if (target.assignedTo && target.workLocation) {
-    if (overlapping.some(o => o.assignedTo && o.assignedTo === target.assignedTo && o.workLocation && o.workLocation !== target.workLocation)) {
-      conflicts.push(CONFLICT_CODES.LOCATION_MISMATCH)
-    }
-  }
   return conflicts
 }
 

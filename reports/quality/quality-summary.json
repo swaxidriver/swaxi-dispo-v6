@@ -14,10 +14,10 @@
       "filesWithErrors": 0
     },
     "coverage": {
-      "statements": 79.37,
+      "statements": 79.56,
       "branches": 70.69,
-      "functions": 79.2,
-      "lines": 81.57
+      "functions": 78.98,
+      "lines": 81.65
     }
   },
   "thresholds": {
