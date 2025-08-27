@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="2" failures="0" errors="0" time="1.412">
-  <testsuite name="Dark theme toggle (a11y precondition)" errors="0" failures="0" skipped="0" timestamp="2025-08-27T11:33:21" time="0.856" tests="1">
-    <testcase classname="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" name="Dark theme toggle (a11y precondition) toggles data-theme attribute and persists preference" time="0.042">
+<testsuites name="jest tests" tests="9" failures="0" errors="0" time="1.405">
+  <testsuite name="SeriesApplicationModal focus management" errors="0" failures="0" skipped="0" timestamp="2025-08-27T11:35:46" time="0.724" tests="5">
+    <testcase classname="SeriesApplicationModal focus management has correct accessibility attributes" name="SeriesApplicationModal focus management has correct accessibility attributes" time="0.055">
+    </testcase>
+    <testcase classname="SeriesApplicationModal focus management stores focused element when modal opens" name="SeriesApplicationModal focus management stores focused element when modal opens" time="0.012">
+    </testcase>
+    <testcase classname="SeriesApplicationModal focus management restores focus to trigger element when modal closes" name="SeriesApplicationModal focus management restores focus to trigger element when modal closes" time="0.011">
+    </testcase>
+    <testcase classname="SeriesApplicationModal focus management focus remains trapped within modal during interaction" name="SeriesApplicationModal focus management focus remains trapped within modal during interaction" time="0.069">
+    </testcase>
+    <testcase classname="SeriesApplicationModal focus management returns focus to trigger button when closed via close button" name="SeriesApplicationModal focus management returns focus to trigger button when closed via close button" time="0.025">
     </testcase>
   </testsuite>
-  <testsuite name="Navigation accessibility" errors="0" failures="0" skipped="0" timestamp="2025-08-27T11:33:21" time="0.866" tests="1">
-    <testcase classname="Navigation accessibility has no axe violations" name="Navigation accessibility has no axe violations" time="0.14">
+  <testsuite name="FeedbackModal accessibility basics" errors="0" failures="0" skipped="0" timestamp="2025-08-27T11:35:47" time="0.326" tests="4">
+    <testcase classname="FeedbackModal accessibility basics traps focus and blocks empty submit" name="FeedbackModal accessibility basics traps focus and blocks empty submit" time="0.058">
+    </testcase>
+    <testcase classname="FeedbackModal accessibility basics restores focus to trigger element when modal closes" name="FeedbackModal accessibility basics restores focus to trigger element when modal closes" time="0.018">
+    </testcase>
+    <testcase classname="FeedbackModal accessibility basics restores focus when modal is closed via close button" name="FeedbackModal accessibility basics restores focus when modal is closed via close button" time="0.012">
+    </testcase>
+    <testcase classname="FeedbackModal accessibility basics has correct accessibility attributes" name="FeedbackModal accessibility basics has correct accessibility attributes" time="0.009">
     </testcase>
   </testsuite>
 </testsuites>
