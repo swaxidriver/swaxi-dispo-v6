@@ -50,17 +50,17 @@ export default function FeedbackModal() {
     }
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="feedback-title" aria-describedby="feedback-desc" onKeyDown={handleKey}>
-      <div ref={panelRef} className="bg-white rounded shadow max-w-lg w-full p-4 space-y-4" role="document">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" style={{ padding: 'var(--space-4)' }} role="dialog" aria-modal="true" aria-labelledby="feedback-title" aria-describedby="feedback-desc" onKeyDown={handleKey}>
+      <div ref={panelRef} className="bg-white rounded shadow max-w-lg w-full" style={{ padding: 'var(--space-4)', gap: 'var(--space-4)', display: 'flex', flexDirection: 'column' }} role="document">
         <div className="flex justify-between items-center">
           <h2 id="feedback-title" className="text-lg font-semibold">Feedback geben</h2>
           <button onClick={close} aria-label="Schließen" className="text-gray-600 hover:text-gray-900 focus:outline-brand-accent">✕</button>
         </div>
         <p id="feedback-desc" className="text-sm text-gray-600">Dein Feedback hilft uns, die Anwendung zu verbessern.</p>
-        <form onSubmit={submit} className="space-y-3">
+        <form onSubmit={submit} style={{ gap: 'var(--space-3)', display: 'flex', flexDirection: 'column' }}>
           <div>
             <label htmlFor="fb-category" className="block text-sm font-medium text-gray-700">Kategorie</label>
-            <select id="fb-category" value={category} onChange={e => setCategory(e.target.value)} className="mt-1 block w-full rounded border-gray-300 shadow-sm">
+            <select id="fb-category" value={category} onChange={e => setCategory(e.target.value)} className="block w-full rounded border-gray-300 shadow-sm" style={{ marginTop: 'var(--space-1)' }}>
               <option value="general">Allgemein</option>
               <option value="bug">Bug</option>
               <option value="idea">Idee</option>
@@ -70,13 +70,13 @@ export default function FeedbackModal() {
           </div>
           <div>
             <label htmlFor="fb-message" className="block text-sm font-medium text-gray-700">Nachricht</label>
-            <textarea id="fb-message" value={message} onChange={e => setMessage(e.target.value)} rows={5} className="mt-1 block w-full rounded border-gray-300 shadow-sm" placeholder="Beschreibe dein Problem oder deine Idee…" />
+            <textarea id="fb-message" value={message} onChange={e => setMessage(e.target.value)} rows={5} className="block w-full rounded border-gray-300 shadow-sm" style={{ marginTop: 'var(--space-1)' }} placeholder="Beschreibe dein Problem oder deine Idee…" />
           </div>
           <div className="flex items-center justify-between">
             <div className="text-xs text-gray-500">Eingeloggt als: {auth?.user?.role || 'Gast'}</div>
-            <div className="space-x-2">
-              <button type="button" onClick={exportJson} className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200">Exportieren</button>
-              <button type="submit" disabled={!message.trim()} className="px-3 py-1 rounded bg-brand-accent text-white disabled:opacity-40">Senden</button>
+            <div style={{ gap: 'var(--space-2)', display: 'flex' }}>
+              <button type="button" onClick={exportJson} className="text-xs rounded bg-gray-100 hover:bg-gray-200" style={{ paddingLeft: 'var(--space-2)', paddingRight: 'var(--space-2)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}>Exportieren</button>
+              <button type="submit" disabled={!message.trim()} className="rounded bg-brand-accent text-white disabled:opacity-40" style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}>Senden</button>
             </div>
           </div>
           {submitted && <p className="text-green-600 text-sm" role="status" aria-live="polite">Danke! Feedback gespeichert.</p>}

@@ -48,7 +48,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
       <ul className="divide-y divide-gray-200">
         {shifts.map((shift) => (
           <li key={shift.id}>
-            <div className="px-4 py-4 sm:px-6">
+            <div style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-4)', paddingBottom: 'var(--space-4)' }}>
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-[var(--color-primary)] truncate">
                   {shift.date instanceof Date 
@@ -58,21 +58,21 @@ export default function ShiftTable({ shifts, showActions = true }) {
                         month: '2-digit' 
                       }) 
                     : shift.date} • {shift.start}-{shift.end}
-                  <span className="ml-2 text-xs text-gray-500">({(computeDuration(shift.start, shift.end)/60).toFixed(1)}h)</span>
+                  <span className="text-xs text-gray-500" style={{ marginLeft: 'var(--space-2)' }}>({(computeDuration(shift.start, shift.end)/60).toFixed(1)}h)</span>
                 </div>
-                <div className="ml-2 flex-shrink-0 flex">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`}>
+                <div className="flex-shrink-0 flex" style={{ marginLeft: 'var(--space-2)' }}>
+                  <span className={`inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(shift.status)}`} style={{ paddingLeft: 'var(--space-2)', paddingRight: 'var(--space-2)' }}>
                     {shift.status}
                   </span>
                   {shift.workLocation === WORK_LOCATIONS.HOME && (
-                    <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                    <span className="inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800" style={{ marginLeft: 'var(--space-2)', paddingLeft: 'var(--space-2)', paddingRight: 'var(--space-2)' }}>
                       Homeoffice
                     </span>
                   )}
                 </div>
               </div>
               
-              <div className="mt-2 sm:flex sm:justify-between">
+              <div className="sm:flex sm:justify-between" style={{ marginTop: 'var(--space-2)' }}>
                 <div className="sm:flex">
                   {shift.assignedTo && (
                     <div className="text-sm text-gray-500">
@@ -81,33 +81,33 @@ export default function ShiftTable({ shifts, showActions = true }) {
                   )}
                 </div>
                 {showActions && (
-                  <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 space-x-2">
+                  <div className="flex items-center text-sm text-gray-500 sm:mt-0" style={{ marginTop: 'var(--space-2)', gap: 'var(--space-2)' }}>
                     {shift.status === SHIFT_STATUS.OPEN && (
                       <>
                         {(() => { return null })() /* placeholder to keep structure */}
                         {(() => {
                           const applyDisabled = !auth?.user || !canTransition(shift.status, STATUS.OPEN)
                           const applyReason = !auth?.user ? 'Anmeldung erforderlich' : (!canTransition(shift.status, STATUS.OPEN) ? 'Status erlaubt keine Bewerbung' : 'Für diesen Dienst bewerben')
-                          return <button disabled={applyDisabled} onClick={() => !applyDisabled && handleApply(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${applyDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'btn-primary'}`} title={applyReason} aria-label={applyReason} aria-disabled={applyDisabled}>Bewerben</button>
+                          return <button disabled={applyDisabled} onClick={() => !applyDisabled && handleApply(shift.id)} className={`inline-flex items-center rounded-md text-sm font-semibold shadow-sm ${applyDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'btn-primary'}`} title={applyReason} aria-label={applyReason} aria-disabled={applyDisabled} style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>Bewerben</button>
                         })()}
                         {canManageShifts(userRole) && (() => {
                           const assignDisabled = !canTransition(shift.status, STATUS.ASSIGNED)
                           const assignReason = assignDisabled ? 'Status erlaubt keine Zuweisung' : 'Diesen Dienst einem Nutzer zuweisen'
-                          return <button disabled={assignDisabled} onClick={() => !assignDisabled && handleAssign(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset ${assignDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'}`} title={assignReason} aria-label={assignReason} aria-disabled={assignDisabled}>Zuweisen</button>
+                          return <button disabled={assignDisabled} onClick={() => !assignDisabled && handleAssign(shift.id)} className={`inline-flex items-center rounded-md text-sm font-semibold shadow-sm ring-1 ring-inset ${assignDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'}`} title={assignReason} aria-label={assignReason} aria-disabled={assignDisabled} style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>Zuweisen</button>
                         })()}
                       </>
                     )}
                     {shift.status === SHIFT_STATUS.ASSIGNED && canManageShifts(userRole) && (() => {
                       const cancelDisabled = !canTransition(shift.status, STATUS.CANCELLED)
                       const cancelReason = cancelDisabled ? 'Status erlaubt keine Absage' : 'Zuweisung für diesen Dienst zurücknehmen'
-                      return <button disabled={cancelDisabled} onClick={() => !cancelDisabled && handleCancel(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${cancelDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`} title={cancelReason} aria-label={cancelReason} aria-disabled={cancelDisabled}>Absagen</button>
+                      return <button disabled={cancelDisabled} onClick={() => !cancelDisabled && handleCancel(shift.id)} className={`inline-flex items-center rounded-md text-sm font-semibold shadow-sm ${cancelDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-red-600 text-white hover:bg-red-500'}`} title={cancelReason} aria-label={cancelReason} aria-disabled={cancelDisabled} style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>Absagen</button>
                     })()}
                   </div>
                 )}
               </div>
               
               {shift.conflicts?.length > 0 && (
-                <div className="mt-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded p-2" aria-live="polite">
+                <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded" style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)' }} aria-live="polite">
                   <strong>Konflikte:</strong> {describeConflicts(shift.conflicts).join(', ')}
                 </div>
               )}
@@ -117,8 +117,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
       </ul>
       
       {/* Legend & Series Application Button */}
-      <div className="px-4 py-2 bg-white border-t text-xs text-gray-500 space-y-1">
-        <div className="flex flex-wrap gap-3">
+      <div className="bg-white border-t text-xs text-gray-500 space-y-1" style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>
+        <div className="flex flex-wrap" style={{ gap: 'var(--space-3)' }}>
           <span><strong>Legende:</strong></span>
           <span><span className="font-semibold">Zeitüberlappung</span> = Überschneidung in Zeit</span>
           <span><span className="font-semibold">Doppelte Bewerbung</span> = Bewerber in overlappenden Diensten</span>
@@ -127,10 +127,11 @@ export default function ShiftTable({ shifts, showActions = true }) {
         </div>
       </div>
       {showActions && shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length > 1 && (
-        <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+        <div className="bg-gray-50 border-t border-gray-200" style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-3)', paddingBottom: 'var(--space-3)' }}>
           <button
             onClick={() => setShowSeriesModal(true)}
-            className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-accent)] hover:opacity-90"
+            className="inline-flex items-center rounded-md text-sm font-semibold text-white shadow-sm bg-[var(--color-accent)] hover:opacity-90"
+            style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
           >
             Serienbewerbung ({shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length} Dienste)
           </button>

@@ -29,13 +29,13 @@ export default function Navigation() {
 
   return (
   <nav className="bg-[var(--color-primary)]" aria-label="Hauptnavigation">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
+      <div className="mx-auto max-w-7xl" style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)' }}>
+        <div className="flex justify-between" style={{ height: 'var(--space-16)' }}>
           <div className="flex">
             <div className="flex flex-shrink-0 items-center">
               <span className="text-white font-bold text-xl flex items-center">swaxi <VersionBadge /></span>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className="hidden sm:flex items-center" style={{ marginLeft: 'var(--space-6)', gap: 'var(--space-8)' }}>
               {navigation.map((item) => (
                 <NavLink
                   key={item.name}
@@ -46,16 +46,17 @@ export default function Navigation() {
                       isActive
                         ? 'border-brand-accent text-white'
                         : 'border-transparent text-gray-300 hover:border-gray-300 hover:text-white',
-                      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
+                      'inline-flex items-center border-b-2 text-sm font-medium'
                     )
                   }
+                  style={{ paddingLeft: 'var(--space-1)', paddingTop: 'var(--space-1)' }}
                 >
                   {item.name}
                 </NavLink>
               ))}
               <span className="flex-1" aria-hidden="true" />
               {auth?.user && (
-                <ActiveRoleBadge className="ml-4" />
+                <ActiveRoleBadge style={{ marginLeft: 'var(--space-4)' }} />
               )}
               {!auth?.user && (
                 <NavLink
@@ -63,17 +64,19 @@ export default function Navigation() {
                   className={({ isActive }) =>
                     classNames(
                       isActive ? 'border-brand-accent text-white' : 'border-transparent text-gray-300 hover:border-gray-300 hover:text-white',
-                      'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium'
+                      'inline-flex items-center border-b-2 text-sm font-medium'
                     )
                   }
+                  style={{ paddingLeft: 'var(--space-1)', paddingTop: 'var(--space-1)' }}
                 >Anmelden</NavLink>
               )}
               {auth?.user && (
                 <button
                   onClick={auth.logout}
-                  className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300"
+                  className="inline-flex items-center border-b-2 border-transparent text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300"
                   aria-label={`Abmelden (${auth.user.role})`}
                   title="Aktuelle Sitzung beenden"
+                  style={{ paddingLeft: 'var(--space-1)', paddingTop: 'var(--space-1)' }}
                 >Abmelden ({auth.user.role})</button>
               )}
             </div>
@@ -91,7 +94,7 @@ function FeedbackNavControl() {
     const fb = useFeedback()
     return (
       <div className="flex items-center">
-  <button onClick={fb.open} className="ml-4 text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded px-3 py-1" aria-haspopup="dialog" title="Feedback geben / Problem melden">Feedback</button>
+  <button onClick={fb.open} className="text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded" aria-haspopup="dialog" title="Feedback geben / Problem melden" style={{ marginLeft: 'var(--space-4)', paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}>Feedback</button>
       </div>
     )
   } catch {

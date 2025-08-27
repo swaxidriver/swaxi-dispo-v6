@@ -412,6 +412,33 @@ Seit v0.3.1 sind semantische Design-Tokens als Tailwind-Utilities verfügbar:
 <div className="font-sans">Uses design token font stack</div>
 ```
 
+#### Spacing Scale
+
+Seit v0.3.x ist eine konsistente Spacing Scale als CSS Custom Properties verfügbar:
+
+**Verfügbare Werte:**
+- `--space-1`: 4px
+- `--space-2`: 8px  
+- `--space-3`: 12px
+- `--space-4`: 16px
+- `--space-6`: 24px
+- `--space-8`: 32px
+- `--space-16`: 64px
+
+**Verwendung in Komponenten:**
+
+```jsx
+{/* Mit CSS Custom Properties */}
+<div style={{ padding: 'var(--space-4)', margin: 'var(--space-2)' }}>
+  Konsistente Abstände
+</div>
+
+{/* Als CSS-Klassen (bei Bedarf) */}
+<div className="space-4">Content mit Standard-Spacing</div>
+```
+
+**Best Practice:** Verwende ausschließlich Werte aus der Spacing Scale für Padding, Margin und Gaps. Vermeide hardcodierte Pixelwerte (13, 18, 22px etc.).
+
 Diese Klassen verweisen auf CSS-Variablen und funktionieren automatisch mit Light/Dark Mode.
 
 ### Migration Alt → Neu
