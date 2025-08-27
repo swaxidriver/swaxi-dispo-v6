@@ -2,6 +2,7 @@
 import { collection, writeBatch, doc, getDocs } from 'firebase/firestore';
 
 import { db } from './firebaseConfig';
+import { logInfo, logError } from '../utils/logger';
 
 export class MigrationService {
   async exportLocalStorageData() {
@@ -50,10 +51,10 @@ export class MigrationService {
       // Commit in batches of 500 (Firestore limit)
       await batch.commit();
       
-      console.log(`✅ Successfully migrated ${processedCount} records to Firebase`);
+      logInfo(`✅ Successfully migrated ${processedCount} records to Firebase`);
       return { success: true, count: processedCount };
     } catch (error) {
-      console.error('❌ Migration failed:', error);
+      logError('❌ Migration failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -73,10 +74,10 @@ export class MigrationService {
         difference: Math.abs(firebaseShiftCount - localShiftCount)
       };
 
-      console.log('Migration validation:', validation);
+      logInfo('Migration validation:', validation);
       return validation;
     } catch (error) {
-      console.error('Validation error:', error);
+      logError('Validation error:', error);
       return { error: error.message };
     }
   }

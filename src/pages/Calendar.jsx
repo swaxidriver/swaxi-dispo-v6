@@ -5,6 +5,7 @@ import { canManageShifts } from '../utils/auth'
 import AuthContext from '../contexts/AuthContext'
 import _ShiftTable from '../components/ShiftTable'
 import CreateShiftModal from '../components/CreateShiftModal'
+import ShiftDetailsModal from '../components/ShiftDetailsModal'
 
 const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`)
@@ -50,9 +51,11 @@ function getShiftSpanForDay(shift, dayDate) {
 }
 
 export default function Calendar() {
-  const { state } = useShifts();
+  const { state, applyToShift, assignShift } = useShifts();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [selectedShift, setSelectedShift] = useState(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   // future: month view support
   const auth = useContext(AuthContext)
   const userRole = auth?.user?.role || 'analyst'
@@ -84,8 +87,8 @@ export default function Calendar() {
   };
 
   const handleShiftClick = (shift) => {
-    // TODO: Open shift details modal
-    console.log('Shift clicked:', shift);
+    setSelectedShift(shift)
+    setIsDetailsOpen(true)
   };
 
   const handleCreateShift = () => {
@@ -93,6 +96,14 @@ export default function Calendar() {
       setIsCreateOpen(true)
     }
   };
+
+  const handleApplyToShift = async (shiftId, userId) => {
+    return applyToShift(shiftId, userId)
+  }
+
+  const handleAssignShift = async (shiftId, userId) => {
+    return assignShift(shiftId, userId)
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -211,7 +222,18 @@ export default function Calendar() {
         <h2 className="text-lg font-semibold mb-4">Diese Woche</h2>
         <_ShiftTable shifts={weekShifts} />
       </div>
+      
       <CreateShiftModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} defaultDate={selectedDate} />
+      
+      <ShiftDetailsModal
+        shift={selectedShift}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        onApply={handleApplyToShift}
+        onAssign={handleAssignShift}
+        currentUser={auth?.user}
+        userRole={userRole}
+      />
     </div>
   );
 }
