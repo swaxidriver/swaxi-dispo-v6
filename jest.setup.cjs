@@ -1,6 +1,11 @@
 // Fallback duplicate so CI can't claim missing setup file due to ESM resolution edge.
 require('@testing-library/jest-dom');
 
+// Polyfill TextEncoder/TextDecoder for react-router (Node 20 jsdom environment)
+const { TextEncoder, TextDecoder } = require('util');
+if (!global.TextEncoder) global.TextEncoder = TextEncoder;
+if (!global.TextDecoder) global.TextDecoder = TextDecoder;
+
 // IntersectionObserver mock
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}
