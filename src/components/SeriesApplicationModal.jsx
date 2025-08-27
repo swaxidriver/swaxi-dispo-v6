@@ -128,7 +128,7 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
                         type="checkbox"
                         checked={selectedShifts.includes(shift.id)}
                         onChange={() => handleShiftToggle(shift.id)}
-                        className="rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
+                        className="rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                       />
                       <div className="ml-3 flex-1">
                         <div className="text-sm font-medium text-gray-900">
@@ -165,7 +165,7 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
               <button
                 onClick={handleSubmit}
                 disabled={selectedShifts.length === 0}
-                className="px-4 py-2 text-sm font-medium text-white bg-brand-primary rounded-md hover:bg-brand-primary/80 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="btn btn-primary px-4 py-2 text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Bewerben
               </button>

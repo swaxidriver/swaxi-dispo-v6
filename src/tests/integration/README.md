@@ -1,9 +1,10 @@
 # Integration Tests
 
-Exercise multiple contexts/services (ShiftContext + repository + UI).
+Cross-layer behavior: contexts + services + repositories + UI orchestration.
 
 ## Guidelines
 
-- Can touch localStorage & timers.
-- Prefer real reducers over mocks.
-- Limit runtime < 2s per test file.
+- May touch localStorage, IndexedDB (fake-indexeddb), timers.
+- Use real reducers & repositories unless isolation is the goal.
+- Keep each file under ~2s runtime; split if slower.
+- Avoid asserting on implementation details (focus on visible outcomes & state).

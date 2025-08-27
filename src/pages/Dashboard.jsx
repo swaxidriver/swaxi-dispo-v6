@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { useShifts } from '../contexts/useShifts'
+import { useAuth } from '../contexts/useAuth'
 import { ROLES } from '../utils/constants'
 import { canManageShifts } from '../utils/auth'
 import MiniAnalytics from '../components/MiniAnalytics'
@@ -35,8 +36,9 @@ function QuickFilters({ onChange }) {
 
 export default function Dashboard() {
   const { state } = useShifts();
+  const { user } = useAuth();
   const [filter, setFilter] = useState('today');
-  const userRole = ROLES.ADMIN; // TODO: Get from auth context
+  const userRole = user?.role || ROLES.ANALYST; // fallback to lowest privilege if unauthenticated
 
   const filteredShifts = state.shifts.filter(shift => {
     const shiftDate = new Date(shift.date);
@@ -81,7 +83,7 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={() => alert('Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉')}
-              className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
+              className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90"
             >
               Automatisch zuteilen
             </button>

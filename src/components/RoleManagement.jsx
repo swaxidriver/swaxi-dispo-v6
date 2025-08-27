@@ -45,7 +45,7 @@ export default function RoleManagement({ users = [], onUpdateRole = () => {} }) 
           <li key={user.id}>
             <div className="px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-medium text-brand-primary">
+                <div className="text-sm font-medium text-[var(--color-primary)]">
                   {user.name}
                 </div>
                 <div className="ml-2 flex-shrink-0 flex items-center space-x-2">
@@ -53,7 +53,7 @@ export default function RoleManagement({ users = [], onUpdateRole = () => {} }) 
                     <select
                       value={user.role}
                       onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-brand-primary sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] sm:text-sm sm:leading-6"
                     >
                       {Object.values(ROLES).map((role) => (
                         <option key={role} value={role}>
@@ -69,7 +69,7 @@ export default function RoleManagement({ users = [], onUpdateRole = () => {} }) 
                       {canManageShifts(user.role) && (
                         <button
                           onClick={() => setEditingUser(user.id)}
-                          className="text-sm text-brand-primary hover:text-brand-primary/80"
+                          className="text-sm text-[var(--color-primary)] hover:opacity-80"
                         >
                           Bearbeiten
                         </button>

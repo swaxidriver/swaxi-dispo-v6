@@ -6,12 +6,12 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 
 ## ✨ Features
 
-### 🔄 **Hybrid Data Layer (NEU)**
+### 🔄 **Hybrid Data Layer (Feature‑Flag)**
 
-- **SharePoint Integration** für Stadtwerke Augsburg MS365
-- **Automatischer Fallback** auf localStorage bei fehlender SharePoint-Verbindung
-- **Seamless Switching** zwischen Datenquellen ohne Datenverlust
-- **Real-time Connection Status** mit visuellen Indikatoren
+- **SharePoint Integration (derzeit deaktiviert)** – Architektur vorhanden, Flag standardmäßig aus (`VITE_ENABLE_SHAREPOINT=false`)
+- **IndexedDB / In-Memory** als aktive Persistenz
+- **Umschaltbar** via `.env` (`VITE_ENABLE_SHAREPOINT=true` + optional `VITE_SHIFT_BACKEND=sharepoint`)
+- **Connection Status** UI vorbereitet für Re-Aktivierung
 
 ### 🚗 **Schichtplanung**
 
@@ -46,9 +46,9 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 
 ### **Data Layer**
 
-- **SharePoint Lists** - Enterprise-grade data storage (MS365)
-- **localStorage** - Client-side fallback und offline support
-- **Hybrid Service Layer** - Automatic switching zwischen Datenquellen
+- **IndexedDB / In-Memory** – Aktive Modi für lokale Demo & Tests
+- **SharePoint (flag-gesteuert)** – Reaktivierbar ohne Refactor
+- **Hybrid Service Layer** – Repository Pattern kapselt Backend-Wahl
 
 ### **State Management**
 
@@ -105,7 +105,7 @@ swaxi-dispo-v6/
 │   │   ├── Dashboard.jsx       # 🏠 Hauptdashboard
 │   │   └── TestPage.jsx        # 🧪 Comprehensive Tests
 │   ├── services/            # Business Logic
-│   │   ├── sharePointService.js  # 🔄 SharePoint Integration
+│   │   ├── sharePointService.js  # (Flag deaktiviert) SharePoint Integration
 │   │   └── migrationService.js   # 📦 Data Migration
 │   └── utils/               # Hilfsfunktionen
 ├── .github/workflows/       # 🚀 CI/CD Pipeline
@@ -299,12 +299,16 @@ npm run build
 
 ## 📋 SharePoint Integration
 
-### **🔧 Setup für Stadtwerke Augsburg**
+### **🔧 SharePoint (derzeit deaktiviert)**
 
-- **MS365 Environment**: Bereits vorhanden ✅
-- **SharePoint Lists**: Automatische Erstellung via Service
-- **Permissions**: Standard Stadtwerke User-Rechte
-- **Fallback**: localStorage bei fehlender Verbindung
+Feature Flag: `VITE_ENABLE_SHAREPOINT=false` – echte Requests unterdrückt; bei gesetztem Backend `sharepoint` erfolgt automatischer Fallback auf IndexedDB.
+
+Re-Aktivierung:
+
+1. `.env` erstellen (siehe `.env.example`)
+2. `VITE_ENABLE_SHAREPOINT=true` & optional `VITE_SHIFT_BACKEND=sharepoint`
+3. Dev-Server neu starten
+4. ConnectionStatus zeigt dann Online/Fallback Status
 
 ### **📊 Data Flow**
 
@@ -326,10 +330,13 @@ User Action → ShiftContext → sharePointService
 ### **📚 Zusätzliche Dokumentation**
 
 - **`HYBRID_TESTING_GUIDE.md`** - Sofort testbare Features
-- **`SHAREPOINT_SETUP.md`** - SharePoint Integration Guide
-- **`DATABASE_RECOMMENDATION.md`** - Architektur-Entscheidungen
-- **`MIGRATION_PLAN.md`** - Produktions-Migration
+- **`docs/archive/SHAREPOINT_SETUP.md`** - (Archiv) SharePoint Integration Guide
+- (Archiv) Historische Backlogs jetzt unter `docs/archive/` (`BACKLOG.md`, `PRIORITIZED_BACKLOG.md`)
 **Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
+
+### Historische Planung / Backlog
+
+Die alten Markdown Backlogs wurden archiviert und durch Issue-Tracking ersetzt (siehe offene Issues mit Label `P1`). Für Referenzzwecke liegen die unveränderten Kopien in `docs/archive/`.
 
 ### **🔧 Troubleshooting**
 

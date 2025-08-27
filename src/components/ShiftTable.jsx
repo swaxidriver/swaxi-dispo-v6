@@ -50,7 +50,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
           <li key={shift.id}>
             <div className="px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between">
-                <div className="text-sm font-medium text-brand-primary truncate">
+                <div className="text-sm font-medium text-[var(--color-primary)] truncate">
                   {shift.date instanceof Date 
                     ? shift.date.toLocaleDateString('de-DE', { 
                         weekday: 'short', 
@@ -88,7 +88,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
                         {(() => {
                           const applyDisabled = !auth?.user || !canTransition(shift.status, STATUS.OPEN)
                           const applyReason = !auth?.user ? 'Anmeldung erforderlich' : (!canTransition(shift.status, STATUS.OPEN) ? 'Status erlaubt keine Bewerbung' : 'Für diesen Dienst bewerben')
-                          return <button disabled={applyDisabled} onClick={() => !applyDisabled && handleApply(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${applyDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-brand-primary text-white hover:bg-brand-primary/80'}`} title={applyReason} aria-label={applyReason} aria-disabled={applyDisabled}>Bewerben</button>
+                          return <button disabled={applyDisabled} onClick={() => !applyDisabled && handleApply(shift.id)} className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${applyDisabled ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'btn-primary'}`} title={applyReason} aria-label={applyReason} aria-disabled={applyDisabled}>Bewerben</button>
                         })()}
                         {canManageShifts(userRole) && (() => {
                           const assignDisabled = !canTransition(shift.status, STATUS.ASSIGNED)
@@ -130,7 +130,7 @@ export default function ShiftTable({ shifts, showActions = true }) {
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
           <button
             onClick={() => setShowSeriesModal(true)}
-            className="inline-flex items-center rounded-md bg-brand-secondary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-secondary/80"
+            className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-accent)] hover:opacity-90"
           >
             Serienbewerbung ({shifts.filter(s => s.status === SHIFT_STATUS.OPEN).length} Dienste)
           </button>

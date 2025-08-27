@@ -66,7 +66,6 @@ Legend: P0 = critical foundation, P1 = near-term, P2 = nice-to-have.
 
 This backlog is intentionally lightweight; promote items to CHANGELOG when shipped. Keep README high-level; implementation granularity lives here.
 
-
 ### Recent Theming Enhancements
 
 - Switched primary font to Manrope for a more modern geometric look

@@ -28,7 +28,7 @@ export default function Navigation() {
   ].filter(Boolean)
 
   return (
-  <nav className="bg-brand-primary" aria-label="Hauptnavigation">
+  <nav className="bg-[var(--color-primary)]" aria-label="Hauptnavigation">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
           <div className="flex">

@@ -129,7 +129,7 @@ export default function Calendar() {
             <button
               type="button"
               onClick={handleCreateShift}
-              className="inline-flex items-center rounded-md bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-primary/80"
+              className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90"
             >
               Dienst erstellen
             </button>
@@ -190,7 +190,7 @@ export default function Calendar() {
                     return (
                       <div
                         key={`${shift.id}_${dayIdx}`}
-                        className="absolute mx-1 rounded-md bg-brand-primary/90 text-white text-[10px] px-1 py-0.5 cursor-pointer shadow-sm hover:bg-brand-primary"
+                        className="absolute mx-1 rounded-md bg-[var(--color-primary)]/90 text-white text-[10px] px-1 py-0.5 cursor-pointer shadow-sm hover:bg-[var(--color-primary)]"
                         style={{ top: span.top, height: span.height }}
                         onClick={() => handleShiftClick(shift)}
                         title={`${shift.type || shift.name} ${shift.start}-${shift.end}`}

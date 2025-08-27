@@ -229,7 +229,7 @@ export default function AutosaveManager({
                 <button
                   onClick={() => recoverFromSnapshot(snapshot.id)}
                   disabled={isRecovering}
-                  className="ml-3 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-brand-primary hover:bg-brand-primary/80 disabled:opacity-50"
+                  className="ml-3 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white btn-primary disabled:opacity-50"
                 >
                   {isRecovering ? 'Lädt...' : 'Wiederherstellen'}
                 </button>
@@ -250,7 +250,7 @@ export default function AutosaveManager({
                 localStorage.removeItem('swaxi-unsaved-work')
                 setShowRecoveryPanel(false)
               }}
-              className="px-4 py-2 bg-brand-primary text-white rounded-md hover:bg-brand-primary/80"
+              className="btn btn-primary px-4 py-2"
             >
               Neu beginnen
             </button>
@@ -287,7 +287,7 @@ export default function AutosaveManager({
             </span>
             <button
               onClick={() => setShowRecoveryPanel(true)}
-              className="text-xs text-brand-primary hover:text-brand-primary/80"
+              className="text-xs text-[var(--color-primary)] hover:opacity-80"
               title="Snapshots verwalten"
             >
               📸

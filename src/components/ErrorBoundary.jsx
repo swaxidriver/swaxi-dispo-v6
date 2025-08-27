@@ -1,6 +1,7 @@
 import { Component } from 'react'
 
 import { logError } from '../utils/logger'
+import { dispatchErrorTelemetry } from '../utils/errorTelemetry'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -18,8 +19,8 @@ class ErrorBoundary extends Component {
       time: new Date().toISOString(),
       version: '6.0.1'
     }
-    logError('ErrorBoundary captured error', payload)
-    // TODO: send to remote telemetry endpoint when available
+  logError('ErrorBoundary captured error', payload)
+  try { dispatchErrorTelemetry(payload) } catch (e) { logError('Telemetry handler failed', e) }
   }
   handleReload = () => {
     window.location.reload()
@@ -31,7 +32,7 @@ class ErrorBoundary extends Component {
         <div role="alert" className="p-6 text-red-700 bg-red-50 rounded">
           <h2 className="font-semibold mb-2">Ein Fehler ist aufgetreten</h2>
           <pre className="text-xs whitespace-pre-wrap">{String(error.message || error)}</pre>
-          <button className="mt-3 bg-brand-primary text-white px-3 py-1 rounded" onClick={this.handleReload}>Neu laden</button>
+          <button className="mt-3 btn btn-primary px-3 py-1" onClick={this.handleReload}>Neu laden</button>
         </div>
       )
     }

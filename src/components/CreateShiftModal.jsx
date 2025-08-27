@@ -75,7 +75,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
         </div>
         <div className="flex justify-end space-x-2 pt-2">
           <button type="button" onClick={onClose} className="px-3 py-1 rounded border text-sm">Abbrechen</button>
-          <button type="submit" className="px-3 py-1 rounded bg-brand-primary text-white text-sm hover:bg-brand-primary/80">Speichern</button>
+          <button type="submit" className="btn btn-primary text-sm px-3 py-1">Speichern</button>
         </div>
       </form>
     </div>

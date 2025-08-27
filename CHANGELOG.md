@@ -7,18 +7,22 @@ All notable changes to this project will be documented in this file.
 ### Added (0.3.0)
 
 - Visible active role badge in navigation (P0-8) plus capability helper functions in `constants.js`.
-- WorkLocation mandatory field enforcement with UI validation + domain guard (P0-6).
-- Autosave snapshot restoration pipeline (`restoreFromSnapshot`) with conflict recomputation (P0-7).
-- Version metadata injection (semantic version, commit, build number, build time) via Vite defines and `VersionBadge` component rendered in navigation.
-- Header documentation comment for `ShiftContext.jsx` outlining responsibilities.
+- Design tokens (`tokens.css`) + persistent theme with system preference.
+- Token lint script (`npm run lint:tokens`) to detect raw hex colors outside approved files.
+- Layered test scaffolding (unit / integration / a11y) + factories + custom jest-axe matcher.
 
 ### Changed (0.3.0)
 
-- Navigation now shows application version (v0.3.0+) alongside brand for quick diagnostics.
+- Modernized primary font from Lato to Manrope; updated typography across app.
+- Navigation shows application version (v0.3.0+) alongside brand for diagnostics.
+- Replaced remaining `brand-*` Tailwind utility usage in components/pages with token-driven classes (Sass leftovers isolated).
+- Introduced layered test scripts: `test:unit`, `test:integration`, `test:a11y`.
+- Coverage thresholds ratcheted (global + stricter utils/services paths).
+- WorkLocation mandatory field enforcement with UI validation + domain guard (P0-6).
+- Autosave snapshot restoration pipeline (`restoreFromSnapshot`) with conflict recomputation (P0-7).
+- Version metadata injection (semantic version, commit, build number, build time) via Vite defines + `VersionBadge`.
 - README extended with testing strategy v2, versioning & backlog sections.
-- Introduced design tokens (`tokens.css`) + persistent theme with system preference + Lato font integration; legacy Tailwind brand-* classes retained for staged migration.
-- Modernized primary font from Lato to Manrope (geometric humanist) with fallback chain.
-- Added token lint script (`npm run lint:tokens`) to detect raw hex colors outside approved files.
+- Header documentation comment for `ShiftContext.jsx` outlining responsibilities.
 
 ### Internal / Tooling (0.3.0)
 

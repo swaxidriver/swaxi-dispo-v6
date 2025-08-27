@@ -1,9 +1,10 @@
 # Accessibility (a11y) Tests
 
-Focused on static analysis with jest-axe and interaction focus order.
+Static analysis (jest-axe) + critical keyboard interaction flows.
 
 ## Guidelines
 
-- Use `axe(container)` and custom matcher wrapper.
-- Test keyboard-only navigation for modals/menus.
-- Avoid snapshot reliance; assert roles/names.
+- Use `await expect(container).toHaveNoA11yViolations()` (custom matcher in `jest.setup.js`).
+- Validate focus trap / order: Tab / Shift+Tab through interactive controls.
+- Assert semantic roles, names, aria-attributes – not styling.
+- Keep axe runs minimal (one per rendered variant) to keep suite fast.

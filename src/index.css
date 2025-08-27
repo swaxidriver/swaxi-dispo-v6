@@ -40,9 +40,9 @@
   .btn-primary:focus { box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
 
   .btn-secondary {
-    @apply btn bg-white text-gray-700 border border-gray-300
-           hover:bg-gray-50 focus:ring-brand-primary/50;
+    @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
   }
+  .btn-secondary:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 50%, transparent); }
 
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700

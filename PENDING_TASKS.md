@@ -67,10 +67,10 @@ _Automatically populated at runtime in localStorage; export via Feedback modal. 
 
 Generated on: 2025-08-26
 
-## 8. Hybrid SharePoint Integration
+## 8. Hybrid SharePoint Integration (Flag aktuell AUS)
 
 - [x] TestPage Hinweis aktualisiert (Mock / Demonstrationsmodus klar kommuniziert)
-- [ ] SharePoint Auth (Token Flow / Service Principal oder delegated) Konzept
+- [ ] (Reaktivierung) SharePoint Auth Konzept (Token Flow / Service Principal oder delegated)
 - [ ] Gesicherte API-Brücke (Server Proxy) statt direkter Client Calls
 - [ ] Konflikt-Merge Strategie (feldbasiert vs last-write-wins) Entscheidungs-Notiz
 - [ ] Hintergrund Sync Status UI (letzte erfolgreiche Synchronisation)

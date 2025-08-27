@@ -39,7 +39,7 @@ export default function Audit() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-brand-primary focus:outline-none focus:ring-brand-primary sm:text-sm"
+            className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
           >
             <option value="all">Alle Aktivitäten</option>
             <option value="create">Erstellungen</option>
@@ -57,7 +57,7 @@ export default function Audit() {
               <li key={log.id}>
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-brand-primary truncate">
+                    <div className="text-sm font-medium text-[var(--color-primary)] truncate">
                       {log.action}
                     </div>
                     <div className="ml-2 flex-shrink-0 flex">

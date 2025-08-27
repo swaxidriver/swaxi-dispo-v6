@@ -32,11 +32,12 @@ describe('ShiftContext heartbeat ping failure transition', () => {
     }
     renderWithProviders(<Probe />, { providerProps: { heartbeatMs: 10, enableAsyncInTests: true, disableAsyncBootstrap: true } })
     // Allow several heartbeat cycles (effect restarts when isOnline changes, causing extra immediate loops)
+    // Wrap timer advances in awaited act to satisfy React 19 strict requirements
     await act(async () => {
-      // initial immediate call
-      await Promise.resolve()
-      // advance enough time for multiple cycles
+      // advance enough time for initial success + subsequent failure
       jest.advanceTimersByTime(40)
+      // Allow all pending promises to flush
+      await Promise.resolve()
       await Promise.resolve()
     })
     expect(mockPing.mock.calls.length).toBeGreaterThanOrEqual(2)
