@@ -466,11 +466,110 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 3. Semantische Benennung: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen
 4. Unterschied `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
 
+### Programmatic Token Consumption
+
+Design tokens are automatically exported as machine-readable JSON for external tools and integrations:
+
+#### Generating Tokens
+
+```bash
+npm run build:tokens
+```
+
+This generates `src/styles/tokens.json` with structured token data:
+
+```json
+{
+  "meta": {
+    "generated": "2024-08-27T15:24:04.325Z",
+    "source": "src/styles/tokens.css",
+    "version": "1.0.0"
+  },
+  "light": {
+    "colors": {
+      "color-primary": "#222F88",
+      "color-accent": "#27ADE7",
+      // ... all light theme colors
+    },
+    "typography": {
+      "font-sans": "Manrope, Inter, system-ui, ...",
+      "text-lg": "1.125rem"
+    },
+    "spacing": {
+      "space-1": "4px",
+      "space-4": "16px"
+    },
+    "borders": {
+      "radius-md": "6px"
+    },
+    "shadows": {
+      "shadow-sm": "0 1px 2px rgba(0,0,0,0.06)"
+    }
+  },
+  "dark": {
+    "colors": {
+      "color-primary": "#8094ff",
+      // ... dark theme overrides
+    }
+  }
+}
+```
+
+#### Usage Examples
+
+**Figma Plugin Integration:**
+```javascript
+import tokens from './src/styles/tokens.json';
+
+// Create Figma color styles from tokens
+Object.entries(tokens.light.colors).forEach(([name, value]) => {
+  figma.createPaintStyle({
+    name: `Light/${name}`,
+    paints: [{ type: 'SOLID', color: hexToRgb(value) }]
+  });
+});
+```
+
+**Storybook Theme Config:**
+```javascript
+import tokens from '../src/styles/tokens.json';
+
+export const lightTheme = {
+  colors: tokens.light.colors,
+  typography: tokens.light.typography,
+  spacing: tokens.light.spacing
+};
+```
+
+**Build Tool Integration:**
+```javascript
+// Custom CSS-in-JS theme generation
+import tokens from './tokens.json';
+
+const theme = {
+  colors: Object.fromEntries(
+    Object.entries(tokens.light.colors).map(([k, v]) => [
+      k.replace('color-', ''), v
+    ])
+  )
+};
+```
+
+#### Stability Testing
+
+Token changes are protected by Jest snapshot tests:
+
+```bash
+npm test -- tokensStability.test.js
+```
+
+This ensures accidental token drift is caught in CI/CD and requires explicit updates.
+
 ### Geplante Erweiterungen
 
 - Erhöhung der Coverage Thresholds (iterativ)
 - (Erledigt) Entfernen alter Sass Variablen / `main.scss`
 - (Erledigt) Tailwind Theme Mapping der Tokens (für Variants)
 - (Neu) Fehler-Telemetrie Stub (`registerErrorTelemetry`) für zukünftige Remote Collection
-- Export der Tokens als JSON für Figma / Storybook
+- (Erledigt) Export der Tokens als JSON für Figma / Storybook
 - Optionale visuelle Regression Tests (Playwright + percy)
