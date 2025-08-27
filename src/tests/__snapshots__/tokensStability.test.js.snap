@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Design Tokens Stability tokens.json snapshot remains stable 1`] = `
+{
+  "dark": {
+    "borders": {},
+    "colors": {
+      "color-accent": "#27ADE7",
+      "color-bg": "#0f172a",
+      "color-border": "#334155",
+      "color-err": "#f87171",
+      "color-muted": "#94a3b8",
+      "color-ok": "#16a34a",
+      "color-primary": "#8094ff",
+      "color-primary-emphasis": "#4f67d2",
+      "color-surface": "#1e293b",
+      "color-text": "#f1f5f9",
+      "color-warn": "#fbbf24",
+    },
+    "shadows": {},
+    "spacing": {},
+    "typography": {},
+  },
+  "light": {
+    "borders": {
+      "radius-lg": "10px",
+      "radius-md": "6px",
+      "radius-sm": "4px",
+    },
+    "colors": {
+      "color-accent": "#27ADE7",
+      "color-bg": "#f8fafc",
+      "color-border": "#e2e8f0",
+      "color-err": "#dc2626",
+      "color-muted": "#64748b",
+      "color-ok": "#16a34a",
+      "color-primary": "#222F88",
+      "color-primary-emphasis": "#1a2566",
+      "color-surface": "#ffffff",
+      "color-text": "#0f172a",
+      "color-warn": "#f59e0b",
+    },
+    "shadows": {
+      "shadow-md": "0 4px 12px -2px rgba(0,0,0,0.12)",
+      "shadow-sm": "0 1px 2px rgba(0,0,0,0.06)",
+    },
+    "spacing": {
+      "space-1": "4px",
+      "space-16": "64px",
+      "space-2": "8px",
+      "space-3": "12px",
+      "space-4": "16px",
+      "space-6": "24px",
+      "space-8": "32px",
+    },
+    "typography": {
+      "font-mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace",
+      "font-sans": "Manrope, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif",
+      "text-lg": "1.125rem",
+      "text-md": "1rem",
+      "text-sm": "0.875rem",
+      "text-xl": "1.25rem",
+      "text-xs": "0.75rem",
+    },
+  },
+  "meta": {
+    "generated": "[timestamp]",
+    "source": "src/styles/tokens.css",
+    "version": "1.0.0",
+  },
+}
+`;
