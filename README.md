@@ -208,9 +208,10 @@ npm run test:coverage
 
 Coverage Gates (aktuell – werden weiter angezogen):
 
-- Global ≥63/58/63/63 (Statements/Branches/Functions/Lines)
+- Global ≥66/60/66/66 (Statements/Branches/Functions/Lines)
 - Utils ≥80/80/90/80
 - shiftGenerationService ≥80/70/80/80
+- sharePointService ≥60/50/60/60
 
 Letzter Lauf: Global ~80/71/80/82 → komfortabler Puffer für nächste Erhöhung.
 
