@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom';
 
+// Mock Vite build globals for components that depend on them
+global.__APP_VERSION__ = '6.0.0';
+global.__APP_COMMIT__ = 'test-commit';
+global.__APP_BUILD__ = '123';
+global.__APP_BUILD_TIME__ = '2025-01-01T00:00:00.000Z';
+
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   constructor() {}

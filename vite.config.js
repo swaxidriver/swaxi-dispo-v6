@@ -23,7 +23,21 @@ const buildMeta = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'html-transform',
+      transformIndexHtml: {
+        order: 'pre',
+        handler(html) {
+          return html.replace(
+            '<meta name="app-version" content="0.3.0" />',
+            `<meta name="app-version" content="${buildMeta.version}" />`
+          )
+        }
+      }
+    }
+  ],
   define: {
     __APP_VERSION__: JSON.stringify(buildMeta.version),
     __APP_COMMIT__: JSON.stringify(buildMeta.commit),
