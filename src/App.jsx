@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ShiftProvider } from './contexts/ShiftContext'
 import { FeedbackProvider } from './contexts/FeedbackContext'
 import FeedbackModal from './components/FeedbackModal'
+import ChangelogModal from './components/ChangelogModal'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Navigation from './components/Navigation'
 import LiveVersionBanner from './components/LiveVersionBanner'
@@ -35,16 +36,27 @@ function LoadingSkeleton() {
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'
 const APP_COMMIT = typeof __APP_COMMIT__ !== 'undefined' ? __APP_COMMIT__ : 'local'
 
-function Footer() {
+function Footer({ onOpenChangelog }) {
   return (
     <footer className="mt-auto py-4 text-center text-sm text-gray-500">
-  <p>swaxi Dispo v{APP_VERSION} ({APP_COMMIT}) • {new Date().getFullYear()}</p>
+      <p>
+        swaxi Dispo v{APP_VERSION} ({APP_COMMIT}) • {new Date().getFullYear()}
+        {' • '}
+        <button 
+          onClick={onOpenChangelog}
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+        >
+          Änderungsprotokoll
+        </button>
+      </p>
     </footer>
   )
 }
 
 function App() {
   const [ready, setReady] = useState(false)
+  const [changelogOpen, setChangelogOpen] = useState(false)
+  
   useEffect(() => {
     // minimal defer to allow ShiftProvider bootstrap; could watch context instead
     const t = setTimeout(() => setReady(true), 50)
@@ -80,11 +92,15 @@ function App() {
                   ) : <LoadingSkeleton />}
                 </main>
               </ErrorBoundary>
-              <Footer />
+              <Footer onOpenChangelog={() => setChangelogOpen(true)} />
               <AutosaveManager />
               {/* Global polite aria-live region for lightweight announcements / toasts */}
               <div id="aria-live-root" className="sr-only" aria-live="polite" />
               <FeedbackModal />
+              <ChangelogModal 
+                isOpen={changelogOpen} 
+                onClose={() => setChangelogOpen(false)} 
+              />
             </div>
           </Router>
           </FeedbackProvider>
