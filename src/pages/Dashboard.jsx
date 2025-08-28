@@ -40,6 +40,28 @@ export default function Dashboard() {
   const [filter, setFilter] = useState('today');
   const userRole = user?.role || ROLES.ANALYST; // fallback to lowest privilege if unauthenticated
 
+  const handleAnalyticsViewSource = (statId) => {
+    // Map analytics stat IDs to filter values that make sense for the user
+    switch (statId) {
+      case 'open':
+        setFilter('open')
+        break
+      case 'assigned-today':
+        setFilter('today') // Show today's shifts (which will include assigned ones)
+        break
+      case 'conflicts':
+        // For conflicts, we'll show all shifts and let the user see which ones have conflicts
+        // in the ShiftTable (conflicts are usually displayed as badges or indicators)
+        setFilter('all')
+        break
+      case 'applications-7d':
+        setFilter('7days') // Show shifts from last 7 days where applications might be relevant
+        break
+      default:
+        setFilter('today')
+    }
+  }
+
   const filteredShifts = state.shifts.filter(shift => {
     const shiftDate = new Date(shift.date);
     const today = new Date();
@@ -92,7 +114,7 @@ export default function Dashboard() {
       </div>
 
       <div className="mb-8">
-        <MiniAnalytics />
+        <MiniAnalytics onViewSource={handleAnalyticsViewSource} />
       </div>
 
       <div className="mb-4">
