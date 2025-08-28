@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 
 import { useShifts } from '../contexts/useShifts';
 import { useAuth } from '../contexts/useAuth';
 import { SHIFT_STATUS } from '../utils/constants';
+import { computeShiftConflicts } from '../utils/shifts';
+import { describeConflicts } from '../utils/conflicts';
 
 export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] }) {
-  const { applyToSeries } = useShifts();
+  const { applyToSeries, state } = useShifts();
   const auth = useAuth(); // may be undefined in isolated tests
   const [selectedShifts, setSelectedShifts] = useState([]);
   // Preserve legacy default "current-user" to keep existing tests stable
@@ -28,7 +30,58 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
       }, 0);
     }
   }, [isOpen]);
+  
+  // Clear selections when modal closes (requirement: exiting mode clears selection)
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedShifts([]);
+    }
+  }, [isOpen]);
+  
   const availableShifts = shifts.filter(shift => shift.status === SHIFT_STATUS.OPEN);
+  
+  // Compute conflicts for selected shifts
+  const conflictData = useMemo(() => {
+    if (!selectedShifts.length) return { hasConflicts: false, conflictsByShift: {}, allConflictReasons: [] };
+    
+    const conflictsByShift = {};
+    const allConflictReasons = new Set();
+    
+    // Get the actual shift objects for selected shifts
+    const selectedShiftObjects = selectedShifts.map(id => availableShifts.find(s => s.id === id)).filter(Boolean);
+    
+    selectedShifts.forEach(shiftId => {
+      const shift = availableShifts.find(s => s.id === shiftId);
+      if (!shift) return;
+      
+      // Check conflicts against OTHER selected shifts only - this is what matters for multi-select
+      // But only check shifts on the SAME DATE - different dates cannot have time conflicts
+      const otherSelectedShifts = selectedShiftObjects.filter(s => {
+        if (s.id === shift.id) return false; // Skip self
+        
+        // Compare dates - normalize both to strings to handle Date objects and string dates
+        const shiftDate = shift.date instanceof Date ? shift.date.toISOString().slice(0, 10) : shift.date;
+        const otherDate = s.date instanceof Date ? s.date.toISOString().slice(0, 10) : s.date;
+        
+        return shiftDate === otherDate; // Only check conflicts on same date
+      });
+      
+      if (otherSelectedShifts.length > 0) {
+        const conflicts = computeShiftConflicts(shift, otherSelectedShifts, state?.applications || []);
+        
+        if (conflicts.length > 0) {
+          conflictsByShift[shiftId] = conflicts;
+          conflicts.forEach(c => allConflictReasons.add(c));
+        }
+      }
+    });
+    
+    return {
+      hasConflicts: Object.keys(conflictsByShift).length > 0,
+      conflictsByShift,
+      allConflictReasons: Array.from(allConflictReasons)
+    };
+  }, [selectedShifts, availableShifts, state?.applications]);
 
   const handleShiftToggle = (shiftId) => {
     setSelectedShifts(prev => 
@@ -173,10 +226,31 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
             )}
           </div>
 
+          {/* Conflicts Display */}
+          {conflictData.hasConflicts && (
+            <div className="border border-red-200 bg-red-50 rounded-md" style={{ padding: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
+              <div className="text-sm font-medium text-red-600 mb-2">Konflikte erkannt</div>
+              <ul className="space-y-1">
+                {describeConflicts(conflictData.allConflictReasons).map((desc, index) => (
+                  <li key={index} className="text-sm text-red-500 flex items-center">
+                    <span className="w-2 h-2 bg-red-400 rounded-full mr-2"></span>
+                    {desc}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-xs text-red-500 mt-2">
+                Bitte Konflikte auflösen oder betroffene Dienste abwählen.
+              </p>
+            </div>
+          )}
+
           <div className="flex justify-between items-center" style={{ marginTop: 'var(--space-6)' }}>
-            <p className="text-sm text-gray-600">
-              {selectedShifts.length} Dienst{selectedShifts.length !== 1 ? 'e' : ''} ausgewählt
-            </p>
+            <div className="flex items-center" style={{ gap: 'var(--space-2)' }}>
+              <span className="text-sm text-gray-600">Ausgewählt:</span>
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {selectedShifts.length} Dienst{selectedShifts.length !== 1 ? 'e' : ''}
+              </span>
+            </div>
             <div className="flex" style={{ gap: 'var(--space-3)' }}>
               <button
                 onClick={onClose}
@@ -187,7 +261,7 @@ export default function SeriesApplicationModal({ isOpen, onClose, shifts = [] })
               </button>
               <button
                 onClick={handleSubmit}
-                disabled={selectedShifts.length === 0}
+                disabled={selectedShifts.length === 0 || conflictData.hasConflicts}
                 className="btn btn-primary text-sm disabled:bg-gray-300 disabled:cursor-not-allowed"
                 style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}
               >
