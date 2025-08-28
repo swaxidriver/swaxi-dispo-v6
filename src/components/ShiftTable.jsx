@@ -5,10 +5,10 @@ import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
 import { canTransition, STATUS } from '../domain/status'
 import { computeDuration } from '../utils/shifts'
-import { describeConflicts } from '../utils/conflicts'
 import { canManageShifts } from '../utils/auth'
 
 import _SeriesApplicationModal from './SeriesApplicationModal'
+import ConflictBadge from './ConflictBadge'
 
 export default function ShiftTable({ shifts, showActions = true }) {
   const { applyToShift, assignShift, cancelShift } = useShifts();
@@ -107,8 +107,8 @@ export default function ShiftTable({ shifts, showActions = true }) {
               </div>
               
               {shift.conflicts?.length > 0 && (
-                <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded" style={{ marginTop: 'var(--space-2)', padding: 'var(--space-2)' }} aria-live="polite">
-                  <strong>Konflikte:</strong> {describeConflicts(shift.conflicts).join(', ')}
+                <div className="mt-2">
+                  <ConflictBadge conflicts={shift.conflicts} />
                 </div>
               )}
             </div>
