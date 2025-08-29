@@ -4,6 +4,7 @@ import { useI18n } from '../hooks/useI18n'
 import { useSettings } from '../hooks/useSettings'
 import { useTheme } from '../contexts/useTheme'
 import { ROLES } from '../utils/constants'
+import ThemeSelector from '../components/ThemeSelector'
 
 export default function Settings() {
   const { t, language, setLanguage, availableLanguages } = useI18n()
@@ -40,11 +41,11 @@ export default function Settings() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">{t('settingsTitle')}</h1>
+        <h1 className="text-3xl font-bold mb-8 text-text">{t('settingsTitle')}</h1>
         
         {/* Language Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">{t('language')}</h2>
+        <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-text">{t('language')}</h2>
           <div className="space-y-2">
             {availableLanguages.map((lang) => (
               <label key={lang} className="flex items-center">
@@ -65,35 +66,24 @@ export default function Settings() {
         </div>
         
         {/* Theme Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">{t('theme')}</h2>
-          <div className="space-y-2">
-            {['light', 'dark', 'system'].map((theme) => (
-              <label key={theme} className="flex items-center">
-                <input
-                  type="radio"
-                  name="theme"
-                  value={theme}
-                  checked={settings.theme === theme}
-                  onChange={(e) => handleThemeChange(e.target.value)}
-                  className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-                />
-                <span className="text-sm font-medium">{t(theme)}</span>
-              </label>
-            ))}
+        <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-text">{t('theme')}</h2>
+          <div className="space-y-4">
+            <p className="text-sm text-muted">Choose your preferred theme appearance</p>
+            <ThemeSelector />
           </div>
         </div>
         
         {/* Role Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">{t('role')}</h2>
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-text">{t('role')}</h2>
+          <p className="text-sm text-muted mb-4">
             Demo: Changes role for testing role-gated UI features
           </p>
           <select
             value={settings.role}
             onChange={(e) => handleRoleChange(e.target.value)}
-            className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
+            className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm bg-surface text-text"
           >
             {Object.values(ROLES).map((role) => (
               <option key={role} value={role}>
