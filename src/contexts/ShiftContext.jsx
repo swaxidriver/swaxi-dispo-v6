@@ -268,6 +268,78 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
   const markNotificationRead = useCallback((id) => dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id }), [])
   const markAllNotificationsRead = useCallback(() => dispatch({ type: 'MARK_ALL_NOTIFICATIONS_READ' }), [])
 
+  // Drag & Drop: Update shift date/time with conflict validation and undo support
+  const updateShift = useCallback((shiftId, updates) => {
+    const currentShift = state.shifts.find(s => s.id === shiftId)
+    if (!currentShift) return { success: false, error: 'Shift not found' }
+
+    // Create updated shift
+    const updatedShift = { ...currentShift, ...updates }
+
+    // Validate conflicts with other shifts
+    const otherShifts = state.shifts.filter(s => s.id !== shiftId)
+    const conflicts = checkShiftConflicts(updatedShift, otherShifts, state.applications)
+    
+    // If there are conflicts, prevent the update and return error
+    if (conflicts && conflicts.length > 0) {
+      const conflictMsg = conflicts.length === 1 
+        ? 'Zeitkonflikt mit anderer Schicht'
+        : `Zeitkonflikte mit ${conflicts.length} anderen Schichten`
+      return { success: false, error: conflictMsg, conflicts }
+    }
+
+    // Store undo state before making changes
+    dispatch({ type: 'SET_UNDO_STATE', payload: { shift: currentShift } })
+
+    // Update the shift
+    const finalShift = { ...updatedShift, conflicts: [] }
+    dispatch({ type: 'UPDATE_SHIFT', payload: finalShift })
+
+    // Log audit trail
+    AuditService.logCurrentUserAction(
+      'Schicht verschoben',
+      `${finalShift.type} ${finalShift.date} ${finalShift.start}-${finalShift.end}`,
+      1
+    )
+
+    // Add success notification
+    dispatch({ 
+      type: 'ADD_NOTIFICATION', 
+      payload: { 
+        id: `move_${shiftId}_${Date.now()}`, 
+        title: 'Schicht verschoben', 
+        message: `${finalShift.type} erfolgreich verschoben`, 
+        timestamp: new Date().toLocaleString(), 
+        isRead: false 
+      } 
+    })
+
+    return { success: true, shift: finalShift }
+  }, [state.shifts, state.applications])
+
+  // Undo last shift movement
+  const undoLastShiftUpdate = useCallback(() => {
+    if (state.undoState && state.undoState.shift) {
+      const originalShift = state.undoState.shift
+      dispatch({ type: 'UPDATE_SHIFT', payload: originalShift })
+      dispatch({ type: 'CLEAR_UNDO_STATE' })
+      
+      dispatch({ 
+        type: 'ADD_NOTIFICATION', 
+        payload: { 
+          id: `undo_${originalShift.id}_${Date.now()}`, 
+          title: 'Rückgängig', 
+          message: `${originalShift.type} Verschiebung rückgängig gemacht`, 
+          timestamp: new Date().toLocaleString(), 
+          isRead: false 
+        } 
+      })
+      
+      return true
+    }
+    return false
+  }, [state.undoState])
+
   const createShift = useCallback((partial) => {
     // partial: { date, type, start, end, workLocation }
     const date = partial.date instanceof Date ? partial.date : new Date(partial.date)
@@ -404,12 +476,14 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     assignShift,
   cancelShift,
     createShift,
+    updateShift,
+    undoLastShiftUpdate,
     markNotificationRead,
     markAllNotificationsRead,
   getOpenShifts: () => state.shifts.filter(s => s.status === SHIFT_STATUS.OPEN),
   getConflictedShifts: () => state.shifts.filter(s => s.conflicts?.length),
   restoreFromSnapshot,
-  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, cancelShift, createShift, markNotificationRead, markAllNotificationsRead, restoreFromSnapshot])
+  }), [state, applyToShift, applyToSeries, updateShiftStatus, assignShift, cancelShift, createShift, updateShift, undoLastShiftUpdate, markNotificationRead, markAllNotificationsRead, restoreFromSnapshot])
 
   return <ShiftContext.Provider value={value}>{children}</ShiftContext.Provider>
 }

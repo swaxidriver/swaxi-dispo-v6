@@ -91,12 +91,18 @@ const CalendarCell = React.memo(({ day, onDayClick, onShiftClick }) => (
 ))
 
 export default function Calendar() {
-  const { state, applyToShift, assignShift } = useShifts();
+  const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } = useShifts();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedShift, setSelectedShift] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  
+  // Drag & Drop state
+  const [draggedShift, setDraggedShift] = useState(null)
+  const [dragOverDay, setDragOverDay] = useState(null)
+  const [dragOverTime, setDragOverTime] = useState(null)
+  
   const auth = useContext(AuthContext)
   const userRole = auth?.user?.role || 'analyst'
 
@@ -220,6 +226,116 @@ export default function Calendar() {
     }
   }
 
+  // Drag & Drop handlers
+  const handleShiftDragStart = (e, shift) => {
+    setDraggedShift(shift)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', shift.id)
+    // Add visual feedback
+    e.target.style.opacity = '0.5'
+  }
+
+  const handleShiftDragEnd = (e) => {
+    e.target.style.opacity = '1'
+    setDraggedShift(null)
+    setDragOverDay(null)
+    setDragOverTime(null)
+  }
+
+  const handleDayDragOver = (e, dayDate) => {
+    if (!draggedShift) return
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverDay(dayDate)
+    
+    // Calculate time from mouse position
+    const rect = e.currentTarget.getBoundingClientRect()
+    const y = e.clientY - rect.top
+    const timePercent = y / DAY_HEIGHT
+    const minutesFromMidnight = timePercent * DAY_MINUTES
+    const hours = Math.floor(minutesFromMidnight / 60)
+    const minutes = Math.floor((minutesFromMidnight % 60) / 15) * 15 // Snap to 15-minute intervals
+    setDragOverTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`)
+  }
+
+  const handleDayDragLeave = (e) => {
+    // Only clear if leaving the day column entirely
+    const rect = e.currentTarget.getBoundingClientRect()
+    const { clientX, clientY } = e
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      setDragOverDay(null)
+      setDragOverTime(null)
+    }
+  }
+
+  const handleDayDrop = (e, dayDate) => {
+    e.preventDefault()
+    
+    if (!draggedShift || !dragOverTime) return
+
+    const newDate = new Date(dayDate).toISOString().slice(0, 10)
+    const startTime = dragOverTime
+    
+    // Calculate end time based on original duration
+    const originalStart = draggedShift.start
+    const originalEnd = draggedShift.end
+    const startMinutes = parseInt(originalStart.split(':')[0]) * 60 + parseInt(originalStart.split(':')[1])
+    const endMinutes = parseInt(originalEnd.split(':')[0]) * 60 + parseInt(originalEnd.split(':')[1])
+    let duration = endMinutes - startMinutes
+    
+    // Handle overnight shifts
+    if (duration < 0) {
+      duration += 24 * 60 // Add 24 hours worth of minutes
+    }
+    
+    const newStartMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1])
+    let newEndMinutes = newStartMinutes + duration
+    
+    // Handle end time going past midnight
+    let endTime
+    if (newEndMinutes >= 24 * 60) {
+      newEndMinutes -= 24 * 60
+      endTime = `${String(Math.floor(newEndMinutes / 60)).padStart(2, '0')}:${String(newEndMinutes % 60).padStart(2, '0')}`
+    } else {
+      endTime = `${String(Math.floor(newEndMinutes / 60)).padStart(2, '0')}:${String(newEndMinutes % 60).padStart(2, '0')}`
+    }
+
+    // Update the shift
+    const result = updateShift(draggedShift.id, {
+      date: newDate,
+      start: startTime,
+      end: endTime
+    })
+
+    if (!result.success) {
+      // Show error notification - the updateShift method already handles this
+      console.warn('Failed to move shift:', result.error)
+    }
+
+    // Reset drag state
+    setDraggedShift(null)
+    setDragOverDay(null)
+    setDragOverTime(null)
+  }
+
+  // Keyboard shortcut for undo
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault()
+      const undoResult = undoLastShiftUpdate()
+      if (!undoResult) {
+        // Show notification that there's nothing to undo
+        console.log('Nothing to undo')
+      }
+    }
+  }
+
+  // Add keyboard listener
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [undoLastShiftUpdate])
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="md:flex md:items-center md:justify-between mb-8">
@@ -286,6 +402,16 @@ export default function Calendar() {
               Dienst erstellen
             </button>
           )}
+          {canManageShifts(userRole) && state.undoState && (
+            <button
+              type="button"
+              onClick={() => undoLastShiftUpdate()}
+              className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+              title="Rückgängig (Strg+Z)"
+            >
+              ↶ Rückgängig
+            </button>
+          )}
         </div>
       </div>
 
@@ -333,21 +459,50 @@ export default function Calendar() {
                   return s < dayEnd && e > dayStart
                 })
                 return (
-                  <div key={dayIdx} className="relative border-r border-gray-100" style={{ height: DAY_HEIGHT }}>
+                  <div 
+                    key={dayIdx} 
+                    className={`relative border-r border-gray-100 ${
+                      dragOverDay && dragOverDay.getTime() === dayDate.getTime() 
+                        ? 'bg-blue-50' 
+                        : ''
+                    }`}
+                    style={{ height: DAY_HEIGHT }}
+                    onDragOver={(e) => handleDayDragOver(e, dayDate)}
+                    onDragLeave={handleDayDragLeave}
+                    onDrop={(e) => handleDayDrop(e, dayDate)}
+                  >
                     {/* Hour grid lines */}
                     {HOURS.map((_, i) => (
                       <div key={i} className="absolute left-0 w-full h-px bg-gray-100" style={{ top: i * PX_PER_HOUR }} />
                     ))}
+                    
+                    {/* Drag preview indicator */}
+                    {dragOverDay && dragOverDay.getTime() === dayDate.getTime() && dragOverTime && (
+                      <div 
+                        className="absolute left-0 right-0 h-1 bg-blue-400 opacity-75 z-10"
+                        style={{ 
+                          top: (parseInt(dragOverTime.split(':')[0]) * 60 + parseInt(dragOverTime.split(':')[1])) / DAY_MINUTES * DAY_HEIGHT 
+                        }}
+                      />
+                    )}
+                    
                     {dayShifts.map(shift => {
                       const span = getShiftSpanForDay(shift, dayDate)
                       if (!span) return null
                       return (
                         <div
                           key={`${shift.id}_${dayIdx}`}
-                          className="absolute mx-1 rounded-md bg-[var(--color-primary)]/90 text-white text-[10px] px-1 py-0.5 cursor-pointer shadow-sm hover:bg-[var(--color-primary)]"
+                          className={`absolute mx-1 rounded-md text-white text-[10px] px-1 py-0.5 cursor-move shadow-sm hover:shadow-md transition-shadow ${
+                            shift.assignedTo 
+                              ? 'bg-[var(--color-primary)]/90 hover:bg-[var(--color-primary)]' 
+                              : 'bg-yellow-500/90 hover:bg-yellow-500'
+                          } ${draggedShift?.id === shift.id ? 'opacity-50' : ''}`}
                           style={{ top: span.top, height: span.height }}
+                          draggable={canManageShifts(userRole)}
+                          onDragStart={(e) => handleShiftDragStart(e, shift)}
+                          onDragEnd={handleShiftDragEnd}
                           onClick={() => handleShiftClick(shift)}
-                          title={`${shift.type || shift.name} ${shift.start}-${shift.end}`}
+                          title={`${shift.type || shift.name} ${shift.start}-${shift.end}${canManageShifts(userRole) ? ' (Ziehen zum Verschieben)' : ''}`}
                         >
                           <div className="font-semibold truncate">{shift.type || shift.name}</div>
                           <div className="truncate">{shift.assignedTo || 'Offen'}</div>
