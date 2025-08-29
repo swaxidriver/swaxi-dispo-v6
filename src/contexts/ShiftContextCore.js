@@ -9,6 +9,7 @@ export const initialState = {
   isOnline: false,
   lastSync: null,
   lastActivity: null,
+  undoState: null, // For single-level undo of shift movements
 }
 
 export function buildShiftId(date, type) {
@@ -68,6 +69,10 @@ export function shiftReducer(state, action) {
       return { ...state, isOnline: action.payload }
     case 'SET_LAST_ACTIVITY':
       return { ...state, lastActivity: action.payload }
+    case 'SET_UNDO_STATE':
+      return { ...state, undoState: action.payload }
+    case 'CLEAR_UNDO_STATE':
+      return { ...state, undoState: null }
     default:
       return state
   }
