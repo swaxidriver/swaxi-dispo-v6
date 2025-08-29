@@ -80,7 +80,7 @@ function App() {
                 } catch { /* ignore */ }
               }}>
               <Router basename="/swaxi-dispo-v6">
-                <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col">
+                <div className="min-h-screen bg-bg text-text flex flex-col">
                   <LiveVersionBanner />
                   <Navigation />
                   <ErrorBoundary>
