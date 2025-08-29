@@ -6,6 +6,7 @@ import { useContext } from 'react'
 import { useFeedback } from '../contexts/useFeedback'
 import AuthContext from '../contexts/AuthContext'
 import { canViewAudit } from '../utils/auth'
+import { useI18n } from '../hooks/useI18n'
 
 import ActiveRoleBadge from './ActiveRoleBadge'
 import VersionBadge from './VersionBadge'
@@ -18,14 +19,16 @@ function classNames(...classes) {
 
 export default function Navigation() {
   const auth = useContext(AuthContext)
+  const { t } = useI18n()
   const role = auth?.user?.role
   const isAdmin = role === 'admin' || role === 'chief'
   const navigation = [
-  { name: 'Übersicht', href: '/' },
-  { name: 'Kalender', href: '/calendar' },
-  isAdmin && { name: 'Verwaltung', href: '/admin' },
-  canViewAudit(role) && { name: 'Audit', href: '/audit' },
-  { name: '🧪 Test', href: '/test' },
+  { name: t('overview'), href: '/' },
+  { name: t('calendar'), href: '/calendar' },
+  isAdmin && { name: t('administration'), href: '/admin' },
+  canViewAudit(role) && { name: t('audit'), href: '/audit' },
+  { name: t('settings'), href: '/settings' },
+  { name: t('test'), href: '/test' },
   ].filter(Boolean)
 
   return (
