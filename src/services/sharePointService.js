@@ -1,5 +1,6 @@
 // src/services/sharePointService.js
 import { logError, logInfo } from '../utils/logger';
+import AuditService from './auditService';
 /**
  * SharePoint Integration Service for Stadtwerke Augsburg
  * This service connects your React app to SharePoint Lists
@@ -228,15 +229,40 @@ export class SharePointService {
     };
     data.shifts = [...(data.shifts || []), newShift];
     localStorage.setItem('swaxi-dispo-state', JSON.stringify(data));
+    
+    // Log audit entry
+    AuditService.logCurrentUserAction(
+      'Schicht erstellt',
+      `${shiftData.type || 'Schicht'} • ${shiftData.date} • ${shiftData.start}-${shiftData.end}`,
+      1
+    );
+    
     return newShift;
   }
 
   updateShiftInLocalStorage(shiftId, updates) {
     const data = JSON.parse(localStorage.getItem('swaxi-dispo-state') || '{"shifts": []}');
+    const originalShift = data.shifts.find(shift => shift.id === shiftId);
+    
     data.shifts = data.shifts.map(shift => 
       shift.id === shiftId ? { ...shift, ...updates, updatedAt: new Date() } : shift
     );
     localStorage.setItem('swaxi-dispo-state', JSON.stringify(data));
+    
+    // Log audit entry
+    if (originalShift) {
+      const changedFields = Object.keys(updates).filter(key => key !== 'updatedAt');
+      const details = changedFields.length > 0 
+        ? `${originalShift.type || 'Schicht'} ${originalShift.date} • Geändert: ${changedFields.join(', ')}`
+        : `${originalShift.type || 'Schicht'} ${originalShift.date} • Aktualisiert`;
+        
+      AuditService.logCurrentUserAction(
+        'Schicht aktualisiert',
+        details,
+        1
+      );
+    }
+    
     return { success: true };
   }
 

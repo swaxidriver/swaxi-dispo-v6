@@ -24,6 +24,7 @@ import { enqueue, drain as drainQueue, peekQueue } from '../services/offlineQueu
 import { STATUS, assertTransition } from '../domain/status'
 import { generateId } from '../utils/id'
 import { useShiftTemplates } from './useShiftTemplates'
+import AuditService from '../services/auditService'
 
 const ShiftContext = createContext(null)
 
@@ -202,6 +203,19 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     if (!shiftIds.length) return
     const apps = shiftIds.map(id => ({ id: `${id}_${userId}`, shiftId: id, userId, ts: Date.now() }))
     dispatch({ type: 'ADD_SERIES_APPLICATION', payload: apps })
+    
+    // Log audit entry for series application
+    const shiftDetails = shiftIds.map(id => {
+      const shift = state.shifts.find(s => s.id === id)
+      return shift ? `${shift.type} ${shift.date}` : id
+    }).join(', ')
+    
+    AuditService.logCurrentUserAction(
+      'Serienbewerbung eingereicht',
+      `Beworben auf ${shiftIds.length} Schichten: ${shiftDetails}`,
+      shiftIds.length
+    )
+    
     // Bulk conflict recompute for involved shifts
     shiftIds.forEach(id => {
       const target = state.shifts.find(s => s.id === id)
@@ -286,6 +300,13 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     }
     shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
     dispatch({ type: 'ADD_SHIFT', payload: shift })
+    
+    // Log audit entry for shift creation
+    AuditService.logCurrentUserAction(
+      'Schicht erstellt',
+      `${partial.type} • ${dateIso} • ${partial.start}-${partial.end} • ${resolvedLocation}`,
+      1
+    )
     
     // Recompute conflicts for existing shifts that overlap with the new shift
     // This ensures all shifts show conflicts bidirectionally

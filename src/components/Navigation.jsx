@@ -5,6 +5,7 @@ import { useContext } from 'react'
 
 import { useFeedback } from '../contexts/useFeedback'
 import AuthContext from '../contexts/AuthContext'
+import { canViewAudit } from '../utils/auth'
 
 import ActiveRoleBadge from './ActiveRoleBadge'
 import VersionBadge from './VersionBadge'
@@ -23,7 +24,7 @@ export default function Navigation() {
   { name: 'Übersicht', href: '/' },
   { name: 'Kalender', href: '/calendar' },
   isAdmin && { name: 'Verwaltung', href: '/admin' },
-  isAdmin && { name: 'Audit', href: '/audit' },
+  canViewAudit(role) && { name: 'Audit', href: '/audit' },
   { name: '🧪 Test', href: '/test' },
   ].filter(Boolean)
 
