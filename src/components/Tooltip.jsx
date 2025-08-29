@@ -120,8 +120,8 @@ function Tooltip({ content, children, className = '', disabled = false }) {
     }
   }, [isVisible])
 
-  // Generate unique ID for accessibility
-  const tooltipId = `tooltip-${Math.random().toString(36).substr(2, 9)}`
+  // Generate stable ID for accessibility
+  const tooltipId = useRef(`tooltip-${Math.random().toString(36).substr(2, 9)}`)
 
   return (
     <div className={`relative inline-block ${className}`}>
@@ -132,8 +132,23 @@ function Tooltip({ content, children, className = '', disabled = false }) {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchMove}
-        aria-describedby={isVisible ? tooltipId : undefined}
+        aria-describedby={isVisible ? tooltipId.current : undefined}
         className="cursor-help"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            if (isVisible) {
+              hideTooltip()
+            } else {
+              showTooltip()
+            }
+          }
+          if (e.key === 'Escape') {
+            hideTooltip()
+          }
+        }}
       >
         {children}
       </div>
@@ -141,9 +156,10 @@ function Tooltip({ content, children, className = '', disabled = false }) {
       {isVisible && (
         <div
           ref={tooltipRef}
-          id={tooltipId}
+          id={tooltipId.current}
           role="tooltip"
-          className="fixed z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none"
+          aria-live="polite"
+          className="fixed z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none max-w-xs"
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
