@@ -1,6 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { ShiftRepository } from './ShiftRepository';
 import { STORES, DB_VERSION, ASSIGNMENT_STATUS } from './schemas';
-import { v4 as uuidv4 } from 'uuid';
 
 // Enhanced IndexedDB repository with support for the new scheduling data model
 const DEFAULT_DB_NAME = 'swaxi_dispo_v2';
@@ -115,22 +116,18 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
   }
 
   async getShiftTemplate(id) {
-    return new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.SHIFT_TEMPLATES.name, 'readonly', (store) => {
-        const request = store.get(id);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+    return this._withStore(STORES.SHIFT_TEMPLATES.name, 'readonly', (store, resolve, reject) => {
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 
   async listShiftTemplates(filters = {}) {
-    const all = await new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.SHIFT_TEMPLATES.name, 'readonly', (store) => {
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
+    const all = await this._withStore(STORES.SHIFT_TEMPLATES.name, 'readonly', (store, resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
     });
 
     // Apply filters
@@ -181,22 +178,18 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
   }
 
   async getShiftInstance(id) {
-    return new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.SHIFT_INSTANCES.name, 'readonly', (store) => {
-        const request = store.get(id);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+    return this._withStore(STORES.SHIFT_INSTANCES.name, 'readonly', (store, resolve, reject) => {
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 
   async listShiftInstances(filters = {}) {
-    const all = await new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.SHIFT_INSTANCES.name, 'readonly', (store) => {
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
+    const all = await this._withStore(STORES.SHIFT_INSTANCES.name, 'readonly', (store, resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
     });
 
     // Apply filters
@@ -256,22 +249,18 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
   }
 
   async getAssignment(id) {
-    return new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.ASSIGNMENTS.name, 'readonly', (store) => {
-        const request = store.get(id);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+    return this._withStore(STORES.ASSIGNMENTS.name, 'readonly', (store, resolve, reject) => {
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 
   async listAssignments(filters = {}) {
-    const all = await new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.ASSIGNMENTS.name, 'readonly', (store) => {
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
+    const all = await this._withStore(STORES.ASSIGNMENTS.name, 'readonly', (store, resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
     });
 
     // Apply filters
@@ -329,22 +318,18 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
   }
 
   async getPerson(id) {
-    return new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.PERSONS.name, 'readonly', (store) => {
-        const request = store.get(id);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-      });
+    return this._withStore(STORES.PERSONS.name, 'readonly', (store, resolve, reject) => {
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 
   async listPersons(filters = {}) {
-    const all = await new Promise(async (resolve, reject) => {
-      await this._withStore(STORES.PERSONS.name, 'readonly', (store) => {
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
+    const all = await this._withStore(STORES.PERSONS.name, 'readonly', (store, resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
     });
 
     // Apply filters

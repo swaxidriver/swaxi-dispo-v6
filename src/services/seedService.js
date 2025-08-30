@@ -1,7 +1,7 @@
+import { addDays, format } from 'date-fns';
+
 import { EnhancedIndexedDBRepository } from '../repository/EnhancedIndexedDBRepository';
 import { dayNamesToMask, isDayActive } from '../repository/schemas';
-import { addDays, format } from 'date-fns';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Seed service for populating initial data according to P0 requirements:
