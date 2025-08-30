@@ -14,6 +14,7 @@ import { render, waitFor } from '@testing-library/react'
 import { ShiftProvider, ShiftContext } from '../contexts/ShiftContext'
 import { ShiftTemplateProvider } from '../contexts/ShiftTemplateContext'
 import { toMinutes, computeDuration, overlaps } from '../utils/shifts'
+import { enhance_shift_with_datetime } from '../utils/time-utils'
 
 function CaptureContext({ holder }) {
   const ctx = React.useContext(ShiftContext)
@@ -91,14 +92,18 @@ describe('P0 Issue: Midnight overlap correctness', () => {
 
     const nightShift = holder.current.shifts[0]
     
-    // Verify the shift was stored correctly
+    // Verify the shift was stored correctly WITH datetime fields
     expect(nightShift.start).toBe('22:00')
     expect(nightShift.end).toBe('06:00')
     expect(nightShift.date).toBe('2025-01-15') // Should stay on the start date
+    expect(nightShift.start_dt).toBeDefined()
+    expect(nightShift.end_dt).toBeDefined()
+    expect(nightShift.start_dt.utc).toBeInstanceOf(Date)
+    expect(nightShift.end_dt.utc).toBeInstanceOf(Date)
     
     // Test conflict detection with this overnight shift
     const morningResult = holder.current.createShift({
-      date: '2025-01-15', // Same date
+      date: '2025-01-16', // Next day - this should overlap with night shift end
       type: 'Frueh',
       start: '05:00', // Should conflict with night shift ending at 06:00  
       end: '13:00',

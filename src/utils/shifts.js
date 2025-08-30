@@ -1,3 +1,5 @@
+import { enhance_shift_with_datetime, is_overlap as is_datetime_overlap } from './time-utils.js'
+
 // (constants import not required here after refinement)
 
 // --- Time & Conflict Utilities (P0-3 & P0-4) ---
@@ -49,7 +51,7 @@ export function computeShiftConflicts(target, others, applications) {
   // Find overlapping shifts in a single pass
   const overlapping = []
   for (const other of others) {
-    if (overlaps(target.start, target.end, other.start, other.end)) {
+    if (detectShiftOverlap(target, other)) {
       overlapping.push(other)
     }
   }
@@ -101,6 +103,41 @@ export function computeShiftConflicts(target, others, applications) {
 }
 
 export const checkShiftConflicts = (shift, existingShifts, applications) => computeShiftConflicts(shift, existingShifts, applications)
+
+/**
+ * Enhanced overlap detection that handles both datetime-enhanced and legacy shifts
+ * @param {Object} shiftA - First shift
+ * @param {Object} shiftB - Second shift  
+ * @returns {boolean} True if shifts overlap
+ */
+export function detectShiftOverlap(shiftA, shiftB) {
+  // If both shifts have datetime fields, use the enhanced overlap detection
+  if (shiftA.start_dt && shiftA.end_dt && shiftB.start_dt && shiftB.end_dt) {
+    const result = is_datetime_overlap(shiftA, shiftB)
+    // Debug: uncomment for debugging
+    // console.log(`Datetime overlap: ${shiftA.id} vs ${shiftB.id} = ${result}`)
+    // console.log(`  A: ${shiftA.start_dt?.utc} → ${shiftA.end_dt?.utc}`)
+    // console.log(`  B: ${shiftB.start_dt?.utc} → ${shiftB.end_dt?.utc}`)
+    return result
+  }
+  
+  // For legacy shifts or mixed scenarios, first check if they're on the same date
+  if (shiftA.date !== shiftB.date) {
+    // Different dates - check if one is cross-midnight and overlaps with the other
+    const enhancedA = shiftA.start_dt ? shiftA : enhance_shift_with_datetime(shiftA)
+    const enhancedB = shiftB.start_dt ? shiftB : enhance_shift_with_datetime(shiftB)
+    const result = is_datetime_overlap(enhancedA, enhancedB)
+    // Debug: uncomment for debugging
+    // console.log(`Cross-date overlap: ${shiftA.id} vs ${shiftB.id} = ${result}`)
+    return result
+  }
+  
+  // Same date - use the original time-based overlap detection
+  const result = overlaps(shiftA.start, shiftA.end, shiftB.start, shiftB.end)
+  // Debug: uncomment for debugging
+  // console.log(`Same-date overlap: ${shiftA.id} vs ${shiftB.id} = ${result}`)
+  return result
+}
 
 export const generateShiftTemplates = (startDate, daysToGenerate = 10) => {
   const shifts = [];
