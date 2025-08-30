@@ -1,5 +1,6 @@
 // src/services/sharePointService.js
 import { logError, logInfo } from '../utils/logger';
+
 import AuditService from './auditService';
 /**
  * SharePoint Integration Service for Stadtwerke Augsburg

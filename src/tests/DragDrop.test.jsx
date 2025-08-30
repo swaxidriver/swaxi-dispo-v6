@@ -1,10 +1,11 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { act } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+
 import Calendar from '../pages/Calendar'
 import { ShiftProvider } from '../contexts/ShiftContext'
 import AuthContext from '../contexts/AuthContext'
 import { ThemeProvider } from '../contexts/ThemeContext'
-import { MemoryRouter } from 'react-router-dom'
 
 // Mock data for testing
 const mockShifts = [
