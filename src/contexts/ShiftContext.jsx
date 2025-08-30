@@ -388,7 +388,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     // Recompute conflicts for existing shifts that overlap with the new shift
     // This ensures all shifts show conflicts bidirectionally
     const overlappingShifts = state.shifts.filter(existingShift => 
-      detectShiftOverlap(enhancedShift, existingShift)
+      existingShift.id !== enhancedShift.id && detectShiftOverlap(enhancedShift, existingShift)
     )
     
     overlappingShifts.forEach(existingShift => {
