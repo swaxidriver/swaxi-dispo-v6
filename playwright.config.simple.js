@@ -63,11 +63,12 @@ export default defineConfig({
     },
   ],
 
+  // Commented out webServer for manual testing - uncomment for automated testing
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5174/swaxi-dispo-v6',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  // webServer: {
+  //   command: 'npm run dev',
+  //   url: 'http://localhost:5174/swaxi-dispo-v6',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 120 * 1000,
+  // },
 });
