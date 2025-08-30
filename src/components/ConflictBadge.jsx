@@ -1,11 +1,11 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/solid'
 
-import { describeConflicts } from '../utils/conflicts'
+import { describeConflicts, categorizeConflicts } from '../utils/conflicts'
 import Tooltip from './Tooltip'
 
 /**
  * Conflict badge with tooltip showing conflict details
- * Displays a warning icon with the number of conflicts
+ * Displays different styling for warnings vs blocking conflicts
  */
 function ConflictBadge({ conflicts = [], className = '' }) {
   if (!conflicts || conflicts.length === 0) {
@@ -15,11 +15,18 @@ function ConflictBadge({ conflicts = [], className = '' }) {
   const conflictCount = conflicts.length
   const conflictDescriptions = describeConflicts(conflicts)
   const tooltipContent = conflictDescriptions.join(', ')
+  const { warnings, blocking } = categorizeConflicts(conflicts)
+  
+  // Use red for blocking conflicts, orange for warnings only
+  const hasBlocking = blocking.length > 0
+  const badgeClasses = hasBlocking
+    ? 'text-red-800 bg-red-100 border-red-200'
+    : 'text-orange-800 bg-orange-100 border-orange-200'
 
   return (
     <Tooltip content={tooltipContent} data-testid="conflict-tooltip">
       <div
-        className={`inline-flex items-center px-2 py-1 text-xs font-medium text-red-800 bg-red-100 border border-red-200 rounded-full ${className}`}
+        className={`inline-flex items-center px-2 py-1 text-xs font-medium border rounded-full ${badgeClasses} ${className}`}
         aria-label={`${conflictCount} Konflikt${conflictCount > 1 ? 'e' : ''}: ${tooltipContent}`}
         data-testid="conflict-badge"
       >

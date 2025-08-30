@@ -1,4 +1,4 @@
-import { toMinutes, computeDuration, overlaps, computeShiftConflicts } from '../utils/shifts'
+import { toMinutes, computeDuration, overlaps, computeShiftConflicts, minutesBetweenShifts, isShortTurnaround, CONFLICT_CODES } from '../utils/shifts'
 
 describe('Time & Conflict Utilities', () => {
   test('toMinutes parses HH:MM', () => {
@@ -29,5 +29,92 @@ describe('Time & Conflict Utilities', () => {
     ]
     const conflictsA = computeShiftConflicts(a, [b], apps)
   expect(conflictsA).toEqual(expect.arrayContaining(['TIME_OVERLAP','ASSIGNMENT_COLLISION','LOCATION_MISMATCH']))
+  })
+
+  // New tests for short turnaround detection
+  test('minutesBetweenShifts calculates gap correctly', () => {
+    const shiftA = { id:'A', date:'2025-01-15', start:'22:00', end:'06:00' }
+    const shiftB = { id:'B', date:'2025-01-15', start:'14:00', end:'18:00' }
+    
+    // Same day calculation
+    expect(minutesBetweenShifts(shiftB, shiftA)).toBe(240) // 4 hours between 18:00 and 22:00
+  })
+
+  test('isShortTurnaround detects insufficient rest time', () => {
+    const nightShift = { id:'A', date:'2025-01-15', start:'22:00', end:'06:00' }
+    const morningShift = { id:'B', date:'2025-01-16', start:'08:00', end:'12:00' }
+    
+    // 2 hours rest is short turnaround (default is 8 hours)
+    expect(isShortTurnaround(nightShift, morningShift)).toBe(true)
+    
+    // 10 hours rest is not short turnaround
+    const afternoonShift = { id:'C', date:'2025-01-16', start:'16:00', end:'20:00' }
+    expect(isShortTurnaround(nightShift, afternoonShift)).toBe(false)
+  })
+
+  test('computeShiftConflicts SHORT_TURNAROUND detection', () => {
+    const nightShift = { 
+      id:'A', 
+      date:'2025-01-15', 
+      start:'22:00', 
+      end:'06:00', 
+      assignedTo:'User1', 
+      status:'assigned' 
+    }
+    const morningShift = { 
+      id:'B', 
+      date:'2025-01-16', 
+      start:'08:00', 
+      end:'12:00', 
+      assignedTo:'User1', 
+      status:'assigned' 
+    }
+    
+    const conflicts = computeShiftConflicts(nightShift, [morningShift], [])
+    expect(conflicts).toContain(CONFLICT_CODES.SHORT_TURNAROUND)
+  })
+
+  test('short turnaround not detected for different users', () => {
+    const nightShift = { 
+      id:'A', 
+      date:'2025-01-15', 
+      start:'22:00', 
+      end:'06:00', 
+      assignedTo:'User1', 
+      status:'assigned' 
+    }
+    const morningShift = { 
+      id:'B', 
+      date:'2025-01-16', 
+      start:'08:00', 
+      end:'12:00', 
+      assignedTo:'User2', 
+      status:'assigned' 
+    }
+    
+    const conflicts = computeShiftConflicts(nightShift, [morningShift], [])
+    expect(conflicts).not.toContain(CONFLICT_CODES.SHORT_TURNAROUND)
+  })
+
+  test('short turnaround not detected for unassigned shifts', () => {
+    const nightShift = { 
+      id:'A', 
+      date:'2025-01-15', 
+      start:'22:00', 
+      end:'06:00', 
+      assignedTo:null, 
+      status:'open' 
+    }
+    const morningShift = { 
+      id:'B', 
+      date:'2025-01-16', 
+      start:'08:00', 
+      end:'12:00', 
+      assignedTo:null, 
+      status:'open' 
+    }
+    
+    const conflicts = computeShiftConflicts(nightShift, [morningShift], [])
+    expect(conflicts).not.toContain(CONFLICT_CODES.SHORT_TURNAROUND)
   })
 })
