@@ -60,7 +60,7 @@ function ShiftTable({ shifts, showActions = true }) {
 
   // Memoize individual shift row component to optimize rendering
   const ShiftRow = useCallback(({ shift }) => (
-    <li key={shift.id}>
+    <li key={shift.id} data-testid="shift-item" data-shift-id={shift.id}>
       <div style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)', paddingTop: 'var(--space-4)', paddingBottom: 'var(--space-4)' }}>
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-[var(--color-primary)] truncate">
@@ -106,7 +106,7 @@ function ShiftTable({ shifts, showActions = true }) {
                   {canManageShifts(userRole) && (() => {
                     const assignDisabled = !canTransition(shift.status, STATUS.ASSIGNED)
                     const assignReason = assignDisabled ? 'Status erlaubt keine Zuweisung' : 'Diesen Dienst einem Nutzer zuweisen'
-                    return <button disabled={assignDisabled} onClick={() => !assignDisabled && handleAssign(shift.id)} className={`inline-flex items-center rounded-md text-sm font-semibold shadow-sm ring-1 ring-inset ${assignDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'}`} title={assignReason} aria-label={assignReason} aria-disabled={assignDisabled} style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>Zuweisen</button>
+                    return <button disabled={assignDisabled} onClick={() => !assignDisabled && handleAssign(shift.id)} data-testid="assign-shift-btn" className={`inline-flex items-center rounded-md text-sm font-semibold shadow-sm ring-1 ring-inset ${assignDisabled ? 'bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'}`} title={assignReason} aria-label={assignReason} aria-disabled={assignDisabled} style={{ paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-2)', paddingBottom: 'var(--space-2)' }}>Zuweisen</button>
                   })()}
                 </>
               )}
@@ -197,7 +197,7 @@ function ShiftTable({ shifts, showActions = true }) {
   ), [auth?.user, userRole, showActions, getStatusBadgeClass, handleApply, handleAssign, handleCancel]);
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+    <div className="bg-white shadow overflow-hidden sm:rounded-md" data-testid="shift-table">
       {shouldVirtualize ? (
         // Use virtualization for large datasets
         <VirtualizedList
@@ -207,10 +207,11 @@ function ShiftTable({ shifts, showActions = true }) {
           renderItem={renderVirtualizedShift}
           className=""
           role="list"
+          data-testid="virtualized-shift-list"
         />
       ) : (
         // Regular rendering for smaller datasets
-        <ul className="divide-y divide-gray-200" role="list">
+        <ul className="divide-y divide-gray-200" role="list" data-testid="shift-list">
           {shifts.map((shift) => (
             <ShiftRow key={shift.id} shift={shift} />
           ))}

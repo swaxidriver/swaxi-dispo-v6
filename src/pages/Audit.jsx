@@ -53,6 +53,7 @@ export default function Audit() {
           </select>
           <button
             onClick={handleExport}
+            data-testid="export-btn"
             className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
           >
             JSON Export

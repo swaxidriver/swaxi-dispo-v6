@@ -17,10 +17,11 @@ function ConflictBadge({ conflicts = [], className = '' }) {
   const tooltipContent = conflictDescriptions.join(', ')
 
   return (
-    <Tooltip content={tooltipContent}>
+    <Tooltip content={tooltipContent} data-testid="conflict-tooltip">
       <div
         className={`inline-flex items-center px-2 py-1 text-xs font-medium text-red-800 bg-red-100 border border-red-200 rounded-full ${className}`}
         aria-label={`${conflictCount} Konflikt${conflictCount > 1 ? 'e' : ''}: ${tooltipContent}`}
+        data-testid="conflict-badge"
       >
         <ExclamationTriangleIcon className="w-3 h-3 mr-1" />
         <span>{conflictCount} Konflikt{conflictCount > 1 ? 'e' : ''}</span>
