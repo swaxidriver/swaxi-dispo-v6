@@ -178,7 +178,8 @@ describe('P0 Issue: Midnight overlap correctness', () => {
       name: 'Nacht',
       startTime: '22:00',
       endTime: '06:00',
-      days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] // Every day
+      days: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'], // Every day
+      cross_midnight: true // Required flag for cross-midnight templates
     }
     
     const shifts = generateShifts([nightTemplate])
@@ -191,9 +192,14 @@ describe('P0 Issue: Midnight overlap correctness', () => {
       expect(shift.startTime).toBe('22:00')
       expect(shift.endTime).toBe('06:00')
       expect(shift.name).toBe('Nacht')
+      expect(shift.cross_midnight).toBe(true)
       
       // Verify ID format is consistent
       expect(shift.id).toMatch(/^\d{4}-\d{2}-\d{2}_Nacht$/)
+      
+      // Should have datetime fields
+      expect(shift.start_dt).toBeDefined()
+      expect(shift.end_dt).toBeDefined()
     })
   })
 })
