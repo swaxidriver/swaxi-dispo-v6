@@ -40,8 +40,19 @@ export function to_utc(dt, timezone = DEFAULT_TIMEZONE) {
  * @returns {Object} Object with utc and local datetime
  */
 export function create_datetime(dateStr, timeStr, timezone = DEFAULT_TIMEZONE) {
+  // Validate inputs
+  if (!dateStr || !timeStr) {
+    throw new Error('Date and time strings are required')
+  }
+  
   // Combine date and time to create local datetime
-  const localDateTime = new Date(`${dateStr}T${timeStr}:00`)
+  const isoString = `${dateStr}T${timeStr}:00`
+  const localDateTime = new Date(isoString)
+  
+  // Check if the date is valid
+  if (isNaN(localDateTime.getTime())) {
+    throw new Error(`Invalid date/time: ${isoString}`)
+  }
   
   // For UTC, we'll use a simple approach since precise timezone handling 
   // requires a proper timezone library like date-fns-tz
