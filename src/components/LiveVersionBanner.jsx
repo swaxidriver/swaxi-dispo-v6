@@ -118,7 +118,7 @@ export default function LiveVersionBanner() {
   // Show update banner if update is available
   if (updateAvailable) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 md:top-0 md:bottom-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-50 md:top-0 md:bottom-auto" data-testid="version-banner">
         <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-gradient-to-r from-orange-500 to-red-500 px-6 py-3 sm:px-3.5">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <div className="flex items-center gap-x-2">
@@ -137,6 +137,7 @@ export default function LiveVersionBanner() {
             <button
               type="button"
               onClick={handleReload}
+              data-testid="version-reload-btn"
               className="rounded-md bg-white/20 px-3 py-1 text-sm font-medium text-white hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
             >
               Neu laden

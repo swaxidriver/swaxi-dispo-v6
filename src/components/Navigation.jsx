@@ -32,7 +32,7 @@ export default function Navigation() {
   ].filter(Boolean)
 
   return (
-  <nav className="bg-[var(--color-primary)]" aria-label="Hauptnavigation">
+  <nav className="bg-[var(--color-primary)]" aria-label="Hauptnavigation" data-testid="main-nav">
       <div className="mx-auto max-w-7xl" style={{ paddingLeft: 'var(--space-4)', paddingRight: 'var(--space-4)' }}>
         <div className="flex justify-between" style={{ height: 'var(--space-16)' }}>
           <div className="flex">
@@ -40,11 +40,15 @@ export default function Navigation() {
               <span className="text-white font-bold text-xl flex items-center">swaxi <VersionBadge /></span>
             </div>
             <div className="hidden sm:flex items-center" style={{ marginLeft: 'var(--space-6)', gap: 'var(--space-8)' }}>
-              {navigation.map((item) => (
+              {navigation.map((item) => {
+                // Generate test ID based on route for consistency
+                const testId = `nav-${item.href === '/' ? 'dashboard' : item.href.slice(1)}`
+                return (
                 <NavLink
                   key={item.name}
                   to={item.href}
                   end={item.href === '/'}
+                  data-testid={testId}
                   className={({ isActive }) =>
                     classNames(
                       isActive
@@ -57,7 +61,8 @@ export default function Navigation() {
                 >
                   {item.name}
                 </NavLink>
-              ))}
+                )
+              })}
               <span className="flex-1" aria-hidden="true" />
               {auth?.user && (
                 <ActiveRoleBadge style={{ marginLeft: 'var(--space-4)' }} />
@@ -65,6 +70,7 @@ export default function Navigation() {
               {!auth?.user && (
                 <NavLink
                   to="/login"
+                  data-testid="nav-login"
                   className={({ isActive }) =>
                     classNames(
                       isActive ? 'border-brand-accent text-white' : 'border-transparent text-gray-300 hover:border-gray-300 hover:text-white',
@@ -77,6 +83,7 @@ export default function Navigation() {
               {auth?.user && (
                 <button
                   onClick={auth.logout}
+                  data-testid="nav-logout"
                   className="inline-flex items-center border-b-2 border-transparent text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300"
                   aria-label={`Abmelden (${auth.user.role})`}
                   title="Aktuelle Sitzung beenden"
@@ -98,7 +105,7 @@ function FeedbackNavControl() {
     const fb = useFeedback()
     return (
       <div className="flex items-center">
-  <button onClick={fb.open} className="text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded" aria-haspopup="dialog" title="Feedback geben / Problem melden" style={{ marginLeft: 'var(--space-4)', paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}>Feedback</button>
+  <button onClick={fb.open} data-testid="feedback-btn" className="text-sm text-gray-300 hover:text-white border border-transparent hover:border-gray-300 rounded" aria-haspopup="dialog" title="Feedback geben / Problem melden" style={{ marginLeft: 'var(--space-4)', paddingLeft: 'var(--space-3)', paddingRight: 'var(--space-3)', paddingTop: 'var(--space-1)', paddingBottom: 'var(--space-1)' }}>Feedback</button>
       </div>
     )
   } catch {

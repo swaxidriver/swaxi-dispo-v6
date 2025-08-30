@@ -47,9 +47,9 @@ function ShiftTemplateManager() {
   const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg">
+    <div className="p-4 bg-white shadow-md rounded-lg" data-testid="shift-template-manager">
       <h2 className="text-xl font-bold mb-4">Shift Templates</h2>
-      <form onSubmit={handleSubmit} className="mb-4">
+      <form onSubmit={handleSubmit} className="mb-4" data-testid="create-template-form">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
             type="text"
@@ -58,6 +58,7 @@ function ShiftTemplateManager() {
             onChange={handleInputChange}
             placeholder="Template Name"
             className="p-2 border rounded"
+            data-testid="template-name-input"
             required
           />
           <input
@@ -66,6 +67,7 @@ function ShiftTemplateManager() {
             value={formState.startTime}
             onChange={handleInputChange}
             className="p-2 border rounded"
+            data-testid="template-start-time-input"
             required
           />
           <input
@@ -74,17 +76,19 @@ function ShiftTemplateManager() {
             value={formState.endTime}
             onChange={handleInputChange}
             className="p-2 border rounded"
+            data-testid="template-end-time-input"
             required
           />
         </div>
         <div className="mt-4">
           <label className="block mb-2">Days of the week:</label>
-          <div className="flex space-x-2">
+          <div className="flex space-x-2" data-testid="template-days-selector">
             {daysOfWeek.map((day) => (
               <button
                 type="button"
                 key={day}
                 onClick={() => handleDayChange(day)}
+                data-testid={`day-${day.toLowerCase()}`}
                 className={`px-4 py-2 rounded ${
                   formState.days.includes(day)
                     ? 'bg-blue-500 text-white'
@@ -97,13 +101,14 @@ function ShiftTemplateManager() {
           </div>
         </div>
         <div className="mt-4">
-          <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+          <button type="submit" data-testid="create-template-btn" className="bg-green-500 text-white px-4 py-2 rounded">
             {editingTemplate ? 'Update Template' : 'Add Template'}
           </button>
           {editingTemplate && (
             <button
               type="button"
               onClick={resetForm}
+              data-testid="cancel-template-edit-btn"
               className="bg-gray-500 text-white px-4 py-2 rounded ml-2"
             >
               Cancel
@@ -113,18 +118,18 @@ function ShiftTemplateManager() {
       </form>
       <div>
         <h3 className="text-lg font-bold mb-2">Existing Templates</h3>
-        <ul>
+        <ul data-testid="template-list">
           {templates.map((template) => (
-            <li key={template.id} className="flex justify-between items-center p-2 border-b">
+            <li key={template.id} className="flex justify-between items-center p-2 border-b" data-testid={`template-item-${template.id}`}>
               <div>
                 <p className="font-semibold">{template.name}</p>
                 <p>{template.days.join(', ')}: {template.startTime} - {template.endTime}</p>
               </div>
               <div>
-                <button onClick={() => handleEdit(template)} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
+                <button onClick={() => handleEdit(template)} data-testid={`edit-template-${template.id}`} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
                   Edit
                 </button>
-                <button onClick={() => deleteTemplate(template.id)} className="bg-red-500 text-white px-2 py-1 rounded">
+                <button onClick={() => deleteTemplate(template.id)} data-testid={`delete-template-${template.id}`} className="bg-red-500 text-white px-2 py-1 rounded">
                   Delete
                 </button>
               </div>
