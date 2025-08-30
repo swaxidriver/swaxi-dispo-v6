@@ -38,11 +38,43 @@ export function overlaps(aStart, aEnd, bStart, bEnd) {
   return segA.some(([s1,e1]) => segB.some(([s2,e2]) => s1 < e2 && e1 > s2))
 }
 
+// Calculate minutes between end of first shift and start of second shift
+export function minutesBetweenShifts(shiftA, shiftB) {
+  // Use datetime-enhanced shifts if available for cross-midnight accuracy
+  if (shiftA.start_dt && shiftA.end_dt && shiftB.start_dt && shiftB.end_dt) {
+    const aEnd = shiftA.end_dt?.utc || new Date(shiftA.end_dt)
+    const bStart = shiftB.start_dt?.utc || new Date(shiftB.start_dt)
+    return Math.round((bStart - aEnd) / (1000 * 60))
+  }
+  
+  // Legacy calculation for same-date shifts
+  if (shiftA.date === shiftB.date) {
+    const aEnd = toMinutes(shiftA.end)
+    const bStart = toMinutes(shiftB.start)
+    if (Number.isNaN(aEnd) || Number.isNaN(bStart)) return null
+    return bStart - aEnd
+  }
+  
+  // Different dates - enhance with datetime and calculate
+  const enhancedA = enhance_shift_with_datetime(shiftA)
+  const enhancedB = enhance_shift_with_datetime(shiftB)
+  const aEnd = enhancedA.end_dt?.utc || new Date(enhancedA.end_dt)
+  const bStart = enhancedB.start_dt?.utc || new Date(enhancedB.start_dt)
+  return Math.round((bStart - aEnd) / (1000 * 60))
+}
+
+// Check if the gap between two shifts is considered a short turnaround
+export function isShortTurnaround(shiftA, shiftB, minRestMinutes = 480) { // 8 hours default
+  const minutes = minutesBetweenShifts(shiftA, shiftB)
+  return minutes !== null && minutes >= 0 && minutes < minRestMinutes
+}
+
 export const CONFLICT_CODES = Object.freeze({
   TIME_OVERLAP: 'TIME_OVERLAP',
   DOUBLE_APPLICATION: 'DOUBLE_APPLICATION',
   ASSIGNMENT_COLLISION: 'ASSIGNMENT_COLLISION',
-  LOCATION_MISMATCH: 'LOCATION_MISMATCH'
+  LOCATION_MISMATCH: 'LOCATION_MISMATCH',
+  SHORT_TURNAROUND: 'SHORT_TURNAROUND'
 })
 
 export function computeShiftConflicts(target, others, applications) {
@@ -85,6 +117,23 @@ export function computeShiftConflicts(target, others, applications) {
       
       if (hasAssignmentCollision) conflicts.push(CONFLICT_CODES.ASSIGNMENT_COLLISION)
       if (hasLocationMismatch) conflicts.push(CONFLICT_CODES.LOCATION_MISMATCH)
+    }
+  }
+
+  // Check for short turnarounds with assigned shifts for the same person
+  if (target.assignedTo) {
+    const assignedToSamePerson = others.filter(other => 
+      other.assignedTo === target.assignedTo && 
+      other.status === 'assigned' &&
+      target.status === 'assigned'
+    )
+    
+    for (const other of assignedToSamePerson) {
+      // Check both directions: target -> other and other -> target
+      if (isShortTurnaround(target, other) || isShortTurnaround(other, target)) {
+        conflicts.push(CONFLICT_CODES.SHORT_TURNAROUND)
+        break // Only add the conflict once
+      }
     }
   }
 
