@@ -6,6 +6,7 @@ import AuthContext from '../contexts/AuthContext'
 import _ShiftTable from '../components/ShiftTable'
 import CreateShiftModal from '../components/CreateShiftModal'
 import ShiftDetailsModal from '../components/ShiftDetailsModal'
+import AssignmentDragDrop from '../ui/assignment-dnd'
 
 const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`)
@@ -93,7 +94,7 @@ const CalendarCell = React.memo(({ day, onDayClick, onShiftClick }) => (
 export default function Calendar() {
   const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } = useShifts();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
+  const [viewMode, setViewMode] = useState('week'); // 'week', 'month', or 'assignment'
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedShift, setSelectedShift] = useState(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -342,7 +343,9 @@ export default function Calendar() {
         <div>
           <h1 className="text-3xl font-bold">Kalender</h1>
           <p className="mt-1 text-sm text-gray-500">
-            {viewMode === 'month' ? 'Monatsübersicht der Dienste' : 'Wochenübersicht der Dienste'}
+            {viewMode === 'month' ? 'Monatsübersicht der Dienste' : 
+             viewMode === 'assignment' ? 'Dienste zuweisen per Drag & Drop' :
+             'Wochenübersicht der Dienste'}
           </p>
         </div>
         <div className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
@@ -362,7 +365,7 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => setViewMode('month')}
-              className={`px-3 py-2 text-sm font-medium rounded-r-md border-l-0 border ${
+              className={`px-3 py-2 text-sm font-medium border-l-0 border ${
                 viewMode === 'month'
                   ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
                   : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
@@ -370,29 +373,48 @@ export default function Calendar() {
             >
               Monat
             </button>
+            {canManageShifts(userRole) && (
+              <button
+                type="button"
+                onClick={() => setViewMode('assignment')}
+                className={`px-3 py-2 text-sm font-medium rounded-r-md border-l-0 border ${
+                  viewMode === 'assignment'
+                    ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
+                    : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Zuweisen
+              </button>
+            )}
           </div>
           
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          >
-            {viewMode === 'month' ? 'Vorheriger Monat' : 'Vorherige Woche'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedDate(new Date())}
-            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          >
-            Heute
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(1)}
-            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          >
-            {viewMode === 'month' ? 'Nächster Monat' : 'Nächste Woche'}
-          </button>
+          {viewMode !== 'assignment' && (
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              {viewMode === 'month' ? 'Vorheriger Monat' : 'Vorherige Woche'}
+            </button>
+          )}
+          {viewMode !== 'assignment' && (
+            <button
+              type="button"
+              onClick={() => setSelectedDate(new Date())}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Heute
+            </button>
+          )}
+          {viewMode !== 'assignment' && (
+            <button
+              type="button"
+              onClick={() => navigate(1)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              {viewMode === 'month' ? 'Nächster Monat' : 'Nächste Woche'}
+            </button>
+          )}
           {canManageShifts(userRole) && (
             <button
               type="button"
@@ -415,7 +437,12 @@ export default function Calendar() {
         </div>
       </div>
 
-      {viewMode === 'week' ? (
+      {viewMode === 'assignment' ? (
+        // Assignment View
+        <div className="bg-white shadow rounded-lg h-[calc(100vh-12rem)]">
+          <AssignmentDragDrop />
+        </div>
+      ) : viewMode === 'week' ? (
         // Week View
         <div className="bg-white shadow rounded-lg overflow-x-auto">
           <div className="min-w-[960px]">
@@ -548,19 +575,21 @@ export default function Calendar() {
         </div>
       )}
 
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">
-          {viewMode === 'month' ? 'Dieser Monat' : 'Diese Woche'}
-        </h2>
-        <_ShiftTable shifts={viewMode === 'month' ? 
-          state.shifts.filter(s => {
-            const shiftDate = new Date(s.date)
-            return shiftDate.getMonth() === selectedDate.getMonth() && 
-                   shiftDate.getFullYear() === selectedDate.getFullYear()
-          }) : 
-          weekShifts
-        } />
-      </div>
+      {viewMode !== 'assignment' && (
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold mb-4">
+            {viewMode === 'month' ? 'Dieser Monat' : 'Diese Woche'}
+          </h2>
+          <_ShiftTable shifts={viewMode === 'month' ? 
+            state.shifts.filter(s => {
+              const shiftDate = new Date(s.date)
+              return shiftDate.getMonth() === selectedDate.getMonth() && 
+                     shiftDate.getFullYear() === selectedDate.getFullYear()
+            }) : 
+            weekShifts
+          } />
+        </div>
+      )}
       
       <CreateShiftModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} defaultDate={selectedDate} />
       
