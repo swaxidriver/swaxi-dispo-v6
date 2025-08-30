@@ -14,7 +14,8 @@
 import { createContext, useReducer, useEffect, useCallback, useMemo, useRef } from 'react'
 
 import { getShiftRepository } from '../repository/repositoryFactory'
-import { checkShiftConflicts, overlaps } from '../utils/shifts'
+import { checkShiftConflicts, overlaps, detectShiftOverlap } from '../utils/shifts'
+import { enhance_shift_with_datetime } from '../utils/time-utils'
 import { validateShiftArray } from '../utils/validation'
 
 import { SHIFT_STATUS } from '../utils/constants'
@@ -370,8 +371,12 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
       conflicts: [], 
       pendingSync: false 
     }
-    shift.conflicts = checkShiftConflicts(shift, state.shifts, state.applications)
-    dispatch({ type: 'ADD_SHIFT', payload: shift })
+    
+    // Enhance shift with datetime fields for cross-midnight support
+    const enhancedShift = enhance_shift_with_datetime(shift)
+    
+    enhancedShift.conflicts = checkShiftConflicts(enhancedShift, state.shifts, state.applications)
+    dispatch({ type: 'ADD_SHIFT', payload: enhancedShift })
     
     // Log audit entry for shift creation
     AuditService.logCurrentUserAction(
@@ -383,13 +388,16 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     // Recompute conflicts for existing shifts that overlap with the new shift
     // This ensures all shifts show conflicts bidirectionally
     const overlappingShifts = state.shifts.filter(existingShift => 
-      overlaps(shift.start, shift.end, existingShift.start, existingShift.end)
+      existingShift.id !== enhancedShift.id && detectShiftOverlap(enhancedShift, existingShift)
     )
     
     overlappingShifts.forEach(existingShift => {
+      // Enhance existing shift if it doesn't already have datetime fields
+      const enhancedExisting = existingShift.start_dt ? existingShift : enhance_shift_with_datetime(existingShift)
+      
       const updatedShift = {
-        ...existingShift,
-        conflicts: checkShiftConflicts(existingShift, [...state.shifts, shift], state.applications)
+        ...enhancedExisting,
+        conflicts: checkShiftConflicts(enhancedExisting, [...state.shifts, enhancedShift], state.applications)
       }
       dispatch({ type: 'UPDATE_SHIFT', payload: updatedShift })
     })
