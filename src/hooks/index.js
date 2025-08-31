@@ -3,31 +3,44 @@ import { useState, useCallback } from 'react'
 import { logError } from '../utils/logger'
 
 /**
- * Custom hook for managing async operations with loading and error states
+ * Custom hook for managing async operations with loading, error states, and retry capabilities
  * @param {Function} asyncFn - The async function to execute
  * @param {Object} options - Configuration options
  * @param {boolean} options.logErrors - Whether to log errors (default: true)
  * @param {Function} options.onSuccess - Callback executed on success
  * @param {Function} options.onError - Callback executed on error
- * @returns {Object} - { execute, isLoading, error, clearError }
+ * @param {number} options.maxRetries - Maximum number of retry attempts (default: 3)
+ * @param {number} options.retryDelay - Delay between retries in ms (default: 1000)
+ * @returns {Object} - { execute, retry, isLoading, error, clearError, retryCount, canRetry }
  */
 export function useAsyncOperation(asyncFn, options = {}) {
-  const { logErrors = true, onSuccess, onError } = options
+  const { logErrors = true, onSuccess, onError, maxRetries = 3, retryDelay = 1000 } = options
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [retryCount, setRetryCount] = useState(0)
+  const [lastArgs, setLastArgs] = useState(null)
 
   const clearError = useCallback(() => {
     setError(null)
+    setRetryCount(0)
+    setLastArgs(null)
   }, [])
 
-  const execute = useCallback(async (...args) => {
-    if (isLoading) return null
+  const executeInternal = useCallback(async (args, isRetry = false) => {
+    if (isLoading && !isRetry) return null
     
     setIsLoading(true)
-    setError(null)
+    if (!isRetry) {
+      setError(null)
+      setRetryCount(0)
+      setLastArgs(args)
+    }
     
     try {
       const result = await asyncFn(...args)
+      // Reset retry state on success
+      setRetryCount(0)
+      setLastArgs(null)
       onSuccess?.(result)
       return result
     } catch (err) {
@@ -45,11 +58,40 @@ export function useAsyncOperation(asyncFn, options = {}) {
     }
   }, [asyncFn, isLoading, logErrors, onSuccess, onError])
 
+  const execute = useCallback(async (...args) => {
+    return executeInternal(args, false)
+  }, [executeInternal])
+
+  const retry = useCallback(async () => {
+    if (!lastArgs || retryCount >= maxRetries || isLoading) {
+      return null
+    }
+    
+    setRetryCount(prev => prev + 1)
+    
+    // Add delay before retry
+    if (retryDelay > 0) {
+      await new Promise(resolve => setTimeout(resolve, retryDelay * retryCount))
+    }
+    
+    try {
+      return await executeInternal(lastArgs, true)
+    } catch (err) {
+      // Error is already handled in executeInternal
+      return null
+    }
+  }, [lastArgs, retryCount, maxRetries, isLoading, retryDelay, executeInternal])
+
+  const canRetry = lastArgs && retryCount < maxRetries && !isLoading
+
   return {
     execute,
+    retry,
     isLoading,
     error,
-    clearError
+    clearError,
+    retryCount,
+    canRetry
   }
 }
 

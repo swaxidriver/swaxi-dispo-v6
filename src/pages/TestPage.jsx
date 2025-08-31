@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useShifts } from '../contexts/useShifts';
 import { sharePointService } from '../services/sharePointService';
 import TokenExample from '../components/TokenExample';
+import FormValidationDemo from '../components/FormValidationDemo';
 
 export default function TestPage() {
   const { state } = useShifts();
@@ -12,6 +13,7 @@ export default function TestPage() {
   const createShift = async (shift) => sharePointService.createShift(shift);
   const [testResults, setTestResults] = useState([]);
   const [testing, setTesting] = useState(false);
+  const [showFormDemo, setShowFormDemo] = useState(false);
 
   const addTestResult = (test, result, details = '') => {
     setTestResults(prev => [...prev, {
@@ -167,6 +169,13 @@ export default function TestPage() {
             >
               💾 Ergebnisse exportieren
             </button>
+            
+            <button
+              onClick={() => setShowFormDemo(!showFormDemo)}
+              className="btn-secondary"
+            >
+              📝 Form Validation Demo {showFormDemo ? 'ausblenden' : 'anzeigen'}
+            </button>
           </div>
         </div>
 
@@ -207,6 +216,13 @@ export default function TestPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Form Validation Demo */}
+        {showFormDemo && (
+          <div className="mt-8">
+            <FormValidationDemo />
           </div>
         )}
 
