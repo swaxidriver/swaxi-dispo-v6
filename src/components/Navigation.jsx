@@ -22,9 +22,11 @@ export default function Navigation() {
   const { t } = useI18n()
   const role = auth?.user?.role
   const isAdmin = role === 'admin' || role === 'chief'
+  const isChief = role === 'chief' || role === 'admin'
   const navigation = [
   { name: t('overview'), href: '/' },
   { name: t('calendar'), href: '/calendar' },
+  isChief && { name: 'Shift Designer', href: '/shift-designer' },
   isAdmin && { name: t('administration'), href: '/admin' },
   canViewAudit(role) && { name: t('audit'), href: '/audit' },
   { name: t('settings'), href: '/settings' },

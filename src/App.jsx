@@ -19,6 +19,7 @@ import Administration from './pages/Administration'
 import Audit from './pages/Audit'
 import Settings from './pages/Settings'
 import TestPage from './pages/TestPage'
+import ShiftDesigner from './pages/ShiftDesigner'
 import Login from './components/Login'
 import './App.css'
 
@@ -90,6 +91,7 @@ function App() {
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/calendar" element={<Calendar />} />
                           <Route path="/admin" element={<Administration />} />
+                          <Route path="/shift-designer" element={<ShiftDesigner />} />
                           <Route path="/audit" element={<Audit />} />
                           <Route path="/settings" element={<Settings />} />
                           <Route path="/test" element={<TestPage />} />

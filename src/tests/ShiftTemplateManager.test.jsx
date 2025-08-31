@@ -6,6 +6,10 @@ jest.mock('../contexts/useShiftTemplates', () => ({
   useShiftTemplates: jest.fn()
 }))
 
+jest.mock('../services/auditService', () => ({
+  logCurrentUserAction: jest.fn()
+}))
+
 const { useShiftTemplates } = jest.requireMock('../contexts/useShiftTemplates')
 
 const templates = [
@@ -21,7 +25,15 @@ function setup() {
 }
 
 describe('ShiftTemplateManager', () => {
-  beforeEach(() => { jest.clearAllMocks() })
+  beforeEach(() => { 
+    jest.clearAllMocks()
+    // Mock window.confirm for delete functionality
+    global.confirm = jest.fn(() => true)
+  })
+
+  afterEach(() => {
+    delete global.confirm
+  })
 
   test('adds a new template', () => {
     setup()
@@ -33,7 +45,7 @@ describe('ShiftTemplateManager', () => {
   fireEvent.change(timeInputs[1], { target: { value: '17:00' } })
     fireEvent.click(screen.getByRole('button', { name: 'Mo' }))
     fireEvent.click(screen.getByRole('button', { name: 'Add Template' }))
-    expect(addTemplate).toHaveBeenCalledWith({ name: 'Late', startTime: '13:00', endTime: '17:00', days: ['Mo'] })
+    expect(addTemplate).toHaveBeenCalledWith({ name: 'Late', startTime: '13:00', endTime: '17:00', days: ['Mo'], color: '#3B82F6' })
   })
 
   test('edits existing template', () => {
@@ -48,6 +60,7 @@ describe('ShiftTemplateManager', () => {
   test('deletes template', () => {
     setup()
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    expect(global.confirm).toHaveBeenCalledWith('Are you sure you want to delete template "Morning"?')
     expect(deleteTemplate).toHaveBeenCalledWith('1')
   })
 })
