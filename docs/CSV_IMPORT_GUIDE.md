@@ -171,7 +171,28 @@ The actual issues for this project were imported from: `swaxi-dispo-v6-issues.cs
 
 ## Validation
 
-Before importing, validate your CSV:
+Before importing, validate your CSV using the included validation script:
+
+```bash
+# Validate CSV format and data
+./scripts/validate-csv.sh my-issues.csv
+
+# Validate template (should always pass)
+./scripts/validate-csv.sh docs/templates/issue-import-template.csv
+```
+
+The validation script checks:
+
+1. **Column count**: Ensure all rows have the same number of columns
+2. **Required fields**: Check no required columns are empty
+3. **Priority values**: Must be P0, P1, or P2
+4. **Type values**: Must be feature, bug, docs, or chore
+5. **Area values**: Warns about uncommon areas
+6. **Content validation**: Ensures title, context, and outcome are not empty
+
+### Manual Validation
+
+If you prefer manual validation:
 
 1. **Column count**: Ensure all rows have the same number of columns
 2. **Required fields**: Check no required columns are empty

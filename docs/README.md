@@ -31,6 +31,7 @@ This directory contains comprehensive documentation for the Swaxi Dispo v6 proje
 | Path | Description | Use Case |
 |------|-------------|----------|
 | **[../scripts/import-issues.sh](../scripts/import-issues.sh)** | Automated CSV to GitHub issues import script | Bulk issue creation automation |
+| **[../scripts/validate-csv.sh](../scripts/validate-csv.sh)** | CSV format and data validation tool | Pre-import validation and error checking |
 
 ## 📚 Quick Reference
 
@@ -48,10 +49,14 @@ This directory contains comprehensive documentation for the Swaxi Dispo v6 proje
 cp docs/templates/issue-import-template.csv my-issues.csv
 
 # 2. Edit CSV with your issues
-# 3. Test import (dry run)
+
+# 3. Validate format
+./scripts/validate-csv.sh my-issues.csv
+
+# 4. Test import (dry run)
 ./scripts/import-issues.sh my-issues.csv true
 
-# 4. Import for real
+# 5. Import for real
 ./scripts/import-issues.sh my-issues.csv
 ```
 

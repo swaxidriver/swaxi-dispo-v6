@@ -8,8 +8,11 @@ All notable changes to this project will be documented in this file.
 
 - **CSV Import Guide** (`docs/CSV_IMPORT_GUIDE.md`) - Comprehensive documentation for bulk creating GitHub issues from structured CSV data
 - **CSV Import Templates** (`docs/templates/issue-import-template.csv`) - Ready-to-use templates for issue import workflow
+- **Import Automation Script** (`scripts/import-issues.sh`) - Automated bash script with dry-run mode and error handling
+- **CSV Validation Script** (`scripts/validate-csv.sh`) - Pre-import validation tool for CSV format and data checking
 - **Enhanced README Documentation Structure** - Added dedicated documentation section with quick references
 - **Project Management Workflow** - Complete CSV → GitHub Issues → Epics → Milestones pipeline documentation
+- **Documentation Index** (`docs/README.md`) - Comprehensive guide to all project documentation
 
 ### Changed (Documentation)
 

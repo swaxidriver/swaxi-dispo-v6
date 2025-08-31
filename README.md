@@ -79,6 +79,7 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 
 ### **🛠 Scripts & Automation**
 - **[Import Script](scripts/import-issues.sh)** - Automated CSV to GitHub issues import
+- **[Validation Script](scripts/validate-csv.sh)** - CSV format and data validation tool
 - **GitHub CLI Integration** - Bulk operations and automation tools
 - **Development Scripts** - Build, test, and deployment automation
 
@@ -384,7 +385,11 @@ Die alten Markdown Backlogs wurden archiviert und durch Issue-Tracking ersetzt (
 cp docs/templates/issue-import-template.csv my-issues.csv
 
 # 2. Edit CSV with your issues
-# 3. Import using automation script (recommended)
+
+# 3. Validate CSV format
+./scripts/validate-csv.sh my-issues.csv
+
+# 4. Import using automation script (recommended)
 ./scripts/import-issues.sh my-issues.csv
 
 # Or preview first (dry run)
