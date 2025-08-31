@@ -13,15 +13,19 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]  # LTS and current
+        package-manager: [npm]  # Start with npm only, add yarn when stable
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Use Node.js 20
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-      - name: Configure npm retries
+          node-version: ${{ matrix.node-version }}
+          cache: ${{ matrix.package-manager }}
+      - name: Configure package manager retries
         run: |
           npm config set fetch-retries 5
           npm config set fetch-retry-factor 2
@@ -38,11 +42,11 @@ jobs:
           until [ $n -ge 3 ]; do
             npm ci --no-audit --no-fund && break
             n=$((n+1))
-            echo "npm ci failed (attempt $n), retrying in $((2**n))s..."
+            echo "Package install failed (attempt $n), retrying in $((2**n))s..."
             sleep $((2**n))
           done
           if [ $n -ge 3 ]; then
-            echo "npm ci failed after retries; attempting fallback npm install" >&2
+            echo "Package install failed after retries; attempting fallback install" >&2
             npm install --no-audit --no-fund || { echo "Fallback npm install failed" >&2; exit 1; }
           fi
           # Workaround Rollup native binary missing on linux
@@ -71,14 +75,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: quality-reports
+          name: quality-reports-node${{ matrix.node-version }}-${{ matrix.package-manager }}
           path: |
             reports/quality/quality-summary.json
             reports/junit/jest-junit.xml
+            coverage/coverage-summary.json
+            coverage/lcov-report/
       - name: Lint
         run: npm run lint
-      - name: Test
-        run: npm test -- --ci --silent
+      - name: Type Check
+        run: npm run type-check
+      - name: Test with Coverage (≥70% required)
+        run: npm run test:coverage -- --ci --silent
       - name: Import integrity
         run: npm run check:imports
       - name: Build
@@ -86,7 +94,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-node${{ matrix.node-version }}-${{ matrix.package-manager }}
           path: dist
 
   pages-deploy:

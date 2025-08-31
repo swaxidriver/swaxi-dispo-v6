@@ -1,23 +1,23 @@
 {
   "stats": {
     "tests": {
-      "total": 184,
-      "failed": 23,
-      "passed": 160
+      "total": 592,
+      "failed": 32,
+      "passed": 559
     },
     "suites": {
-      "total": 59,
-      "failed": 8
+      "total": 92,
+      "failed": 11
     },
     "lint": {
-      "errors": 5,
-      "filesWithErrors": 1
+      "errors": 25,
+      "filesWithErrors": 15
     },
     "coverage": {
-      "statements": 75.16,
-      "branches": 65.71,
-      "functions": 72.3,
-      "lines": 77.19
+      "statements": 61.85,
+      "branches": 53.86,
+      "functions": 58.55,
+      "lines": 63.07
     }
   },
   "thresholds": {
@@ -30,146 +30,224 @@
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "SeriesApplicationModal focus management has correct accessibility attributes",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "SeriesApplicationModal focus management stores focused element when modal opens",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "SeriesApplicationModal focus management restores focus to trigger element when modal closes",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "SeriesApplicationModal focus management focus remains trapped within modal during interaction",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "SeriesApplicationModal focus management returns focus to trigger button when closed via close button",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/unit/SeriesApplicationModal.focus.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Shift creation via template (Schicht anlegen) generates a shift for today after adding a template including today's weekday",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/shiftCreation.integration.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Calendar page renders week header and shifts",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Calendar page navigates weeks forward and back",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Calendar page resets to today",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Calendar page shows create shift button for manager role",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Calendar.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "Dashboard page renders heading and analytics",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
       "test": "Dashboard page filters by status (open, assigned, cancelled)",
       "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
     },
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "Dashboard page shows auto assign button when user can manage shifts",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Dashboard.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "ShiftTable actions invokes applyToShift when Bewerben clicked",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "ShiftTable actions invokes assignShift when Zuweisen clicked for manager role",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "ShiftTable actions calls cancelShift when Absagen clicked on assigned shift",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "ShiftTable actions disables Bewerben when not logged in",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "ShiftTable actions disables Zuweisen when status not open",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.actions.test.jsx"
-    },
-    {
-      "priority": 1,
-      "type": "test-failure",
-      "test": "SeriesApplicationModal renders available shifts and allows selecting multiple via type shortcut",
+      "test": "SeriesApplicationModal detects and displays conflicts when selecting overlapping shifts",
       "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/SeriesApplicationModal.test.jsx"
     },
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "SeriesApplicationModal disables submit when no selection and enables after selecting one",
+      "test": "SeriesApplicationModal allows submitting when conflicts are resolved by deselecting",
       "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/SeriesApplicationModal.test.jsx"
     },
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "Shift assignment & notifications assigns a shift and updates status",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftAssignNotifications.test.jsx"
+      "test": "ActiveRoleBadge shows admin only nav items and hides for analyst",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ActiveRoleBadge.test.jsx"
     },
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "ShiftTable renders shifts correctly",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.test.jsx"
+      "test": "MiniAnalytics displays correct analytics tiles",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/MiniAnalytics.test.jsx"
     },
     {
       "priority": 1,
       "type": "test-failure",
-      "test": "ShiftTable handles apply action",
-      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/ShiftTable.test.jsx"
+      "test": "ShiftTable Accessibility all interactive elements have proper labels and roles",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/a11y/ShiftTable.a11y.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Tooltip Accessibility has no axe violations",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/a11y/ShiftTable.a11y.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Tooltip Accessibility mobile long-press accessibility",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/a11y/ShiftTable.a11y.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Navigation shows login link (Anmelden) when not authenticated",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Navigation.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Navigation shows admin links and logout when admin",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Navigation.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards PermissionCheck renders children when user has permission",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards PermissionCheck renders fallback when user lacks permission",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards PermissionCheck renders nothing when no fallback provided",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards RoleCheck renders children for matching role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards RoleCheck renders fallback for non-matching role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks usePermission returns true when user has permission",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks usePermission returns false when user lacks permission",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useRole returns true for matching role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useRole returns false for non-matching role",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useRole returns true for role in array",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useUserCapabilities returns correct capabilities for admin",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useUserCapabilities returns correct capabilities for chief",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useUserCapabilities returns correct capabilities for disponent",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useUserCapabilities returns correct capabilities for analyst",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Route Guards Hooks useUserCapabilities returns all false for unauthenticated user",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/routeGuards.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Audit page renders heading and all logs initially",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Audit.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Audit page filters by type",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/Audit.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Rule Engine End-to-End Demo Complete Double-booking Prevention Flow Demonstrates rule outcome persistence and audit trail",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/rule-engine-demo.test.js"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Navigation accessibility has no axe violations",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/a11y/Navigation.a11y.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Drag & Drop Functionality renders shifts as draggable in week view for managers",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/DragDrop.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Drag & Drop Functionality drag preview shows when dragging shift",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/DragDrop.test.jsx"
+    },
+    {
+      "priority": 1,
+      "type": "test-failure",
+      "test": "Drag & Drop Functionality maintains shift data integrity after drag operations",
+      "file": "/home/runner/work/swaxi-dispo-v6/swaxi-dispo-v6/src/tests/DragDrop.test.jsx"
     },
     {
       "priority": 2,
       "type": "lint-rule",
       "rule": "no-undef",
+      "count": 17
+    },
+    {
+      "priority": 2,
+      "type": "lint-rule",
+      "rule": "react/no-unescaped-entities",
       "count": 5
+    },
+    {
+      "priority": 2,
+      "type": "lint-rule",
+      "rule": "react-hooks/rules-of-hooks",
+      "count": 1
+    },
+    {
+      "priority": 2,
+      "type": "lint-rule",
+      "rule": "react/display-name",
+      "count": 1
+    },
+    {
+      "priority": 2,
+      "type": "lint-rule",
+      "rule": "no-dupe-class-members",
+      "count": 1
     }
   ]
 }
