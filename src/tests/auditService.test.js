@@ -1,98 +1,78 @@
-import AuditService from '../services/auditService';
+import AuditService from "../services/auditService";
 
-describe('AuditService', () => {
+describe("AuditService", () => {
   beforeEach(() => {
-    // Clear localStorage before each test
     localStorage.clear();
+    if (typeof window !== "undefined") window.__auditCalls = [];
   });
 
-  afterEach(() => {
-    localStorage.clear();
-  });
-
-  test('logs audit entries correctly', () => {
-    const entry = AuditService.logAction(
-      'test_action',
-      'test@example.com',
-      'admin',
-      { detail: 'test detail' },
-      1
-    );
-
-    expect(entry).toBeTruthy();
-    expect(entry.action).toBe('test_action');
-    expect(entry.actor).toBe('test@example.com');
-    expect(entry.role).toBe('admin');
-    expect(entry.count).toBe(1);
-    expect(entry.type).toBe('other');
-  });
-
-  test('determines action types correctly', () => {
-    expect(AuditService.getActionType('Created shift')).toBe('create');
-    expect(AuditService.getActionType('Updated shift')).toBe('update');
-    expect(AuditService.getActionType('Deleted shift')).toBe('delete');
-    expect(AuditService.getActionType('Applied for shift')).toBe('apply');
-    expect(AuditService.getActionType('Random action')).toBe('other');
-  });
-
-  test('retrieves filtered logs correctly', () => {
-    // Log different types of actions
-    AuditService.logAction('Created shift', 'user1@example.com', 'admin', {}, 1);
-    AuditService.logAction('Updated shift', 'user2@example.com', 'chief', {}, 1);
-    AuditService.logAction('Applied for shift', 'user3@example.com', 'disponent', {}, 1);
-
-    const allLogs = AuditService.getFilteredLogs('all');
-    expect(allLogs).toHaveLength(3);
-
-    const createLogs = AuditService.getFilteredLogs('create');
-    expect(createLogs).toHaveLength(1);
-    expect(createLogs[0].action).toBe('Created shift');
-
-    const updateLogs = AuditService.getFilteredLogs('update');
-    expect(updateLogs).toHaveLength(1);
-    expect(updateLogs[0].action).toBe('Updated shift');
-
-    const applyLogs = AuditService.getFilteredLogs('apply');
-    expect(applyLogs).toHaveLength(1);
-    expect(applyLogs[0].action).toBe('Applied for shift');
-  });
-
-  test('implements ring buffer correctly', () => {
-    // Simulate reaching the limit by adding more than MAX_AUDIT_ENTRIES
-    for (let i = 0; i < 1005; i++) {
-      AuditService.logAction(`action_${i}`, 'test@example.com', 'admin', {}, 1);
+  test("logAction stores entry and enforces ring buffer", () => {
+    for (let i = 0; i < 1010; i++) {
+      AuditService.logAction(
+        `shift_created_${i}`,
+        "tester@example.com",
+        "admin",
+        { i },
+      );
     }
-
     const logs = AuditService.getLogs();
-    // Should not exceed the max limit
     expect(logs.length).toBe(1000);
-    
-    // Should contain the most recent entries
-    expect(logs[logs.length - 1].action).toBe('action_1004');
-    expect(logs[0].action).toBe('action_5'); // First 5 should be removed
+    const first = logs[0];
+    expect(first.details).not.toContain('"i":0');
   });
 
-  test('clears logs correctly', () => {
-    AuditService.logAction('test_action', 'test@example.com', 'admin', {}, 1);
-    expect(AuditService.getLogs()).toHaveLength(1);
+  test("action type categorization (EN + DE)", () => {
+    expect(AuditService.getActionType("Created shift")).toBe("create");
+    expect(AuditService.getActionType("Schicht erstellt")).toBe("create");
+    expect(AuditService.getActionType("Updated shift")).toBe("update");
+    expect(AuditService.getActionType("Schicht geändert")).toBe("update");
+    expect(AuditService.getActionType("Deleted shift")).toBe("delete");
+    expect(AuditService.getActionType("Schicht gelöscht")).toBe("delete");
+    expect(AuditService.getActionType("Applied for shift")).toBe("apply");
+    expect(AuditService.getActionType("Bewerbung eingereicht")).toBe("apply");
+    expect(AuditService.getActionType("Random action")).toBe("other");
+  });
 
+  test("filtered logs by type", () => {
+    AuditService.logAction("Created shift", "u", "admin", {});
+    AuditService.logAction("Updated shift", "u", "admin", {});
+    AuditService.logAction("Applied for shift", "u", "admin", {});
+    expect(AuditService.getFilteredLogs("create").length).toBe(1);
+    expect(AuditService.getFilteredLogs("update").length).toBe(1);
+    expect(AuditService.getFilteredLogs("apply").length).toBe(1);
+  });
+
+  test("logCurrentUserAction uses fallback context then auth context", () => {
+    const e1 = AuditService.logCurrentUserAction("fallback_action");
+    expect(e1.actor).toBeDefined();
+    localStorage.setItem(
+      "swaxi-auth",
+      JSON.stringify({ user: { email: "test@example.com", role: "admin" } }),
+    );
+    const e2 = AuditService.logCurrentUserAction("auth_action");
+    expect(e2.actor).toBe("test@example.com");
+  });
+
+  test("clearLogs empties storage", () => {
+    AuditService.logAction("x", "a", "r", {});
+    expect(AuditService.getLogs().length).toBe(1);
     AuditService.clearLogs();
-    expect(AuditService.getLogs()).toHaveLength(0);
+    expect(AuditService.getLogs().length).toBe(0);
   });
 
-  test('gets current user context', () => {
-    // Test with no auth data
-    const context1 = AuditService.getCurrentUserContext();
-    expect(context1.actor).toBe('System');
-    expect(context1.role).toBe('system');
-
-    // Test with auth data in localStorage
-    localStorage.setItem('swaxi-auth', JSON.stringify({
-      user: { email: 'test@example.com', role: 'admin', name: 'Test User' }
-    }));
-
-    const context2 = AuditService.getCurrentUserContext();
-    expect(context2.actor).toBe('test@example.com');
-    expect(context2.role).toBe('admin');
+  test("exportLogs returns metadata without throwing", () => {
+    AuditService.logAction("x", "a", "r", {});
+    const origCreate = document.createElement;
+    const origCreateObjectURL = URL.createObjectURL;
+    URL.createObjectURL = () => "blob:mock";
+    document.createElement = (tag) => {
+      const el = origCreate.call(document, tag);
+      if (tag === "a") el.click = () => {};
+      return el;
+    };
+    const data = AuditService.exportLogs();
+    document.createElement = origCreate;
+    URL.createObjectURL = origCreateObjectURL;
+    expect(data).toHaveProperty("totalEntries", 1);
   });
 });

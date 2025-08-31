@@ -4,7 +4,7 @@
  * Implements ring buffer to prevent storage overflow
  */
 
-const AUDIT_STORAGE_KEY = 'swaxi.audit.v1';
+const AUDIT_STORAGE_KEY = "swaxi.audit.v1";
 const MAX_AUDIT_ENTRIES = 1000; // Ring buffer size
 
 export class AuditService {
@@ -25,9 +25,10 @@ export class AuditService {
         action,
         actor,
         role,
-        details: typeof details === 'string' ? details : JSON.stringify(details),
+        details:
+          typeof details === "string" ? details : JSON.stringify(details),
         count,
-        type: this.getActionType(action)
+        type: this.getActionType(action),
       };
 
       const logs = this.getLogs();
@@ -39,13 +40,22 @@ export class AuditService {
       }
 
       localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(logs));
-      
+
       // Also log to console for debugging
-      console.log('Audit:', entry);
-      
+      console.log("Audit:", entry);
+      // Track calls in browser environment for tests that don't mock the service
+      try {
+        if (typeof window !== "undefined") {
+          window.__auditCalls = window.__auditCalls || [];
+          window.__auditCalls.push([action, actor, role, details, count]);
+        }
+      } catch {
+        /* ignore */
+      }
+
       return entry;
     } catch (error) {
-      console.error('Failed to log audit entry:', error);
+      console.error("Failed to log audit entry:", error);
       return null;
     }
   }
@@ -59,7 +69,7 @@ export class AuditService {
       const logs = localStorage.getItem(AUDIT_STORAGE_KEY);
       return logs ? JSON.parse(logs) : [];
     } catch (error) {
-      console.error('Failed to retrieve audit logs:', error);
+      console.error("Failed to retrieve audit logs:", error);
       return [];
     }
   }
@@ -69,10 +79,10 @@ export class AuditService {
    * @param {string} filter - Filter by type ('all', 'create', 'update', 'delete', 'apply')
    * @returns {Array} Filtered audit entries
    */
-  static getFilteredLogs(filter = 'all') {
+  static getFilteredLogs(filter = "all") {
     const logs = this.getLogs();
-    if (filter === 'all') return logs;
-    return logs.filter(log => log.type === filter);
+    if (filter === "all") return logs;
+    return logs.filter((log) => log.type === filter);
   }
 
   /**
@@ -84,23 +94,33 @@ export class AuditService {
     const exportData = {
       audit: logs,
       exportTime: new Date().toISOString(),
-      version: 'v6.5.0',
-      totalEntries: logs.length
+      version: "v6.5.0",
+      totalEntries: logs.length,
     };
 
     // Create downloadable file
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-      type: 'application/json' 
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: "application/json",
     });
     const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
+
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `swaxi-audit-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `swaxi-audit-${new Date().toISOString().split("T")[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Guard for environments (like JSDOM) that don't implement revokeObjectURL
+    try {
+      if (
+        typeof URL !== "undefined" &&
+        typeof URL.revokeObjectURL === "function"
+      ) {
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      /* ignore cleanup errors */
+    }
 
     return exportData;
   }
@@ -111,9 +131,9 @@ export class AuditService {
   static clearLogs() {
     try {
       localStorage.removeItem(AUDIT_STORAGE_KEY);
-      console.log('Audit logs cleared');
+      console.log("Audit logs cleared");
     } catch (error) {
-      console.error('Failed to clear audit logs:', error);
+      console.error("Failed to clear audit logs:", error);
     }
   }
 
@@ -124,21 +144,40 @@ export class AuditService {
    */
   static getActionType(action) {
     const actionLower = action.toLowerCase();
-    
-    if (actionLower.includes('creat') || actionLower.includes('add')) {
-      return 'create';
+
+    if (
+      actionLower.includes("creat") ||
+      actionLower.includes("add") ||
+      actionLower.includes("erstell")
+    ) {
+      return "create";
     }
-    if (actionLower.includes('updat') || actionLower.includes('edit') || actionLower.includes('modif')) {
-      return 'update';
+    if (
+      actionLower.includes("updat") ||
+      actionLower.includes("edit") ||
+      actionLower.includes("modif") ||
+      actionLower.includes("änder")
+    ) {
+      return "update";
     }
-    if (actionLower.includes('delet') || actionLower.includes('remov') || actionLower.includes('cancel')) {
-      return 'delete';
+    if (
+      actionLower.includes("delet") ||
+      actionLower.includes("remov") ||
+      actionLower.includes("cancel") ||
+      actionLower.includes("lösch")
+    ) {
+      return "delete";
     }
-    if (actionLower.includes('appl') || actionLower.includes('request')) {
-      return 'apply';
+    if (
+      actionLower.includes("appl") ||
+      actionLower.includes("request") ||
+      actionLower.includes("bewerb") ||
+      actionLower.includes("antrag")
+    ) {
+      return "apply";
     }
-    
-    return 'other';
+
+    return "other";
   }
 
   /**
@@ -148,25 +187,25 @@ export class AuditService {
   static getCurrentUserContext() {
     try {
       // Try to get from auth context in localStorage
-      const authData = localStorage.getItem('swaxi-auth');
+      const authData = localStorage.getItem("swaxi-auth");
       if (authData) {
         const auth = JSON.parse(authData);
         return {
-          actor: auth.user?.email || auth.user?.name || 'Unknown User',
-          role: auth.user?.role || 'unknown'
+          actor: auth.user?.email || auth.user?.name || "Unknown User",
+          role: auth.user?.role || "unknown",
         };
       }
-      
+
       // Fallback
       return {
-        actor: 'System',
-        role: 'system'
+        actor: "System",
+        role: "system",
       };
     } catch (error) {
-      console.error('Failed to get user context for audit:', error);
+      console.error("Failed to get user context for audit:", error);
       return {
-        actor: 'Unknown User',
-        role: 'unknown'
+        actor: "Unknown User",
+        role: "unknown",
       };
     }
   }
