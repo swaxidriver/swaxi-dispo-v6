@@ -13,21 +13,27 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]  # LTS and current
+        package-manager: [npm, yarn]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Use Node.js 20
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-      - name: Configure npm retries
+          node-version: ${{ matrix.node-version }}
+          cache: ${{ matrix.package-manager }}
+      - name: Configure package manager retries
         run: |
-          npm config set fetch-retries 5
-          npm config set fetch-retry-factor 2
-          npm config set fetch-retry-maxtimeout 600000
-          npm config set fetch-timeout 600000
-          npm config set prefer-offline true
+          if [ "${{ matrix.package-manager }}" = "npm" ]; then
+            npm config set fetch-retries 5
+            npm config set fetch-retry-factor 2
+            npm config set fetch-retry-maxtimeout 600000
+            npm config set fetch-timeout 600000
+            npm config set prefer-offline true
+          fi
       - name: Jitter to avoid registry burst
         run: |
           JITTER=$((RANDOM % 20 + 5))
@@ -36,17 +42,27 @@ jobs:
         run: |
           n=0
           until [ $n -ge 3 ]; do
-            npm ci --no-audit --no-fund && break
+            if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+              yarn install --frozen-lockfile --non-interactive && break
+            else
+              npm ci --no-audit --no-fund && break
+            fi
             n=$((n+1))
-            echo "npm ci failed (attempt $n), retrying in $((2**n))s..."
+            echo "Package install failed (attempt $n), retrying in $((2**n))s..."
             sleep $((2**n))
           done
           if [ $n -ge 3 ]; then
-            echo "npm ci failed after retries; attempting fallback npm install" >&2
-            npm install --no-audit --no-fund || { echo "Fallback npm install failed" >&2; exit 1; }
+            echo "Package install failed after retries; attempting fallback install" >&2
+            if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+              yarn install --non-interactive || { echo "Fallback yarn install failed" >&2; exit 1; }
+            else
+              npm install --no-audit --no-fund || { echo "Fallback npm install failed" >&2; exit 1; }
+            fi
           fi
           # Workaround Rollup native binary missing on linux
-          npm install --no-save @rollup/rollup-linux-x64-gnu || true
+          if [ "${{ matrix.package-manager }}" = "npm" ]; then
+            npm install --no-save @rollup/rollup-linux-x64-gnu || true
+          fi
       - name: Install trunk
         run: |
           # Install trunk without leaving an ephemeral script file that triggers format checks
@@ -61,32 +77,70 @@ jobs:
           trunk check --ci --no-progress || { echo "Trunk check failed"; exit 1; }
       - name: Quality Gate (lint+tests+coverage prioritized summary)
         run: |
-          npm run quality || {
-            code=$?
-            echo "Quality gate failed with exit code $code" >&2
-            # Always upload quality artifacts even on failure
-            exit $code
-          }
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run quality || {
+              code=$?
+              echo "Quality gate failed with exit code $code" >&2
+              # Always upload quality artifacts even on failure
+              exit $code
+            }
+          else
+            npm run quality || {
+              code=$?
+              echo "Quality gate failed with exit code $code" >&2
+              # Always upload quality artifacts even on failure
+              exit $code
+            }
+          fi
       - name: Upload quality reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: quality-reports
+          name: quality-reports-node${{ matrix.node-version }}-${{ matrix.package-manager }}
           path: |
             reports/quality/quality-summary.json
             reports/junit/jest-junit.xml
+            coverage/coverage-summary.json
+            coverage/lcov-report/
       - name: Lint
-        run: npm run lint
-      - name: Test
-        run: npm test -- --ci --silent
+        run: |
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run lint
+          else
+            npm run lint
+          fi
+      - name: Type Check
+        run: |
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run type-check
+          else
+            npm run type-check
+          fi
+      - name: Test with Coverage (≥70% required)
+        run: |
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run test:coverage -- --ci --silent
+          else
+            npm run test:coverage -- --ci --silent
+          fi
       - name: Import integrity
-        run: npm run check:imports
+        run: |
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run check:imports
+          else
+            npm run check:imports
+          fi
       - name: Build
-        run: npm run build
+        run: |
+          if [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run build
+          else
+            npm run build
+          fi
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: dist-node${{ matrix.node-version }}-${{ matrix.package-manager }}
           path: dist
 
   pages-deploy:
@@ -117,7 +171,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: dist-node20-npm
           path: dist
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3

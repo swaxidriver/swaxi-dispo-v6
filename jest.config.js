@@ -20,13 +20,14 @@ export default {
     '!src/**/*.test.{js,jsx,ts,tsx}',
     '!src/**/*.spec.{js,jsx,ts,tsx}',
   ],
-  // Granular coverage ratchet: raise global slightly; enforce higher targets on stable areas.
+  // Coverage threshold aiming towards ≥80% goal (progressive improvement)
+  // Current: ~63% lines, target: meaningful step toward 80%
   coverageThreshold: {
     global: {
-      statements: 66,
-      branches: 60,
-      functions: 66,
-      lines: 66,
+      statements: 75,  // ~13% improvement from current 61.85%
+      branches: 65,    // ~11% improvement from current 53.86%
+      functions: 70,   // ~11% improvement from current 58.55%
+      lines: 75,       // ~12% improvement from current 63.07%
     },
     // Stricter for core pure logic (utils, services generation) – easier to keep high
     './src/utils/': {
