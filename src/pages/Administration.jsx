@@ -1,13 +1,20 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { ArrowUpTrayIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 import ShiftTemplateManager from '../components/ShiftTemplateManager'
 import { ShiftTemplateProvider } from '../contexts/ShiftTemplateContext'
 import RoleManagement from '../components/RoleManagement'
+import CSVImportExportModal from '../components/CSVImportExportModal'
+import { ShiftContext } from '../contexts/ShiftContext'
 import AuditService from '../services/auditService'
 
 function Administration() {
   const [showDangerZone, setShowDangerZone] = useState(false)
   const [confirmText, setConfirmText] = useState('')
+  const [showCSVModal, setShowCSVModal] = useState(false)
+  
+  const shiftContext = useContext(ShiftContext)
+  const repository = shiftContext?.repository
 
   const handleClearAllData = () => {
     if (confirmText !== 'ALLE DATEN LÖSCHEN') {
@@ -74,6 +81,61 @@ function Administration() {
         <RoleManagement />
       </div>
 
+      {/* CSV Import/Export Section */}
+      <div className="mt-8 border border-blue-200 rounded-lg p-6 bg-blue-50">
+        <h2 className="text-xl font-bold text-blue-800 mb-4">📊 CSV Import/Export</h2>
+        <p className="text-blue-700 mb-4">
+          Import people and shift templates from CSV files, or export assignments for Perdis/WebComm systems.
+        </p>
+        
+        <div className="space-y-4">
+          <button
+            onClick={() => setShowCSVModal(true)}
+            disabled={!repository}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
+            Import CSV
+          </button>
+          
+          <button
+            onClick={() => setShowCSVModal(true)}
+            disabled={!repository}
+            className="inline-flex items-center ml-3 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+            Export CSV
+          </button>
+          
+          {!repository && (
+            <p className="text-sm text-gray-500 mt-2">
+              Repository not available. Please wait for the system to initialize.
+            </p>
+          )}
+        </div>
+        
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-600">
+          <div>
+            <h4 className="font-medium mb-2">Import Features:</h4>
+            <ul className="space-y-1">
+              <li>• People (name, email, role) with upsert</li>
+              <li>• Shift templates with weekday masks</li>
+              <li>• Cross-midnight shift detection</li>
+              <li>• Data validation and error reporting</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-medium mb-2">Export Features:</h4>
+            <ul className="space-y-1">
+              <li>• Weekly assignment reports</li>
+              <li>• Perdis/WebComm compatible format</li>
+              <li>• Cross-midnight flags and paid hours</li>
+              <li>• People and template backups</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Danger Zone */}
       <div className="mt-12 border border-red-200 rounded-lg p-6 bg-red-50">
         <h2 className="text-xl font-bold text-red-800 mb-4">⚠️ Danger Zone</h2>
@@ -136,6 +198,15 @@ function Administration() {
           )}
         </div>
       </div>
+      
+      {/* CSV Import/Export Modal */}
+      {showCSVModal && repository && (
+        <CSVImportExportModal
+          isOpen={showCSVModal}
+          onClose={() => setShowCSVModal(false)}
+          repository={repository}
+        />
+      )}
     </div>
   )
 }
