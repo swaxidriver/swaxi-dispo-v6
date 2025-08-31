@@ -97,6 +97,96 @@ describe('Custom Hooks', () => {
       expect(secondResult).toBe(null)
       expect(mockAsyncFn).toHaveBeenCalledTimes(1)
     })
+
+    test('provides retry functionality', async () => {
+      let attemptCount = 0
+      const mockAsyncFn = jest.fn(() => {
+        attemptCount++
+        if (attemptCount < 3) {
+          return Promise.reject(new Error('Network error'))
+        }
+        return Promise.resolve('success on retry')
+      })
+
+      const { result } = renderHook(() => useAsyncOperation(mockAsyncFn, { maxRetries: 3 }))
+
+      // First attempt should fail
+      await act(async () => {
+        try {
+          await result.current.execute('test-arg')
+        } catch (_error) {
+          // Expected to throw
+        }
+      })
+
+      expect(result.current.error).toBe('Network error')
+      expect(result.current.canRetry).toBe(true)
+      expect(result.current.retryCount).toBe(0)
+
+      // First retry should also fail
+      await act(async () => {
+        try {
+          await result.current.retry()
+        } catch (_error) {
+          // Expected to throw
+        }
+      })
+
+      expect(result.current.retryCount).toBe(1)
+      expect(result.current.canRetry).toBe(true)
+
+      // Second retry should succeed
+      let retryResult
+      await act(async () => {
+        retryResult = await result.current.retry()
+      })
+
+      expect(retryResult).toBe('success on retry')
+      expect(result.current.error).toBe(null) // Error should be cleared on success
+      expect(result.current.retryCount).toBe(0) // Reset on success
+      expect(result.current.canRetry).toBe(false)
+      expect(mockAsyncFn).toHaveBeenCalledTimes(3)
+    })
+
+    test('respects maximum retry limit', async () => {
+      const mockAsyncFn = jest.fn().mockRejectedValue(new Error('Persistent error'))
+      const { result } = renderHook(() => useAsyncOperation(mockAsyncFn, { maxRetries: 2 }))
+
+      // Initial execution
+      await act(async () => {
+        try {
+          await result.current.execute()
+        } catch (_error) {
+          // Expected to throw
+        }
+      })
+
+      expect(result.current.canRetry).toBe(true)
+
+      // First retry
+      await act(async () => {
+        try {
+          await result.current.retry()
+        } catch (_error) {
+          // Expected to throw
+        }
+      })
+
+      expect(result.current.retryCount).toBe(1)
+      expect(result.current.canRetry).toBe(true)
+
+      // Second retry (should hit limit)
+      await act(async () => {
+        try {
+          await result.current.retry()
+        } catch (_error) {
+          // Expected to throw
+        }
+      })
+
+      expect(result.current.retryCount).toBe(2)
+      expect(result.current.canRetry).toBe(false) // No more retries allowed
+    })
   })
 
   describe('useFormState', () => {
