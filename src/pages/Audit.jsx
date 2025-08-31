@@ -1,13 +1,33 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from "react";
 
-import AuthContext from '../contexts/AuthContext'
-import { canViewAudit } from '../lib/rbac'
-import AuditService from '../services/auditService'
+import AuthContext from "../contexts/AuthContext";
+import { canViewAudit } from "../lib/rbac";
+import AuditService from "../services/auditService";
 
 export default function Audit() {
-  const auth = useContext(AuthContext)
-  const [logs, setLogs] = useState([])
-  const [filter, setFilter] = useState('all')
+  const auth = useContext(AuthContext);
+  const [logs, setLogs] = useState([]);
+  const [filter, setFilter] = useState("all");
+
+  // Load audit logs on mount and when filter changes
+  useEffect(() => {
+    const loadLogs = () => {
+      const auditLogs = AuditService.getFilteredLogs(filter).sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+      ); // Most recent first
+      setLogs(auditLogs);
+    };
+
+    loadLogs();
+  }, [filter]);
+
+  const handleExport = () => {
+    AuditService.exportLogs();
+  };
+
+  const handleExportCSV = () => {
+    AuditService.exportLogsAsCSV();
+  };
 
   // Check permission
   if (!auth?.user || !canViewAudit(auth.user.role)) {
@@ -15,25 +35,12 @@ export default function Audit() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Zugriff verweigert</h1>
-          <p className="text-gray-600">Sie haben keine Berechtigung, das Audit-Log einzusehen.</p>
+          <p className="text-gray-600">
+            Sie haben keine Berechtigung, das Audit-Log einzusehen.
+          </p>
         </div>
       </div>
-    )
-  }
-
-  // Load audit logs on mount and when filter changes
-  useEffect(() => {
-    const loadLogs = () => {
-      const auditLogs = AuditService.getFilteredLogs(filter)
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)) // Most recent first
-      setLogs(auditLogs)
-    }
-    
-    loadLogs()
-  }, [filter])
-
-  const handleExport = () => {
-    AuditService.exportLogs()
+    );
   }
 
   return (
@@ -59,6 +66,13 @@ export default function Audit() {
           >
             JSON Export
           </button>
+          <button
+            onClick={handleExportCSV}
+            data-testid="export-csv-btn"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+          >
+            CSV Export
+          </button>
         </div>
       </div>
 
@@ -66,8 +80,8 @@ export default function Audit() {
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <div className="px-4 py-8 text-center">
             <p className="text-gray-500">
-              {filter === 'all' 
-                ? 'Keine Audit-Einträge vorhanden.' 
+              {filter === "all"
+                ? "Keine Audit-Einträge vorhanden."
                 : `Keine ${filter}-Aktivitäten gefunden.`}
             </p>
           </div>
@@ -76,7 +90,8 @@ export default function Audit() {
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <div className="px-4 py-3 border-b border-gray-200">
             <p className="text-sm text-gray-600">
-              {logs.length} {logs.length === 1 ? 'Eintrag' : 'Einträge'} gefunden
+              {logs.length} {logs.length === 1 ? "Eintrag" : "Einträge"}{" "}
+              gefunden
             </p>
           </div>
           <ul className="divide-y divide-gray-200">
@@ -93,27 +108,31 @@ export default function Audit() {
                       )}
                     </div>
                     <div className="ml-2 flex-shrink-0 flex">
-                      <span className={classNames(
-                        log.type === 'create' ? 'bg-green-100 text-green-800' :
-                        log.type === 'update' ? 'bg-blue-100 text-blue-800' :
-                        log.type === 'delete' ? 'bg-red-100 text-red-800' :
-                        log.type === 'apply' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-gray-100 text-gray-800',
-                        'px-2 inline-flex text-xs leading-5 font-semibold rounded-full'
-                      )}>
+                      <span
+                        className={classNames(
+                          log.type === "create"
+                            ? "bg-green-100 text-green-800"
+                            : log.type === "update"
+                              ? "bg-blue-100 text-blue-800"
+                              : log.type === "delete"
+                                ? "bg-red-100 text-red-800"
+                                : log.type === "apply"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-gray-100 text-gray-800",
+                          "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+                        )}
+                      >
                         {log.actor} ({log.role})
                       </span>
                     </div>
                   </div>
                   <div className="mt-2 sm:flex sm:justify-between">
                     <div className="sm:flex">
-                      <div className="text-sm text-gray-500">
-                        {log.details}
-                      </div>
+                      <div className="text-sm text-gray-500">{log.details}</div>
                     </div>
                     <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                       <span>
-                        {new Date(log.timestamp).toLocaleString('de-DE')}
+                        {new Date(log.timestamp).toLocaleString("de-DE")}
                       </span>
                     </div>
                   </div>
@@ -124,9 +143,9 @@ export default function Audit() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
