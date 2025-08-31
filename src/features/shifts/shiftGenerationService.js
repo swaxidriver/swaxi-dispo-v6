@@ -1,8 +1,8 @@
 import { addDays, format, getDay } from 'date-fns'
 
-import { buildShiftId } from '../contexts/ShiftContextCore'
-import { validateTemplate, normalizeTemplate } from '../utils/templateValidation'
-import { enhance_shift_with_datetime } from '../utils/time-utils'
+import { buildShiftId } from '../../contexts/ShiftContextCore'
+import { validateTemplate, normalizeTemplate } from '../../utils/templateValidation'
+import { enhance_shift_with_datetime } from '../../lib/time'
 
 const dayMapping = {
   Su: 0,

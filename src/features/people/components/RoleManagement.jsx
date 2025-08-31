@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { ROLES } from '../utils/constants';
-import { canManageShifts } from '../utils/auth';
+import { ROLES } from '../../../utils/constants';
+import { canManageShifts } from '../../../lib/rbac';
 
 const roleDescriptions = {
   [ROLES.ADMIN]: 'Vollzugriff inkl. Audit-Log und Rollenverwaltung',

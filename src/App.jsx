@@ -20,7 +20,7 @@ import Audit from './pages/Audit'
 import Settings from './pages/Settings'
 import TestPage from './pages/TestPage'
 import ShiftDesigner from './pages/ShiftDesigner'
-import Login from './components/Login'
+import { Login } from './features/people'
 import './App.css'
 
 import ErrorBoundary from './components/ErrorBoundary'

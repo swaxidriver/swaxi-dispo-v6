@@ -1,4 +1,4 @@
-import { ROLES } from './constants';
+import { ROLES } from '../utils/constants';
 
 const userHasPermission = (userRole, requiredRole) => {
   const roleHierarchy = {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 
 import AuthContext from '../contexts/AuthContext'
-import { canViewAudit } from '../utils/auth'
+import { canViewAudit } from '../lib/rbac'
 import AuditService from '../services/auditService'
 
 export default function Audit() {

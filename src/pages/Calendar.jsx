@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useContext } from 'react'
 
 import { useShifts } from '../contexts/useShifts'
-import { canManageShifts } from '../utils/auth'
+import { canManageShifts } from '../lib/rbac'
 import AuthContext from '../contexts/AuthContext'
 import _ShiftTable from '../components/ShiftTable'
-import CreateShiftModal from '../components/CreateShiftModal'
-import ShiftDetailsModal from '../components/ShiftDetailsModal'
+import { CreateShiftModal, ShiftDetailsModal } from '../features/shifts'
 import AssignmentDragDrop from '../ui/assignment-dnd'
 
 const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
