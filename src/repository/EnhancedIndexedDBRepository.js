@@ -82,6 +82,7 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     const entity = {
       ...template,
       id: template.id || uuidv4(),
+      deleted_at: null,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -144,6 +145,7 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     const entity = {
       ...instance,
       id: instance.id || uuidv4(),
+      active: instance.active !== undefined ? instance.active : true,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -277,6 +279,8 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     const entity = {
       ...person,
       id: person.id || uuidv4(),
+      active: person.active !== undefined ? person.active : true,
+      deleted_at: null,
       created_at: new Date(),
       updated_at: new Date()
     };
@@ -379,6 +383,293 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     } catch {
       return false;
     }
+  }
+
+  // Transaction operations for swaps
+  async swapAssignments(assignment1Id, assignment2Id) {
+    const db = await this._openDatabase();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORES.ASSIGNMENTS.name], 'readwrite');
+      const store = transaction.objectStore(STORES.ASSIGNMENTS.name);
+      
+      let assignment1 = null;
+      let assignment2 = null;
+      
+      transaction.oncomplete = () => {
+        resolve();
+      };
+      
+      transaction.onerror = () => {
+        reject(new Error('Swap transaction failed: ' + transaction.error));
+      };
+      
+      transaction.onabort = () => {
+        reject(new Error('Swap transaction was aborted'));
+      };
+      
+      // Get both assignments
+      const get1 = store.get(assignment1Id);
+      get1.onsuccess = () => {
+        assignment1 = get1.result;
+        if (!assignment1) {
+          transaction.abort();
+          reject(new Error('Assignment 1 not found'));
+          return;
+        }
+        
+        const get2 = store.get(assignment2Id);
+        get2.onsuccess = () => {
+          assignment2 = get2.result;
+          if (!assignment2) {
+            transaction.abort();
+            reject(new Error('Assignment 2 not found'));
+            return;
+          }
+          
+          // Swap the shift assignments
+          const tempShiftId = assignment1.shift_instance_id;
+          assignment1.shift_instance_id = assignment2.shift_instance_id;
+          assignment2.shift_instance_id = tempShiftId;
+          
+          // Update timestamps
+          assignment1.updated_at = new Date();
+          assignment2.updated_at = new Date();
+          
+          // Put back the updated assignments
+          const put1 = store.put(assignment1);
+          put1.onerror = () => {
+            transaction.abort();
+          };
+          
+          const put2 = store.put(assignment2);
+          put2.onerror = () => {
+            transaction.abort();
+          };
+        };
+        
+        get2.onerror = () => {
+          transaction.abort();
+          reject(new Error('Failed to get assignment 2'));
+        };
+      };
+      
+      get1.onerror = () => {
+        transaction.abort();
+        reject(new Error('Failed to get assignment 1'));
+      };
+    });
+  }
+
+  async bulkUpdateAssignments(updates) {
+    const db = await this._openDatabase();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORES.ASSIGNMENTS.name], 'readwrite');
+      const store = transaction.objectStore(STORES.ASSIGNMENTS.name);
+      
+      transaction.oncomplete = () => {
+        resolve();
+      };
+      
+      transaction.onerror = () => {
+        reject(new Error('Bulk update transaction failed: ' + transaction.error));
+      };
+      
+      let completedOperations = 0;
+      const totalOperations = updates.length;
+      
+      for (const update of updates) {
+        const getRequest = store.get(update.id);
+        
+        getRequest.onsuccess = () => {
+          const assignment = getRequest.result;
+          if (!assignment) {
+            transaction.abort();
+            reject(new Error(`Assignment ${update.id} not found`));
+            return;
+          }
+          
+          // Apply updates
+          const updatedAssignment = {
+            ...assignment,
+            ...update,
+            id: assignment.id, // Preserve original ID
+            updated_at: new Date()
+          };
+          
+          const putRequest = store.put(updatedAssignment);
+          putRequest.onsuccess = () => {
+            completedOperations++;
+            if (completedOperations === totalOperations) {
+              // All operations completed successfully
+            }
+          };
+          
+          putRequest.onerror = () => {
+            transaction.abort();
+          };
+        };
+        
+        getRequest.onerror = () => {
+          transaction.abort();
+          reject(new Error(`Failed to get assignment ${update.id}`));
+        };
+      }
+      
+      if (totalOperations === 0) {
+        resolve();
+      }
+    });
+  }
+
+  // Soft delete operations
+  async softDeletePerson(id) {
+    const existing = await this.getPerson(id);
+    if (!existing) throw new Error('Person not found');
+    
+    const updated = {
+      ...existing,
+      deleted_at: new Date(),
+      active: false,
+      updated_at: new Date()
+    };
+
+    await this._withStore(STORES.PERSONS.name, 'readwrite', (store, resolve, reject) => {
+      const request = store.put(updated);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+
+    return updated;
+  }
+
+  async restorePerson(id) {
+    const existing = await this.getPerson(id);
+    if (!existing) throw new Error('Person not found');
+    
+    const updated = {
+      ...existing,
+      deleted_at: null,
+      active: true,
+      updated_at: new Date()
+    };
+
+    await this._withStore(STORES.PERSONS.name, 'readwrite', (store, resolve, reject) => {
+      const request = store.put(updated);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+
+    return updated;
+  }
+
+  async softDeleteShiftTemplate(id) {
+    const existing = await this.getShiftTemplate(id);
+    if (!existing) throw new Error('ShiftTemplate not found');
+    
+    // Soft delete the template
+    const updated = {
+      ...existing,
+      deleted_at: new Date(),
+      active: false,
+      updated_at: new Date()
+    };
+
+    await this._withStore(STORES.SHIFT_TEMPLATES.name, 'readwrite', (store, resolve, reject) => {
+      const request = store.put(updated);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+
+    // Deactivate all instances from this template
+    const instances = await this.listShiftInstances({ template_id: id });
+    for (const instance of instances) {
+      await this.updateShiftInstance(instance.id, { active: false });
+    }
+
+    return updated;
+  }
+
+  // Cascade delete operations
+  async cascadeDeleteShiftInstance(id) {
+    const db = await this._openDatabase();
+    
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORES.SHIFT_INSTANCES.name, STORES.ASSIGNMENTS.name], 'readwrite');
+      const instanceStore = transaction.objectStore(STORES.SHIFT_INSTANCES.name);
+      const assignmentStore = transaction.objectStore(STORES.ASSIGNMENTS.name);
+      
+      transaction.oncomplete = () => {
+        resolve();
+      };
+      
+      transaction.onerror = () => {
+        reject(new Error('Cascade delete transaction failed: ' + transaction.error));
+      };
+      
+      // First delete related assignments
+      const assignmentIndex = assignmentStore.index('shift_instance_id');
+      const assignmentCursor = assignmentIndex.openCursor(IDBKeyRange.only(id));
+      
+      assignmentCursor.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        } else {
+          // All assignments deleted, now delete the shift instance
+          const deleteInstance = instanceStore.delete(id);
+          deleteInstance.onerror = () => {
+            transaction.abort();
+          };
+        }
+      };
+      
+      assignmentCursor.onerror = () => {
+        transaction.abort();
+        reject(new Error('Failed to delete related assignments'));
+      };
+    });
+  }
+
+  // Hard delete operations with referential integrity checks
+  async hardDeletePerson(id) {
+    // Check for existing assignments
+    const assignments = await this.listAssignments({ disponent_id: id });
+    if (assignments.length > 0) {
+      throw new Error('Cannot delete person with existing assignments');
+    }
+    
+    await this._withStore(STORES.PERSONS.name, 'readwrite', (store, resolve, reject) => {
+      const request = store.delete(id);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async hardDeleteAssignment(id) {
+    await this._withStore(STORES.ASSIGNMENTS.name, 'readwrite', (store, resolve, reject) => {
+      const request = store.delete(id);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // Override listPersons to support includeDeleted option
+  async listPersons(filters = {}) {
+    const all = await this._withStore(STORES.PERSONS.name, 'readonly', (store, resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+
+    // Apply filters
+    return all.filter(person => {
+      if (filters.role && person.role !== filters.role) return false;
+      if (!filters.includeDeleted && person.deleted_at) return false;
+      return true;
+    });
   }
 }
 
