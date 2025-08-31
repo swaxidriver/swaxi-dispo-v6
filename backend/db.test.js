@@ -276,7 +276,7 @@ describe('Database Integration Tests - Constraints & Transactions', () => {
       });
 
       // This will create a constraint issue when we try to swap
-      const conflictingAssignment = await repository.createAssignment({
+      const _conflictingAssignment = await repository.createAssignment({
         shift_instance_id: shiftInstance2.id, // Same shift as assignment2
         disponent_id: person3.id,
         status: ASSIGNMENT_STATUS.TENTATIVE
