@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { useShiftTemplates } from '../contexts/useShiftTemplates'
+import AuditService from '../services/auditService'
 
 function ShiftTemplateManager() {
   const { templates, addTemplate, updateTemplate, deleteTemplate } = useShiftTemplates()
@@ -10,6 +11,7 @@ function ShiftTemplateManager() {
     startTime: '',
     endTime: '',
     days: [],
+    color: '#3B82F6', // Default blue color
   })
 
   const handleInputChange = (e) => {
@@ -28,20 +30,60 @@ function ShiftTemplateManager() {
     e.preventDefault()
     if (editingTemplate) {
       updateTemplate({ ...formState, id: editingTemplate.id })
+      AuditService.logCurrentUserAction(
+        'Template updated',
+        { templateName: formState.name, templateId: editingTemplate.id },
+        1
+      )
     } else {
       addTemplate(formState)
+      AuditService.logCurrentUserAction(
+        'Template created',
+        { templateName: formState.name },
+        1
+      )
     }
     resetForm()
   }
 
   const handleEdit = (template) => {
     setEditingTemplate(template)
-    setFormState(template)
+    setFormState({
+      ...template,
+      color: template.color || '#3B82F6' // Ensure color is always defined
+    })
+  }
+
+  const handleClone = (template) => {
+    const clonedTemplate = {
+      ...template,
+      name: `${template.name} (Copy)`,
+      color: template.color || '#3B82F6', // Ensure color is always defined
+      id: undefined // Remove ID so it gets a new one
+    }
+    setFormState(clonedTemplate)
+    setEditingTemplate(null)
+    AuditService.logCurrentUserAction(
+      'Template cloned',
+      { originalName: template.name, clonedName: clonedTemplate.name },
+      1
+    )
+  }
+
+  const handleDelete = (templateId, templateName) => {
+    if (confirm(`Are you sure you want to delete template "${templateName}"?`)) {
+      deleteTemplate(templateId)
+      AuditService.logCurrentUserAction(
+        'Template deleted',
+        { templateName, templateId },
+        1
+      )
+    }
   }
 
   const resetForm = () => {
     setEditingTemplate(null)
-    setFormState({ name: '', startTime: '', endTime: '', days: [] })
+    setFormState({ name: '', startTime: '', endTime: '', days: [], color: '#3B82F6' })
   }
 
   const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
@@ -50,7 +92,7 @@ function ShiftTemplateManager() {
     <div className="p-4 bg-white shadow-md rounded-lg" data-testid="shift-template-manager">
       <h2 className="text-xl font-bold mb-4">Shift Templates</h2>
       <form onSubmit={handleSubmit} className="mb-4" data-testid="create-template-form">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <input
             type="text"
             name="name"
@@ -79,6 +121,18 @@ function ShiftTemplateManager() {
             data-testid="template-end-time-input"
             required
           />
+          <div className="flex items-center space-x-2">
+            <label htmlFor="color" className="text-sm font-medium">Color:</label>
+            <input
+              type="color"
+              name="color"
+              id="color"
+              value={formState.color}
+              onChange={handleInputChange}
+              className="w-full h-10 border rounded"
+              data-testid="template-color-input"
+            />
+          </div>
         </div>
         <div className="mt-4">
           <label className="block mb-2">Days of the week:</label>
@@ -121,15 +175,38 @@ function ShiftTemplateManager() {
         <ul data-testid="template-list">
           {templates.map((template) => (
             <li key={template.id} className="flex justify-between items-center p-2 border-b" data-testid={`template-item-${template.id}`}>
-              <div>
-                <p className="font-semibold">{template.name}</p>
-                <p>{template.days.join(', ')}: {template.startTime} - {template.endTime}</p>
+              <div className="flex items-center space-x-3">
+                <div 
+                  className="w-4 h-4 rounded border"
+                  style={{ backgroundColor: template.color || '#3B82F6' }}
+                  title="Template Color"
+                />
+                <div>
+                  <p className="font-semibold">{template.name}</p>
+                  <p className="text-sm text-gray-600">{template.days.join(', ')}: {template.startTime} - {template.endTime}</p>
+                </div>
               </div>
-              <div>
-                <button onClick={() => handleEdit(template)} data-testid={`edit-template-${template.id}`} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2">
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleClone(template)} 
+                  data-testid={`clone-template-${template.id}`} 
+                  className="bg-blue-500 text-white px-2 py-1 rounded text-sm hover:bg-blue-600"
+                  title="Clone Template"
+                >
+                  Clone
+                </button>
+                <button 
+                  onClick={() => handleEdit(template)} 
+                  data-testid={`edit-template-${template.id}`} 
+                  className="bg-yellow-500 text-white px-2 py-1 rounded text-sm hover:bg-yellow-600"
+                >
                   Edit
                 </button>
-                <button onClick={() => deleteTemplate(template.id)} data-testid={`delete-template-${template.id}`} className="bg-red-500 text-white px-2 py-1 rounded">
+                <button 
+                  onClick={() => handleDelete(template.id, template.name)} 
+                  data-testid={`delete-template-${template.id}`} 
+                  className="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+                >
                   Delete
                 </button>
               </div>
