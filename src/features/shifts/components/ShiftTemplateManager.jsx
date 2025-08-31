@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { useShiftTemplates } from '../contexts/useShiftTemplates'
-import AuditService from '../services/auditService'
+import { useShiftTemplates } from '../../../contexts/useShiftTemplates'
+import AuditService from '../../../services/auditService'
 
 function ShiftTemplateManager() {
   const { templates, addTemplate, updateTemplate, deleteTemplate } = useShiftTemplates()

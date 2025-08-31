@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { format, addDays, startOfWeek } from 'date-fns'
 
-import { generateShifts } from '../services/shiftGenerationService'
-import { useShiftTemplates } from '../contexts/useShiftTemplates'
-import { useShifts } from '../contexts/useShifts'
-import AuditService from '../services/auditService'
+import { generateShifts } from '../shiftGenerationService'
+import { useShiftTemplates } from '../../../contexts/useShiftTemplates'
+import { useShifts } from '../../../contexts/useShifts'
+import AuditService from '../../../services/auditService'
 
 function ShiftWeeklyGenerator() {
   const { templates } = useShiftTemplates()

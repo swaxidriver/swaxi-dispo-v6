@@ -1,11 +1,13 @@
 import React, { useState, useMemo, useContext } from 'react'
 
 import { useShifts } from '../contexts/useShifts'
+import { useShiftTemplates } from '../contexts/useShiftTemplates'
 import { canManageShifts } from '../lib/rbac'
 import AuthContext from '../contexts/AuthContext'
 import _ShiftTable from '../components/ShiftTable'
 import { CreateShiftModal, ShiftDetailsModal } from '../features/shifts'
 import AssignmentDragDrop from '../ui/assignment-dnd'
+import { ShiftCell, TimelineShiftCell, QUICK_ACTIONS } from '../ui/calendar-views.jsx'
 
 const DAYS = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`)
@@ -51,7 +53,7 @@ function getShiftSpanForDay(shift, dayDate) {
 }
 
 // Memoized calendar cell for better performance
-const CalendarCell = React.memo(({ day, onDayClick, onShiftClick }) => (
+const CalendarCell = React.memo(({ day, onDayClick, onShiftClick, onQuickAction, templates = [] }) => (
   <div
     className={`min-h-[100px] p-2 border-r border-b border-gray-200 last:border-r-0 cursor-pointer hover:bg-gray-50 ${
       !day.isCurrentMonth ? 'bg-gray-50 text-gray-400' : ''
@@ -62,24 +64,19 @@ const CalendarCell = React.memo(({ day, onDayClick, onShiftClick }) => (
       {day.date.getDate()}
     </div>
     
-    {/* Shift markers */}
+    {/* Shift markers with template colors */}
     <div className="space-y-1">
       {day.shifts.slice(0, 3).map((shift) => (
-        <div
+        <ShiftCell
           key={shift.id}
-          className={`text-xs px-1 py-0.5 rounded truncate ${
-            shift.assignedTo 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-yellow-100 text-yellow-800'
-          }`}
-          title={`${shift.type || shift.name} ${shift.start}-${shift.end} ${shift.assignedTo ? `(${shift.assignedTo})` : '(Offen)'}`}
-          onClick={(e) => {
-            e.stopPropagation()
-            onShiftClick(shift)
-          }}
-        >
-          {shift.type || shift.name}
-        </div>
+          shift={shift}
+          templates={templates}
+          onShiftClick={onShiftClick}
+          onQuickAction={onQuickAction}
+          size="compact"
+          showQuickActions={false} // Too small for quick actions in month view
+          conflicts={shift.conflicts || []}
+        />
       ))}
       {day.shifts.length > 3 && (
         <div className="text-xs text-gray-500">
@@ -92,6 +89,7 @@ const CalendarCell = React.memo(({ day, onDayClick, onShiftClick }) => (
 
 export default function Calendar() {
   const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } = useShifts();
+  const { templates } = useShiftTemplates();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('week'); // 'week', 'month', or 'assignment'
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -216,6 +214,29 @@ export default function Calendar() {
 
   const handleAssignShift = async (shiftId, userId) => {
     return assignShift(shiftId, userId)
+  }
+
+  const handleQuickAction = (shift, action) => {
+    console.log(`Quick action ${action} for shift ${shift.id}`)
+    switch (action) {
+      case QUICK_ACTIONS.NOTE:
+        // Open note dialog
+        setSelectedShift(shift)
+        setIsDetailsOpen(true)
+        break
+      case QUICK_ACTIONS.SWAP:
+        // TODO: Implement swap functionality
+        alert('Swap functionality will be implemented')
+        break
+      case QUICK_ACTIONS.RELEASE:
+        // Release assignment
+        if (shift.assignedTo) {
+          assignShift(shift.id, null)
+        }
+        break
+      default:
+        console.warn('Unknown quick action:', action)
+    }
   }
 
   const handleDayClick = (day) => {
@@ -516,23 +537,20 @@ export default function Calendar() {
                       const span = getShiftSpanForDay(shift, dayDate)
                       if (!span) return null
                       return (
-                        <div
+                        <TimelineShiftCell
                           key={`${shift.id}_${dayIdx}`}
-                          className={`absolute mx-1 rounded-md text-white text-[10px] px-1 py-0.5 cursor-move shadow-sm hover:shadow-md transition-shadow ${
-                            shift.assignedTo 
-                              ? 'bg-[var(--color-primary)]/90 hover:bg-[var(--color-primary)]' 
-                              : 'bg-yellow-500/90 hover:bg-yellow-500'
-                          } ${draggedShift?.id === shift.id ? 'opacity-50' : ''}`}
-                          style={{ top: span.top, height: span.height }}
-                          draggable={canManageShifts(userRole)}
+                          shift={shift}
+                          templates={templates}
+                          span={span}
+                          dayIdx={dayIdx}
+                          onShiftClick={handleShiftClick}
+                          onQuickAction={handleQuickAction}
                           onDragStart={(e) => handleShiftDragStart(e, shift)}
                           onDragEnd={handleShiftDragEnd}
-                          onClick={() => handleShiftClick(shift)}
-                          title={`${shift.type || shift.name} ${shift.start}-${shift.end}${canManageShifts(userRole) ? ' (Ziehen zum Verschieben)' : ''}`}
-                        >
-                          <div className="font-semibold truncate">{shift.type || shift.name}</div>
-                          <div className="truncate">{shift.assignedTo || 'Offen'}</div>
-                        </div>
+                          isDraggable={canManageShifts(userRole)}
+                          isDragged={draggedShift?.id === shift.id}
+                          conflicts={shift.conflicts || []}
+                        />
                       )
                     })}
                   </div>
@@ -568,6 +586,8 @@ export default function Calendar() {
                 day={day}
                 onDayClick={handleDayClick}
                 onShiftClick={handleShiftClick}
+                onQuickAction={handleQuickAction}
+                templates={templates}
               />
             ))}
           </div>

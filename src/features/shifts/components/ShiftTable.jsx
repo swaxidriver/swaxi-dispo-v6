@@ -1,15 +1,15 @@
 import React, { useState, useContext, useMemo, useCallback, memo } from 'react'
 
-import { useShifts } from '../contexts/useShifts'
-import AuthContext from '../contexts/AuthContext'
-import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
-import { canTransition, STATUS } from '../domain/status'
-import { computeDuration } from '../utils/shifts'
+import { useShifts } from '../../../contexts/useShifts'
+import AuthContext from '../../../contexts/AuthContext'
+import { SHIFT_STATUS, WORK_LOCATIONS } from '../../../utils/constants'
+import { canTransition, STATUS } from '../../../domain/status'
+import { computeDuration } from '../../../utils/shifts'
 import { canManageShifts } from '../../../lib/rbac'
 
-import _SeriesApplicationModal from './SeriesApplicationModal'
-import ConflictBadge from './ConflictBadge'
-import VirtualizedList from './VirtualizedList'
+import _SeriesApplicationModal from '../../../components/SeriesApplicationModal'
+import ConflictBadge from '../../../components/ConflictBadge'
+import VirtualizedList from '../../../components/VirtualizedList'
 
 // Threshold for using virtualization (100+ items)
 const VIRTUALIZATION_THRESHOLD = 100
