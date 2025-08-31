@@ -478,6 +478,7 @@ export function ShiftProvider({ children, disableAsyncBootstrap = false, heartbe
     shifts: state.shifts,
     dispatch,
   isOnline: state.isOnline,
+    repository: repoRef.current, // Expose repository for CSV operations
     applyToShift,
     applyToSeries,
     updateShiftStatus,

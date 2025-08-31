@@ -339,6 +339,23 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     });
   }
 
+  // Alias methods for CSV module compatibility
+  async getPersons() {
+    return this.listPersons();
+  }
+
+  async getShiftTemplates() {
+    return this.listShiftTemplates();
+  }
+
+  async getShiftInstances() {
+    return this.listShiftInstances();
+  }
+
+  async getAssignments() {
+    return this.listAssignments();
+  }
+
   // Legacy compatibility methods for existing ShiftRepository interface
   async list(filter = {}) {
     // This could either return shift instances or maintain backward compatibility
