@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import { useShifts } from '../contexts/useShifts'
+import { useShifts } from '../../../contexts/useShifts'
 
 export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
   const { createShift } = useShifts()
