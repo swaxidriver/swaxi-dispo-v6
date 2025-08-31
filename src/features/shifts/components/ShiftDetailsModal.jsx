@@ -2,9 +2,9 @@ import { useState, useEffect, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, ClockIcon, MapPinIcon, UserIcon } from '@heroicons/react/24/outline'
 
-import { describeConflicts } from '../utils/conflicts'
-import { computeDuration } from '../utils/shifts'
-import { logError } from '../utils/logger'
+import { describeConflicts } from '../../../utils/conflicts'
+import { computeDuration } from '../../../utils/shifts'
+import { logError } from '../../../utils/logger'
 
 function ShiftDetailsModal({ shift, isOpen, onClose, onApply, onAssign, currentUser, userRole }) {
   const [isApplying, setIsApplying] = useState(false)
