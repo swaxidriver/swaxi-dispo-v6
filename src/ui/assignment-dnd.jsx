@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useShifts } from '../contexts/useShifts'
 import AuthContext from '../contexts/AuthContext'
 import { SHIFT_STATUS, WORK_LOCATIONS } from '../utils/constants'
-import { canManageShifts } from '../utils/auth'
+import { canManageShifts } from '../lib/rbac'
 
 // Sample disponenten data - in a real app this would come from a context or API
 const SAMPLE_DISPONENTEN = [

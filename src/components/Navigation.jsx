@@ -5,7 +5,7 @@ import { useContext } from 'react'
 
 import { useFeedback } from '../contexts/useFeedback'
 import AuthContext from '../contexts/AuthContext'
-import { canViewAudit } from '../utils/auth'
+import { canViewAudit } from '../lib/rbac'
 import { useI18n } from '../hooks/useI18n'
 
 import ActiveRoleBadge from './ActiveRoleBadge'
