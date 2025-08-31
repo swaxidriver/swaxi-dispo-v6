@@ -1,4 +1,5 @@
-const {
+// Import for ES modules environment that needs to be tested in CommonJS Jest
+import {
   ROLES,
   ROLE_HIERARCHY,
   hasPermission,
@@ -8,7 +9,7 @@ const {
   requireRole,
   guardResource,
   getUserContext
-} = require('./rbac.js');
+} from './rbac.js';
 
 describe('Backend RBAC System', () => {
   describe('hasPermission', () => {

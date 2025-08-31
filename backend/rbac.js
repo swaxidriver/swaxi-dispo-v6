@@ -272,20 +272,7 @@ function getUserContext(req) {
   };
 }
 
-// Export both CommonJS and ES modules for compatibility
-module.exports = {
-  ROLES,
-  ROLE_HIERARCHY,
-  hasPermission,
-  Permissions,
-  extractUserRole,
-  requirePermission,
-  requireRole,
-  guardResource,
-  getUserContext
-};
-
-// ES module exports for modern environments
+// Export both named exports for ES modules
 export {
   ROLES,
   ROLE_HIERARCHY,
