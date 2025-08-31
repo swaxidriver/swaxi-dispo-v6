@@ -11,13 +11,14 @@ export default {
   },
   transform: {
     '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   collectCoverage: true,
   collectCoverageFrom: [
-    'src/**/*.{js,jsx}',
+    'src/**/*.{js,jsx,ts,tsx}',
     '!src/main.jsx',
-    '!src/**/*.test.{js,jsx}',
-    '!src/**/*.spec.{js,jsx}',
+    '!src/**/*.test.{js,jsx,ts,tsx}',
+    '!src/**/*.spec.{js,jsx,ts,tsx}',
   ],
   // Granular coverage ratchet: raise global slightly; enforce higher targets on stable areas.
   coverageThreshold: {

@@ -40,6 +40,9 @@ function LoadingSkeleton() {
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'dev'
 const APP_COMMIT = typeof __APP_COMMIT__ !== 'undefined' ? __APP_COMMIT__ : 'local'
 
+/**
+ * @param {{ onOpenChangelog: () => void }} props
+ */
 function Footer({ onOpenChangelog }) {
   return (
     <footer className="mt-auto py-4 text-center text-sm text-gray-500">
@@ -72,7 +75,7 @@ function App() {
         <SettingsProvider>
           <ThemeProvider>
             <ShiftProvider>
-              <FeedbackProvider onNewFeedback={(entry) => {
+              <FeedbackProvider onNewFeedback={(/** @type {any} */ entry) => {
                 // push into notifications via ShiftContext dispatch (available under provider tree)
                 // we cannot import hook at module top (ordering) so do dynamic inside callback
                 try {
