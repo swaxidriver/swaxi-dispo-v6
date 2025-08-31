@@ -64,6 +64,29 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 - **Custom Hooks** - Wiederverwendbare Logik
 - **Real-time Updates** - Live data synchronization
 
+## 📚 Documentation
+
+### **📋 Project Planning & Issue Management**
+- **[CSV Import Guide](docs/CSV_IMPORT_GUIDE.md)** - Bulk create GitHub issues from CSV files
+- **[Issue Planning](docs/swaxi_issue_plan.md)** - Comprehensive project structure and templates
+- **[GitHub Issues Template](docs/github-issues.md)** - Structured issue examples
+- **[CSV Templates](docs/templates/)** - Ready-to-use CSV templates for issue import
+
+### **🔧 Development & Setup**
+- **[RBAC Integration](docs/RBAC_INTEGRATION.md)** - Role-based access control documentation
+- **[GitHub Setup Guide](docs/github-setup-guide.md)** - Repository configuration and workflow
+- **[Contrast Audit Plan](docs/contrast-audit-plan.md)** - Accessibility compliance guidelines
+
+### **🛠 Scripts & Automation**
+- **[Import Script](scripts/import-issues.sh)** - Automated CSV to GitHub issues import
+- **GitHub CLI Integration** - Bulk operations and automation tools
+- **Development Scripts** - Build, test, and deployment automation
+
+### **📖 Quick References**
+- **Project Structure**: Modular React architecture with context-based state management
+- **Issue Workflow**: CSV → GitHub Issues → Epics → Milestones → Implementation
+- **Test Coverage**: Comprehensive test suite accessible at `/test` route
+
 ## 🚀 Quick Start
 
 ### **Lokale Entwicklung**
@@ -346,6 +369,34 @@ User Action → ShiftContext → sharePointService
 ### Historische Planung / Backlog
 
 Die alten Markdown Backlogs wurden archiviert und durch Issue-Tracking ersetzt (siehe offene Issues mit Label `P1`). Für Referenzzwecke liegen die unveränderten Kopien in `docs/archive/`.
+
+### **📋 Project Management & CSV Import**
+
+- **Issue Planning**: See `docs/swaxi_issue_plan.md` for comprehensive project structure
+- **CSV Import Process**: Bulk create GitHub issues from structured CSV data
+- **Import Guide**: Complete documentation in `docs/CSV_IMPORT_GUIDE.md`
+- **Templates**: CSV templates available in `docs/templates/`
+
+#### **CSV Import Quick Start**
+
+```bash
+# 1. Prepare CSV file using template
+cp docs/templates/issue-import-template.csv my-issues.csv
+
+# 2. Edit CSV with your issues
+# 3. Import using automation script (recommended)
+./scripts/import-issues.sh my-issues.csv
+
+# Or preview first (dry run)
+./scripts/import-issues.sh my-issues.csv true
+
+# Manual GitHub CLI approach:
+gh issue create --title "[P1] Feature: New Feature" \
+  --label "type:feature,prio:P1,area:UI" \
+  --body "Description from CSV..."
+```
+
+**CSV Format**: Structured import supporting priorities (P0-P2), types (feature/bug/docs/chore), areas (UI/state/perf), epics (E0-E6), milestones, acceptance criteria, and test cases.
 
 ### **🔧 Troubleshooting**
 
