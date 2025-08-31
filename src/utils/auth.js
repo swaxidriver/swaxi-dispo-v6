@@ -15,3 +15,15 @@ export const canManageShifts = (userRole) => userHasPermission(userRole, ROLES.C
 export const canViewAudit = (userRole) => userHasPermission(userRole, ROLES.ADMIN);
 export const canApplyForShifts = (userRole) => userHasPermission(userRole, ROLES.DISPONENT);
 export const canViewAnalytics = (userRole) => userHasPermission(userRole, ROLES.ANALYST);
+export const canAssignShifts = (userRole) => userHasPermission(userRole, ROLES.CHIEF);
+export const canManageTemplates = (userRole) => userHasPermission(userRole, ROLES.CHIEF);
+
+// Permission object for consistency with backend RBAC
+export const Permissions = {
+  canManageShifts,
+  canViewAudit,
+  canApplyForShifts,
+  canViewAnalytics,
+  canAssignShifts,
+  canManageTemplates
+};
