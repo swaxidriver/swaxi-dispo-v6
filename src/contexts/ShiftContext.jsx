@@ -10,6 +10,7 @@
  *  - Offline action queue drain on reconnect (create/apply/assign)
  *  - Snapshot restoration (autosave) rebuilding conflicts & timestamps
  *  - Deterministic id generation (monotonic counter) via generateId
+ *  - Email notification integration for assignment changes
  */
 import {
   createContext,
@@ -28,6 +29,10 @@ import { validateShiftArray } from "../utils/validation";
 import { SHIFT_STATUS } from "../utils/constants";
 import { initialState, shiftReducer, buildShiftId } from "./ShiftContextCore";
 import { applyInitialSeedIfEmpty } from "../seed/initialData";
+import {
+  notificationService,
+  NOTIFICATION_TYPES,
+} from "../../backend/notifications.js";
 import {
   enqueue,
   drain as drainQueue,
@@ -440,11 +445,16 @@ export function ShiftProvider({
     (shiftId, user) => {
       const target = state.shifts.find((s) => s.id === shiftId);
       if (!target) return;
+
+      // Check if this is a reassignment (removing previous assignment)
+      const previouslyAssigned = target.assignedTo;
+
       try {
         assertTransition(target.status, STATUS.ASSIGNED);
       } catch {
         return;
       }
+
       dispatch({ type: "ASSIGN_SHIFT", payload: { id: shiftId, user } });
       const updated = {
         ...target,
@@ -467,6 +477,33 @@ export function ShiftProvider({
           isRead: false,
         },
       });
+
+      // Queue email notification for assignment
+      notificationService
+        .queueAssignmentNotification({
+          shiftId,
+          assignedTo: user,
+          type: NOTIFICATION_TYPES.ASSIGNED,
+          shift: updated,
+        })
+        .catch((error) => {
+          console.error("Failed to queue assignment notification:", error);
+        });
+
+      // If there was a previous assignment, queue removal notification
+      if (previouslyAssigned && previouslyAssigned !== user) {
+        notificationService
+          .queueAssignmentNotification({
+            shiftId,
+            assignedTo: previouslyAssigned,
+            type: NOTIFICATION_TYPES.REMOVED,
+            shift: { ...updated, assignedTo: previouslyAssigned },
+          })
+          .catch((error) => {
+            console.error("Failed to queue removal notification:", error);
+          });
+      }
+
       const attempt = repoRef.current?.assignShift?.(shiftId, user);
       if (attempt && typeof attempt.then === "function") {
         attempt.catch(() => {
@@ -482,6 +519,78 @@ export function ShiftProvider({
           id: `assign_${shiftId}_${user}`,
           type: "assign",
           payload: { shiftId, user },
+          ts: Date.now(),
+        });
+      }
+    },
+    [state.shifts, state.applications],
+  );
+
+  const unassignShift = useCallback(
+    (shiftId) => {
+      const target = state.shifts.find((s) => s.id === shiftId);
+      if (!target || !target.assignedTo) return;
+
+      const previouslyAssigned = target.assignedTo;
+
+      try {
+        assertTransition(target.status, STATUS.OPEN);
+      } catch {
+        return;
+      }
+
+      const updated = {
+        ...target,
+        status: SHIFT_STATUS.OPEN,
+        assignedTo: null,
+      };
+
+      updated.conflicts = checkShiftConflicts(
+        updated,
+        state.shifts.filter((o) => o.id !== updated.id),
+        state.applications,
+      );
+
+      dispatch({ type: "UPDATE_SHIFT", payload: updated });
+      dispatch({
+        type: "ADD_NOTIFICATION",
+        payload: {
+          id: `${shiftId}_unassign_${Date.now()}`,
+          title: "Shift unassigned",
+          message: `Dienst-Zuweisung für ${previouslyAssigned} entfernt`,
+          timestamp: new Date().toLocaleString(),
+          isRead: false,
+        },
+      });
+
+      // Queue email notification for removal
+      notificationService
+        .queueAssignmentNotification({
+          shiftId,
+          assignedTo: previouslyAssigned,
+          type: NOTIFICATION_TYPES.REMOVED,
+          shift: { ...updated, assignedTo: previouslyAssigned },
+        })
+        .catch((error) => {
+          console.error("Failed to queue removal notification:", error);
+        });
+
+      // Update repository
+      const attempt = repoRef.current?.unassignShift?.(shiftId);
+      if (attempt && typeof attempt.then === "function") {
+        attempt.catch(() => {
+          enqueue({
+            id: `unassign_${shiftId}`,
+            type: "unassign",
+            payload: { shiftId },
+            ts: Date.now(),
+          });
+        });
+      } else {
+        enqueue({
+          id: `unassign_${shiftId}`,
+          type: "unassign",
+          payload: { shiftId },
           ts: Date.now(),
         });
       }
@@ -809,6 +918,7 @@ export function ShiftProvider({
       applyToSeries,
       updateShiftStatus,
       assignShift,
+      unassignShift,
       cancelShift,
       createShift,
       updateShift,
@@ -827,6 +937,7 @@ export function ShiftProvider({
       applyToSeries,
       updateShiftStatus,
       assignShift,
+      unassignShift,
       cancelShift,
       createShift,
       updateShift,
