@@ -7,7 +7,7 @@
  */
 
 // Default timezone for the application (Europe/Berlin)
-const DEFAULT_TIMEZONE = "Europe/Berlin";
+export const DEFAULT_TIMEZONE = "Europe/Berlin";
 
 /**
  * Convert a datetime to local timezone
@@ -138,22 +138,29 @@ export function enhance_shift_with_datetime(shift) {
 }
 
 /**
- * Format datetime for display
+ * Format datetime for display (legacy function - consider using formatDateTime from i18n-time-utils)
  * @param {Object} dt - Datetime object with utc/local/timezone
+ * @param {string} language - Language code (default: 'de')
+ * @param {string} timeFormat - Time format preference ('24h' or 'ampm', default: '24h')
  * @returns {string} Formatted string
  */
-export function format_datetime(dt) {
+export function format_datetime(dt, language = "de", timeFormat = "24h") {
   if (!dt) return "";
 
   const localTime = dt.local || new Date(dt);
-  return localTime.toLocaleString("de-DE", {
+  const locale = language === "en" ? "en-US" : "de-DE";
+
+  const formatOptions = {
     timeZone: dt.timezone || DEFAULT_TIMEZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  });
+    hour12: timeFormat === "ampm",
+  };
+
+  return localTime.toLocaleString(locale, formatOptions);
 }
 
 /**
