@@ -136,7 +136,7 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
   }
 
-  async listShiftTemplates(filters = {}) {
+  async listShiftTemplates(filters = {}, pagination = {}) {
     const all = await this._withStore(
       STORES.SHIFT_TEMPLATES.name,
       "readonly",
@@ -148,12 +148,21 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
 
     // Apply filters
-    return all.filter((template) => {
+    let filtered = all.filter((template) => {
       if (filters.active !== undefined && template.active !== filters.active) {
         return false;
       }
       return true;
     });
+
+    // Apply pagination
+    if (pagination.page !== undefined && pagination.pageSize !== undefined) {
+      const start = pagination.page * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      filtered = filtered.slice(start, end);
+    }
+
+    return filtered;
   }
 
   // ShiftInstance operations
@@ -215,7 +224,12 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
   }
 
-  async listShiftInstances(filters = {}) {
+  async listShiftInstances(filters = {}, pagination = {}) {
+    // Use indexes for better performance when filtering by date ranges
+    if (filters.startDate || filters.endDate) {
+      return this._listShiftInstancesByDateRange(filters, pagination);
+    }
+
     const all = await this._withStore(
       STORES.SHIFT_INSTANCES.name,
       "readonly",
@@ -227,14 +241,88 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
 
     // Apply filters
-    return all.filter((instance) => {
+    let filtered = all.filter((instance) => {
       if (filters.date && instance.date !== filters.date) return false;
       if (filters.template_id && instance.template_id !== filters.template_id)
         return false;
-      if (filters.startDate && instance.date < filters.startDate) return false;
-      if (filters.endDate && instance.date > filters.endDate) return false;
       return true;
     });
+
+    // Apply pagination
+    if (pagination.page !== undefined && pagination.pageSize !== undefined) {
+      const start = pagination.page * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      filtered = filtered.slice(start, end);
+    }
+
+    return filtered;
+  }
+
+  // Helper method to efficiently query by date range using indexes
+  async _listShiftInstancesByDateRange(filters, pagination) {
+    return this._withStore(
+      STORES.SHIFT_INSTANCES.name,
+      "readonly",
+      (store, resolve, reject) => {
+        const results = [];
+        let cursorRequest;
+
+        // Use the date index for efficient range queries
+        const index = store.index("date");
+
+        if (filters.startDate && filters.endDate) {
+          // Range query using IDBKeyRange
+          const range = IDBKeyRange.bound(filters.startDate, filters.endDate);
+          cursorRequest = index.openCursor(range);
+        } else if (filters.startDate) {
+          const range = IDBKeyRange.lowerBound(filters.startDate);
+          cursorRequest = index.openCursor(range);
+        } else if (filters.endDate) {
+          const range = IDBKeyRange.upperBound(filters.endDate);
+          cursorRequest = index.openCursor(range);
+        } else {
+          // Fallback to all records
+          cursorRequest = store.openCursor();
+        }
+
+        cursorRequest.onsuccess = (event) => {
+          const cursor = event.target.result;
+          if (cursor) {
+            const instance = cursor.value;
+
+            // Apply additional filters
+            let include = true;
+            if (filters.date && instance.date !== filters.date) include = false;
+            if (
+              filters.template_id &&
+              instance.template_id !== filters.template_id
+            )
+              include = false;
+
+            if (include) {
+              results.push(instance);
+            }
+
+            cursor.continue();
+          } else {
+            // Apply pagination after collection
+            let paginated = results;
+            if (
+              pagination.page !== undefined &&
+              pagination.pageSize !== undefined
+            ) {
+              const start = pagination.page * pagination.pageSize;
+              const end = start + pagination.pageSize;
+              paginated = results.slice(start, end);
+            }
+
+            resolve(paginated);
+          }
+        };
+
+        cursorRequest.onerror = () => reject(cursorRequest.error);
+      },
+    );
   }
 
   // Assignment operations
@@ -303,7 +391,7 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
   }
 
-  async listAssignments(filters = {}) {
+  async listAssignments(filters = {}, pagination = {}) {
     const all = await this._withStore(
       STORES.ASSIGNMENTS.name,
       "readonly",
@@ -315,7 +403,7 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
 
     // Apply filters
-    return all.filter((assignment) => {
+    let filtered = all.filter((assignment) => {
       if (
         filters.shift_instance_id &&
         assignment.shift_instance_id !== filters.shift_instance_id
@@ -329,6 +417,15 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
       if (filters.status && assignment.status !== filters.status) return false;
       return true;
     });
+
+    // Apply pagination
+    if (pagination.page !== undefined && pagination.pageSize !== undefined) {
+      const start = pagination.page * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      filtered = filtered.slice(start, end);
+    }
+
+    return filtered;
   }
 
   // Person operations
@@ -418,10 +515,10 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
   }
 
   // Legacy compatibility methods for existing ShiftRepository interface
-  async list(filter = {}) {
+  async list(filter = {}, pagination = {}) {
     // This could either return shift instances or maintain backward compatibility
     // For now, return shift instances to align with new schema
-    return this.listShiftInstances(filter);
+    return this.listShiftInstances(filter, pagination);
   }
 
   async create(shift) {
@@ -748,8 +845,8 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
   }
 
-  // Override listPersons to support includeDeleted option
-  async listPersons(filters = {}) {
+  // Override listPersons to support includeDeleted option and pagination
+  async listPersons(filters = {}, pagination = {}) {
     const all = await this._withStore(
       STORES.PERSONS.name,
       "readonly",
@@ -761,11 +858,20 @@ export class EnhancedIndexedDBRepository extends ShiftRepository {
     );
 
     // Apply filters
-    return all.filter((person) => {
+    let filtered = all.filter((person) => {
       if (filters.role && person.role !== filters.role) return false;
       if (!filters.includeDeleted && person.deleted_at) return false;
       return true;
     });
+
+    // Apply pagination
+    if (pagination.page !== undefined && pagination.pageSize !== undefined) {
+      const start = pagination.page * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      filtered = filtered.slice(start, end);
+    }
+
+    return filtered;
   }
 }
 
