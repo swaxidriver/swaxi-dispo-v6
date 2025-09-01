@@ -1,13 +1,13 @@
 /**
  * Time utilities for cross-midnight handling with real datetimes
- * 
+ *
  * This module provides utilities for handling shifts that cross midnight
  * by storing full datetime information (UTC + local timezone) instead of
  * just times and dates.
  */
 
 // Default timezone for the application (Europe/Berlin)
-const DEFAULT_TIMEZONE = 'Europe/Berlin'
+const DEFAULT_TIMEZONE = "Europe/Berlin";
 
 /**
  * Convert a datetime to local timezone
@@ -16,8 +16,8 @@ const DEFAULT_TIMEZONE = 'Europe/Berlin'
  * @returns {Date} Local datetime
  */
 export function to_local(dt, timezone = DEFAULT_TIMEZONE) {
-  const date = dt instanceof Date ? dt : new Date(dt)
-  return new Date(date.toLocaleString('en-US', { timeZone: timezone }))
+  const date = dt instanceof Date ? dt : new Date(dt);
+  return new Date(date.toLocaleString("en-US", { timeZone: timezone }));
 }
 
 /**
@@ -27,9 +27,9 @@ export function to_local(dt, timezone = DEFAULT_TIMEZONE) {
  * @returns {Date} UTC datetime
  */
 export function to_utc(dt, timezone = DEFAULT_TIMEZONE) {
-  const date = dt instanceof Date ? dt : new Date(dt)
+  const date = dt instanceof Date ? dt : new Date(dt);
   // This is a simplified implementation - for production use a proper timezone library
-  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
 }
 
 /**
@@ -42,27 +42,29 @@ export function to_utc(dt, timezone = DEFAULT_TIMEZONE) {
 export function create_datetime(dateStr, timeStr, timezone = DEFAULT_TIMEZONE) {
   // Validate inputs
   if (!dateStr || !timeStr) {
-    throw new Error('Date and time strings are required')
+    throw new Error("Date and time strings are required");
   }
-  
+
   // Combine date and time to create local datetime
-  const isoString = `${dateStr}T${timeStr}:00`
-  const localDateTime = new Date(isoString)
-  
+  const isoString = `${dateStr}T${timeStr}:00`;
+  const localDateTime = new Date(isoString);
+
   // Check if the date is valid
   if (isNaN(localDateTime.getTime())) {
-    throw new Error(`Invalid date/time: ${isoString}`)
+    throw new Error(`Invalid date/time: ${isoString}`);
   }
-  
-  // For UTC, we'll use a simple approach since precise timezone handling 
+
+  // For UTC, we'll use a simple approach since precise timezone handling
   // requires a proper timezone library like date-fns-tz
-  const utcDateTime = new Date(localDateTime.getTime() - (localDateTime.getTimezoneOffset() * 60000))
-  
+  const utcDateTime = new Date(
+    localDateTime.getTime() - localDateTime.getTimezoneOffset() * 60000,
+  );
+
   return {
     utc: utcDateTime,
     local: localDateTime,
-    timezone: timezone
-  }
+    timezone: timezone,
+  };
 }
 
 /**
@@ -73,13 +75,13 @@ export function create_datetime(dateStr, timeStr, timezone = DEFAULT_TIMEZONE) {
  */
 export function is_overlap(a, b) {
   // Use UTC times for comparison to avoid timezone issues
-  const aStart = a.start_dt?.utc || new Date(a.start_dt)
-  const aEnd = a.end_dt?.utc || new Date(a.end_dt)
-  const bStart = b.start_dt?.utc || new Date(b.start_dt)
-  const bEnd = b.end_dt?.utc || new Date(b.end_dt)
-  
+  const aStart = a.start_dt?.utc || new Date(a.start_dt);
+  const aEnd = a.end_dt?.utc || new Date(a.end_dt);
+  const bStart = b.start_dt?.utc || new Date(b.start_dt);
+  const bEnd = b.end_dt?.utc || new Date(b.end_dt);
+
   // Check if ranges overlap: a.start < b.end && a.end > b.start
-  return aStart < bEnd && aEnd > bStart
+  return aStart < bEnd && aEnd > bStart;
 }
 
 /**
@@ -89,10 +91,10 @@ export function is_overlap(a, b) {
  * @returns {number} Duration in minutes
  */
 export function compute_duration_dt(start_dt, end_dt) {
-  const startTime = start_dt?.utc || new Date(start_dt)
-  const endTime = end_dt?.utc || new Date(end_dt)
-  
-  return Math.round((endTime - startTime) / (1000 * 60))
+  const startTime = start_dt?.utc || new Date(start_dt);
+  const endTime = end_dt?.utc || new Date(end_dt);
+
+  return Math.round((endTime - startTime) / (1000 * 60));
 }
 
 /**
@@ -101,48 +103,55 @@ export function compute_duration_dt(start_dt, end_dt) {
  * @returns {Object} Enhanced shift with start_dt and end_dt
  */
 export function enhance_shift_with_datetime(shift) {
-  const { date, start, end } = shift
-  
+  const { date, start, end } = shift;
+
   // Create start datetime
-  const start_dt = create_datetime(date, start)
-  
+  const start_dt = create_datetime(date, start);
+
   // For end datetime, check if it crosses midnight
-  let end_dt
+  let end_dt;
   if (end < start) {
     // Cross-midnight: end is on the next day
-    const nextDay = new Date(date)
-    nextDay.setDate(nextDay.getDate() + 1)
-    const nextDayStr = nextDay.toISOString().slice(0, 10)
-    end_dt = create_datetime(nextDayStr, end)
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const nextDayStr = nextDay.toISOString().slice(0, 10);
+    end_dt = create_datetime(nextDayStr, end);
   } else {
     // Same day
-    end_dt = create_datetime(date, end)
+    end_dt = create_datetime(date, end);
   }
-  
+
   return {
     ...shift,
     start_dt,
-    end_dt
-  }
+    end_dt,
+  };
 }
 
 /**
- * Format datetime for display
+ * Format datetime for display (legacy function - consider using formatDateTime from i18n-time-utils)
  * @param {Object} dt - Datetime object with utc/local/timezone
+ * @param {string} language - Language code (default: 'de')
+ * @param {string} timeFormat - Time format preference ('24h' or 'ampm', default: '24h')
  * @returns {string} Formatted string
  */
-export function format_datetime(dt) {
-  if (!dt) return ''
-  
-  const localTime = dt.local || new Date(dt)
-  return localTime.toLocaleString('de-DE', {
+export function format_datetime(dt, language = "de", timeFormat = "24h") {
+  if (!dt) return "";
+
+  const localTime = dt.local || new Date(dt);
+  const locale = language === "en" ? "en-US" : "de-DE";
+
+  const formatOptions = {
     timeZone: dt.timezone || DEFAULT_TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: timeFormat === "ampm",
+  };
+
+  return localTime.toLocaleString(locale, formatOptions);
 }
 
 /**
@@ -153,6 +162,6 @@ export function format_datetime(dt) {
  */
 export function get_timezone_offset(date, timezone = DEFAULT_TIMEZONE) {
   // Simple implementation - returns the local timezone offset
-  const d = date instanceof Date ? date : new Date(date)
-  return d.getTimezoneOffset()
+  const d = date instanceof Date ? date : new Date(date);
+  return d.getTimezoneOffset();
 }

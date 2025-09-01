@@ -3,9 +3,13 @@ import { useState, useEffect, useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 import { canViewAudit } from "../lib/rbac";
 import AuditService from "../services/auditService";
+import { useI18n } from "../hooks/useI18n";
+import { useTimeFormat } from "../hooks/useTimeFormat";
 
 export default function Audit() {
   const auth = useContext(AuthContext);
+  const { t } = useI18n();
+  const { formatDateTime } = useTimeFormat();
   const [logs, setLogs] = useState([]);
   const [filter, setFilter] = useState("all");
 
@@ -22,9 +26,12 @@ export default function Audit() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Zugriff verweigert</h1>
+          <h1 className="text-3xl font-bold mb-4">
+            {t("accessDenied") || "Zugriff verweigert"}
+          </h1>
           <p className="text-gray-600">
-            Sie haben keine Berechtigung, das Audit-Log einzusehen.
+            {t("auditAccessDenied") ||
+              "Sie haben keine Berechtigung, das Audit-Log einzusehen."}
           </p>
         </div>
       </div>
@@ -38,16 +45,18 @@ export default function Audit() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="md:flex md:items-center md:justify-between mb-8">
-        <h1 className="text-3xl font-bold">Audit-Log</h1>
+        <h1 className="text-3xl font-bold">{t("audit")}</h1>
         <div className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
           >
-            <option value="all">Alle Aktivitäten</option>
-            <option value="create">Erstellungen</option>
-            <option value="update">Änderungen</option>
+            <option value="all">
+              {t("allActivities") || "Alle Aktivitäten"}
+            </option>
+            <option value="create">{t("creations") || "Erstellungen"}</option>
+            <option value="update">{t("updates") || "Änderungen"}</option>
             <option value="delete">Löschungen</option>
             <option value="apply">Anfragen</option>
           </select>
@@ -116,9 +125,7 @@ export default function Audit() {
                       <div className="text-sm text-gray-500">{log.details}</div>
                     </div>
                     <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                      <span>
-                        {new Date(log.timestamp).toLocaleString("de-DE")}
-                      </span>
+                      <span>{formatDateTime(new Date(log.timestamp))}</span>
                     </div>
                   </div>
                 </div>
