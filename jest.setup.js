@@ -37,15 +37,15 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia for mobile device detection
 Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: globalThis.jest.fn().mockImplementation((query) => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false, // Default to desktop
     media: query,
     onchange: null,
-    addListener: globalThis.jest.fn(), // Deprecated
-    removeListener: globalThis.jest.fn(), // Deprecated
-    addEventListener: globalThis.jest.fn(),
-    removeEventListener: globalThis.jest.fn(),
-    dispatchEvent: globalThis.jest.fn(),
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
   })),
 });
 

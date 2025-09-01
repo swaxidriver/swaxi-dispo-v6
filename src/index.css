@@ -217,3 +217,95 @@
 .animate-slide-in {
   animation: slideIn 0.3s ease-in-out;
 }
+
+/* Mobile Calendar Responsive Layout */
+@media (max-width: 420px) {
+  .calendar-mobile-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .calendar-mobile-day-card {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: var(--space-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .calendar-mobile-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .calendar-mobile-shifts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .calendar-mobile-shift-item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: var(--space-3);
+    min-height: 44px; /* Ensure touch-friendly target size */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  
+  .calendar-mobile-shift-time {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    font-weight: 500;
+  }
+  
+  .calendar-mobile-shift-name {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .calendar-mobile-shift-status {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  
+  /* Hide horizontal scroll and force vertical layout */
+  .calendar-week-container {
+    overflow-x: hidden;
+  }
+  
+  .calendar-week-grid {
+    min-width: unset;
+    width: 100%;
+    display: none; /* Hide horizontal grid on mobile */
+  }
+}
+
+/* Desktop calendar ensures horizontal layout is preserved */
+@media (min-width: 421px) {
+  .calendar-mobile-vertical {
+    display: none;
+  }
+}
+
+/* Enhanced touch targets for mobile */
+@media (max-width: 420px) {
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+  }
+  
+  .view-mode-toggle button {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+  }
+}

@@ -63,6 +63,10 @@ export default {
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
       },
+      screens: {
+        'xs': {'max': '420px'},
+        // Default Tailwind breakpoints still available: sm, md, lg, xl, 2xl
+      },
     },
   },
   plugins: [
