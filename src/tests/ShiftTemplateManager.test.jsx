@@ -51,13 +51,13 @@ describe("ShiftTemplateManager", () => {
     fireEvent.change(screen.getByPlaceholderText("Template Name"), {
       target: { value: "Late" },
     });
-    fireEvent.change(screen.getByRole("textbox", { name: "" }), {
-      target: { value: "Late" },
+    // Use data-testid selectors for time inputs
+    fireEvent.change(screen.getByTestId("template-start-time-input"), {
+      target: { value: "13:00" },
     });
-    // Target time inputs via their type attribute selectors
-    const timeInputs = screen.getAllByDisplayValue("");
-    fireEvent.change(timeInputs[0], { target: { value: "13:00" } });
-    fireEvent.change(timeInputs[1], { target: { value: "17:00" } });
+    fireEvent.change(screen.getByTestId("template-end-time-input"), {
+      target: { value: "17:00" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "Mo" }));
     fireEvent.click(screen.getByRole("button", { name: "Add Template" }));
     expect(addTemplate).toHaveBeenCalledWith({
