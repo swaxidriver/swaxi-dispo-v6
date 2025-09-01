@@ -25,9 +25,19 @@ import "./App.css";
 
 import ErrorBoundary from "./components/ErrorBoundary";
 import { registerServerErrorTelemetry } from "./ui/error-boundaries";
+import { validateEnv } from "./config/env";
 
 // Register server error telemetry once during app initialization
 registerServerErrorTelemetry();
+
+// Validate environment configuration early - fail fast on invalid config
+try {
+  validateEnv({ strict: true });
+} catch (error) {
+  console.error("❌ Environment validation failed:", error.message);
+  console.error("Please check your .env file against .env.example");
+  throw error;
+}
 
 function LoadingSkeleton() {
   return (
