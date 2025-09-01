@@ -76,10 +76,28 @@ describe("AssignmentDragDrop Accessibility", () => {
       screen.getByRole("region", { name: /disponenten/i }),
     ).toBeInTheDocument();
 
-    // Check listboxes exist
+    // Check skip links
     expect(
-      screen.getByRole("listbox", { name: /nicht zugewiesene schichten/i }),
+      screen.getByRole("link", { name: /skip to shifts/i }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /skip to disponenten/i }),
+    ).toBeInTheDocument();
+
+    // Check drag instructions
+    expect(document.querySelector("#drag-instructions")).toBeInTheDocument();
+
+    // Check that either listbox or region exists for shifts (depending on content)
+    const shiftsListbox = screen.queryByRole("listbox", {
+      name: /nicht zugewiesene schichten/i,
+    });
+    const shiftsRegion = screen.queryByRole("region", {
+      name: /keine nicht zugewiesenen schichten/i,
+    });
+
+    expect(shiftsListbox || shiftsRegion).toBeTruthy();
+
+    // Disponenten listbox should always exist (sample data)
     expect(
       screen.getByRole("listbox", { name: /verfügbare disponenten/i }),
     ).toBeInTheDocument();

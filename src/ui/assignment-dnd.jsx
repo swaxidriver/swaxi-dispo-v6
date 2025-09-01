@@ -448,10 +448,18 @@ export default function AssignmentDragDrop() {
         <div
           ref={shiftsRef}
           className="flex-1 overflow-y-auto p-4"
-          role="listbox"
-          aria-label={`${unassignedShifts.length} nicht zugewiesene Schichten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Auswahl.`}
-          aria-multiselectable="true"
-          aria-describedby="drag-instructions"
+          role={unassignedShifts.length > 0 ? "listbox" : "region"}
+          aria-label={
+            unassignedShifts.length > 0
+              ? `${unassignedShifts.length} nicht zugewiesene Schichten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Auswahl.`
+              : "Keine nicht zugewiesenen Schichten vorhanden"
+          }
+          aria-multiselectable={
+            unassignedShifts.length > 0 ? "true" : undefined
+          }
+          aria-describedby={
+            unassignedShifts.length > 0 ? "drag-instructions" : undefined
+          }
           tabIndex={0}
         >
           {unassignedShifts.length === 0 ? (
@@ -613,9 +621,15 @@ export default function AssignmentDragDrop() {
         <div
           ref={disponentiRef}
           className="flex-1 overflow-y-auto p-4"
-          role="listbox"
-          aria-label={`${filteredDisponenten.length} verfügbare Disponenten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Zuweisung.`}
-          aria-describedby="drag-instructions"
+          role={filteredDisponenten.length > 0 ? "listbox" : "region"}
+          aria-label={
+            filteredDisponenten.length > 0
+              ? `${filteredDisponenten.length} verfügbare Disponenten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Zuweisung.`
+              : "Keine Disponenten verfügbar"
+          }
+          aria-describedby={
+            filteredDisponenten.length > 0 ? "drag-instructions" : undefined
+          }
           tabIndex={0}
         >
           {filteredDisponenten.length === 0 ? (
