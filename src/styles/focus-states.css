@@ -1,0 +1,127 @@
+/* Enhanced Focus States for Accessibility
+ * Consistent focus indicators across all interactive elements
+ * WCAG 2.1 AA compliant focus visibility
+ */
+
+/* Base focus reset - remove default browser focus styles */
+*:focus {
+  outline: none;
+}
+
+/* Focus-visible utilities for better UX (only show on keyboard navigation) */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+}
+
+.focus-ring-primary {
+  @apply focus-ring focus-visible:ring-blue-500;
+}
+
+.focus-ring-accent {
+  @apply focus-ring focus-visible:ring-orange-500;
+}
+
+.focus-ring-danger {
+  @apply focus-ring focus-visible:ring-red-500;
+}
+
+/* High contrast focus ring for better visibility */
+.focus-ring-high-contrast {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black dark:focus-visible:ring-white;
+}
+
+/* Skip link specific focus state */
+.skip-link:focus {
+  @apply absolute top-0 left-0 z-50 p-2 bg-blue-600 text-white no-underline;
+  transform: translateY(0);
+}
+
+.skip-link {
+  @apply sr-only;
+  transform: translateY(-100%);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Button focus states */
+button:focus-visible {
+  @apply ring-2 ring-offset-2 ring-blue-500;
+}
+
+button.btn-primary:focus-visible {
+  @apply ring-white/50;
+}
+
+button.btn-secondary:focus-visible {
+  @apply ring-blue-500;
+}
+
+button.btn-danger:focus-visible {
+  @apply ring-red-500;
+}
+
+/* Input focus states */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply ring-2 ring-offset-1 ring-blue-500 border-blue-500;
+}
+
+/* Link focus states */
+a:focus-visible {
+  @apply ring-2 ring-offset-2 ring-blue-500 rounded-sm;
+}
+
+/* Navigation link focus states */
+nav a:focus-visible {
+  @apply ring-2 ring-offset-2 ring-white/50 rounded;
+}
+
+/* Card/interactive container focus states */
+[role="button"]:focus-visible,
+[role="option"]:focus-visible,
+[role="listitem"][tabindex="0"]:focus-visible {
+  @apply ring-2 ring-offset-2 ring-blue-500;
+}
+
+/* Modal/dialog focus trap styling */
+[role="dialog"] :focus-visible {
+  @apply ring-2 ring-offset-2 ring-blue-500;
+}
+
+/* Loading state focus */
+.loading:focus-visible {
+  @apply ring-2 ring-offset-2 ring-gray-400;
+}
+
+/* Disabled state - no focus ring but maintain semantic structure */
+:disabled:focus-visible,
+[aria-disabled="true"]:focus-visible {
+  @apply ring-0;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] button:focus-visible,
+[data-theme="dark"] input:focus-visible,
+[data-theme="dark"] textarea:focus-visible,
+[data-theme="dark"] select:focus-visible,
+[data-theme="dark"] a:focus-visible {
+  @apply ring-blue-400;
+}
+
+[data-theme="dark"] nav a:focus-visible {
+  @apply ring-blue-300/50;
+}
+
+/* Ensure minimum contrast ratio for focus indicators */
+@media (prefers-contrast: high) {
+  *:focus-visible {
+    @apply ring-4 ring-black dark:ring-white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}

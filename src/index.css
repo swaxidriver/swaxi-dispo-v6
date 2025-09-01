@@ -1,14 +1,16 @@
 /* Import design tokens first (prevent PostCSS @import warnings) */
-@import './styles/tokens.css';
+@import "./styles/tokens.css";
 /* Self-hosted Manrope font with optimized loading */
-@import './styles/fonts.css';
+@import "./styles/fonts.css";
+/* Enhanced focus states for accessibility */
+@import "./styles/focus-states.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root { 
+  :root {
     font-family: var(--font-sans);
     /* Improved base line-height scale for better readability */
     line-height: 1.6;
@@ -33,11 +35,18 @@
     height: 8px;
   }
 
-  ::-webkit-scrollbar-track { background: var(--color-bg); }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
 
-  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
 
-  ::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
 }
 
 @layer components {
@@ -46,36 +55,73 @@
            focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .btn-primary { @apply btn text-white; background: var(--color-primary); }
-  .btn-primary:hover { background: var(--color-primary-emphasis); }
-  .btn-primary:focus { box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
+  .btn-primary {
+    @apply btn text-white;
+    background: var(--color-primary);
+  }
+  .btn-primary:hover {
+    background: var(--color-primary-emphasis);
+  }
+  .btn-primary:focus {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  }
 
   .btn-secondary {
     @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
   }
-  .btn-secondary:focus { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 50%, transparent); }
+  .btn-secondary:focus {
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--color-primary) 50%, transparent);
+  }
 
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700
            focus:ring-red-500/50;
   }
 
-  .card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 1rem; transition: box-shadow .2s; }
-  .card:hover { box-shadow: var(--shadow-md); }
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-md);
+  }
 
-  .input { @apply block w-full rounded-md sm:text-sm; border:1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); }
-  .input:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+  .input {
+    @apply block w-full rounded-md sm:text-sm;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  .input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { transform: translateY(-10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-fade-in {
