@@ -23,9 +23,11 @@ export default function Navigation() {
   const role = auth?.user?.role;
   const isAdmin = role === "admin" || role === "chief";
   const isChief = role === "chief" || role === "admin";
+  const isDisponent = role === "disponent";
   const navigation = [
     { name: t("overview"), href: "/" },
     { name: t("calendar"), href: "/calendar" },
+    isDisponent && { name: "Meine Bewerbungen", href: "/applications" },
     isChief && { name: "Shift Designer", href: "/shift-designer" },
     isAdmin && { name: t("administration"), href: "/admin" },
     canViewAudit(role) && { name: t("audit"), href: "/audit" },
