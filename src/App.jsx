@@ -61,16 +61,24 @@ const APP_COMMIT =
  */
 function Footer({ onOpenChangelog }) {
   return (
-    <footer className="mt-auto py-4 text-center text-sm text-gray-500">
+    <footer
+      className="mt-auto py-4 text-center text-sm text-gray-500"
+      role="contentinfo"
+      aria-label="Seiteninformationen"
+    >
       <p>
         swaxi Dispo v{APP_VERSION} ({APP_COMMIT}) • {new Date().getFullYear()}
         {" • "}
         <button
           onClick={onOpenChangelog}
-          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline focus-ring-primary"
+          aria-describedby="changelog-hint"
         >
           Änderungsprotokoll
         </button>
+        <span id="changelog-hint" className="sr-only">
+          Öffnet ein Dialog mit den neuesten Änderungen der Anwendung
+        </span>
       </p>
     </footer>
   );
@@ -107,10 +115,23 @@ function App() {
               >
                 <Router basename="/swaxi-dispo-v6">
                   <div className="min-h-screen bg-bg text-text flex flex-col">
+                    {/* Global live region for application-wide announcements */}
+                    <div
+                      id="global-live-region"
+                      aria-live="polite"
+                      aria-atomic="true"
+                      className="sr-only"
+                    ></div>
+
                     <LiveVersionBanner />
                     <Navigation />
                     <ErrorBoundary>
-                      <main id="main-content" className="flex-1" role="main">
+                      <main
+                        id="main-content"
+                        className="flex-1"
+                        role="main"
+                        aria-label="Hauptinhalt"
+                      >
                         {ready ? (
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
@@ -126,7 +147,16 @@ function App() {
                             <Route path="/login" element={<Login />} />
                           </Routes>
                         ) : (
-                          <LoadingSkeleton />
+                          <div
+                            role="status"
+                            aria-live="polite"
+                            aria-label="Anwendung wird geladen"
+                          >
+                            <LoadingSkeleton />
+                            <span className="sr-only">
+                              Anwendung wird geladen, bitte warten...
+                            </span>
+                          </div>
                         )}
                       </main>
                     </ErrorBoundary>

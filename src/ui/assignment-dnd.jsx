@@ -448,14 +448,16 @@ export default function AssignmentDragDrop() {
         <div
           ref={shiftsRef}
           className="flex-1 overflow-y-auto p-4"
-          role="listbox"
+          role={unassignedShifts.length > 0 ? "listbox" : "region"}
           aria-label={`${unassignedShifts.length} nicht zugewiesene Schichten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Auswahl.`}
-          aria-multiselectable="true"
+          aria-multiselectable={
+            unassignedShifts.length > 0 ? "true" : undefined
+          }
           aria-describedby="drag-instructions"
           tabIndex={0}
         >
           {unassignedShifts.length === 0 ? (
-            <div className="text-center text-gray-500 mt-8">
+            <div className="text-center text-gray-500 mt-8" role="status">
               Keine nicht zugewiesenen Schichten
             </div>
           ) : (
@@ -613,13 +615,13 @@ export default function AssignmentDragDrop() {
         <div
           ref={disponentiRef}
           className="flex-1 overflow-y-auto p-4"
-          role="listbox"
+          role={filteredDisponenten.length > 0 ? "listbox" : "region"}
           aria-label={`${filteredDisponenten.length} verfügbare Disponenten. Verwenden Sie Pfeiltasten zur Navigation, Enter oder Leertaste zur Zuweisung.`}
           aria-describedby="drag-instructions"
           tabIndex={0}
         >
           {filteredDisponenten.length === 0 ? (
-            <div className="text-center text-gray-500 mt-8">
+            <div className="text-center text-gray-500 mt-8" role="status">
               Keine Disponenten entsprechen den aktuellen Filtern
             </div>
           ) : (

@@ -68,21 +68,21 @@ describe("AssignmentDragDrop Accessibility", () => {
       </TestWrapper>,
     );
 
-    // Check main regions exist
-    expect(
-      screen.getByRole("region", { name: /nicht zugewiesene schichten/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: /disponenten/i }),
-    ).toBeInTheDocument();
+    // Check main sections exist
+    expect(document.querySelector("#shifts-section")).toBeInTheDocument();
+    expect(document.querySelector("#disponenten-section")).toBeInTheDocument();
 
-    // Check listboxes exist
-    expect(
-      screen.getByRole("listbox", { name: /nicht zugewiesene schichten/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("listbox", { name: /verfügbare disponenten/i }),
-    ).toBeInTheDocument();
+    // When empty, sections should be regions rather than listboxes
+    // When populated, they should be listboxes with options
+    const shiftsContainer = screen.getByLabelText(
+      /0 nicht zugewiesene schichten/i,
+    );
+    const disponentiContainer = screen.getByLabelText(
+      /5 verfügbare disponenten/i,
+    );
+
+    expect(shiftsContainer).toBeInTheDocument();
+    expect(disponentiContainer).toBeInTheDocument();
 
     // Check skip links
     expect(
@@ -177,10 +177,12 @@ describe("AssignmentDragDrop Accessibility", () => {
       </TestWrapper>,
     );
 
+    // With shifts present, container should be a listbox
     const shiftListbox = screen.getByRole("listbox", {
-      name: /nicht zugewiesene schichten/i,
+      name: /3 nicht zugewiesene schichten/i,
     });
-    const firstShift = screen.getAllByRole("option")[0];
+    const shiftOptions = screen.getAllByRole("option");
+    const firstShift = shiftOptions[0];
 
     // Focus the first shift
     firstShift.focus();
@@ -213,7 +215,7 @@ describe("AssignmentDragDrop Accessibility", () => {
     );
 
     const disponentListbox = screen.getByRole("listbox", {
-      name: /verfügbare disponenten/i,
+      name: /5 verfügbare disponenten/i,
     });
     const allOptions = screen.getAllByRole("option");
     const firstDisponent = allOptions.find((el) =>
