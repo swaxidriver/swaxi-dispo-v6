@@ -26,6 +26,31 @@ const mockShifts = [
   },
 ];
 
+// Mock applications for testing
+const mockApplications = [
+  {
+    id: "app_1",
+    shiftId: "shift_1",
+    userId: "user_1",
+    appliedAt: "2025-01-05T10:00:00Z",
+    status: "pending",
+  },
+  {
+    id: "app_2",
+    shiftId: "shift_1",
+    userId: "user_2",
+    appliedAt: "2025-01-05T11:00:00Z",
+    status: "pending",
+  },
+  {
+    id: "app_3",
+    shiftId: "shift_2",
+    userId: "user_1",
+    appliedAt: "2025-01-05T12:00:00Z",
+    status: "pending",
+  },
+];
+
 const mockDisponenten = [
   { id: "disp_1", name: "Anna Schmidt", role: "analyst" },
   { id: "disp_2", name: "Max Weber", role: "manager" },
@@ -40,7 +65,7 @@ jest.mock("../contexts/useShifts", () => ({
   useShifts: () => ({
     state: {
       shifts: mockShifts,
-      applications: [],
+      applications: mockApplications,
     },
     assignShift: mockAssignShift,
   }),
@@ -66,7 +91,7 @@ describe("BatchAssignmentModal", () => {
     jest.clearAllMocks();
   });
 
-  test("renders modal with selected shifts", () => {
+  test("renders modal with selected shifts and applicants", () => {
     renderWithProviders(
       <BatchAssignmentModal
         isOpen={true}
@@ -81,9 +106,27 @@ describe("BatchAssignmentModal", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("2025-01-06 • Frueh")).toBeInTheDocument();
     expect(screen.getByText("2025-01-06 • Nacht")).toBeInTheDocument();
+
+    // Check for applicant selection interface
+    expect(
+      screen.getByText("Ausgewählte Schichten - Bewerber auswählen"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Nicht ausgewählte Bewerbungen automatisch ablehnen"),
+    ).toBeInTheDocument();
+
+    // Should show applicants for shift_1 (has 2 applications)
+    expect(
+      screen.getByText("Bewerber auswählen (2 Bewerbungen):"),
+    ).toBeInTheDocument();
+
+    // Should show no applicants message for shift_2 (has 1 application)
+    expect(
+      screen.getByText("Bewerber auswählen (1 Bewerbung):"),
+    ).toBeInTheDocument();
   });
 
-  test("enables assign button when disponent is selected", async () => {
+  test("enables assign button when applicant is selected", async () => {
     renderWithProviders(
       <BatchAssignmentModal
         isOpen={true}
@@ -93,18 +136,22 @@ describe("BatchAssignmentModal", () => {
       />,
     );
 
-    const select = screen.getByLabelText("Disponent auswählen");
     const assignButton = screen.getByRole("button", { name: /zuweisen/ });
 
-    // Initially disabled
+    // Initially disabled (no applicants selected)
     expect(assignButton).toBeDisabled();
+    expect(assignButton).toHaveTextContent("0 Schichten zuweisen");
 
-    // Select a disponent
-    fireEvent.change(select, { target: { value: "Anna Schmidt (analyst)" } });
+    // Select an applicant for shift_1
+    const radioButtons = screen.getAllByRole("radio");
+    expect(radioButtons.length).toBeGreaterThan(0);
 
-    // Should now be enabled
+    fireEvent.click(radioButtons[0]); // Select first applicant for shift_1
+
+    // Should now be enabled and show 1 shift
     await waitFor(() => {
       expect(assignButton).not.toBeDisabled();
+      expect(assignButton).toHaveTextContent("1 Schicht zuweisen");
     });
   });
 
@@ -118,9 +165,10 @@ describe("BatchAssignmentModal", () => {
       />,
     );
 
-    // Select disponent and assign
-    const select = screen.getByLabelText("Disponent auswählen");
-    fireEvent.change(select, { target: { value: "Anna Schmidt (analyst)" } });
+    // Select applicants for both shifts
+    const radioButtons = screen.getAllByRole("radio");
+    fireEvent.click(radioButtons[0]); // Select applicant for shift_1
+    fireEvent.click(radioButtons[2]); // Select applicant for shift_2
 
     const assignButton = screen.getByRole("button", { name: /zuweisen/ });
     fireEvent.click(assignButton);
@@ -130,7 +178,11 @@ describe("BatchAssignmentModal", () => {
       expect(
         screen.getByText("Sammelzuweisung bestätigen"),
       ).toBeInTheDocument();
-      expect(screen.getByText(/Anna Schmidt/)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Sie sind dabei, 2 Schichten an die ausgewählten Bewerber zuzuweisen/,
+        ),
+      ).toBeInTheDocument();
     });
 
     // Confirm assignment
@@ -141,6 +193,46 @@ describe("BatchAssignmentModal", () => {
     await waitFor(() => {
       expect(mockAssignShift).toHaveBeenCalledTimes(2);
       expect(mockOnClose).toHaveBeenCalled();
+    });
+  });
+
+  test("handles auto-reject others option", async () => {
+    renderWithProviders(
+      <BatchAssignmentModal
+        isOpen={true}
+        onClose={mockOnClose}
+        selectedShifts={["shift_1"]}
+        disponenten={mockDisponenten}
+      />,
+    );
+
+    // Enable auto-reject option
+    const autoRejectCheckbox = screen.getByLabelText(
+      "Nicht ausgewählte Bewerbungen automatisch ablehnen",
+    );
+    fireEvent.click(autoRejectCheckbox);
+    expect(autoRejectCheckbox).toBeChecked();
+
+    // Select an applicant
+    const radioButtons = screen.getAllByRole("radio");
+    fireEvent.click(radioButtons[0]);
+
+    const assignButton = screen.getByRole("button", { name: /zuweisen/ });
+    fireEvent.click(assignButton);
+
+    // Should show confirmation dialog with auto-reject warning
+    await waitFor(() => {
+      expect(
+        screen.getByText("Sammelzuweisung bestätigen"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Andere Bewerbungen ablehnen/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Nicht ausgewählte Bewerbungen werden automatisch abgelehnt.",
+        ),
+      ).toBeInTheDocument();
     });
   });
 
