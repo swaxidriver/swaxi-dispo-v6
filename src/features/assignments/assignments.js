@@ -116,6 +116,19 @@ export function getApplicationsByUser(userId, applications) {
 }
 
 /**
+ * Withdraw an application
+ * @param {Object} application - The application to withdraw
+ * @returns {Object} Updated application object
+ */
+export function withdrawApplication(application) {
+  return {
+    ...application,
+    status: "withdrawn",
+    withdrawnAt: new Date().toISOString(),
+  };
+}
+
+/**
  * Check if a user can be assigned to a shift
  * @param {Object} shift - The shift
  * @param {string} userId - User ID to check

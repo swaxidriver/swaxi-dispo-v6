@@ -291,6 +291,7 @@ export function ShiftProvider({
         shiftId,
         userId,
         ts: Date.now(),
+        status: "pending", // Add default status
       };
       dispatch({ type: "ADD_APPLICATION", payload: app });
       // Recalculate conflicts for that shift
@@ -349,6 +350,7 @@ export function ShiftProvider({
         shiftId: id,
         userId,
         ts: Date.now(),
+        status: "pending", // Add default status
       }));
       dispatch({ type: "ADD_SERIES_APPLICATION", payload: apps });
 
@@ -393,6 +395,38 @@ export function ShiftProvider({
       });
     },
     [state.shifts, state.applications],
+  );
+
+  const withdrawApplication = useCallback(
+    (applicationId) => {
+      const application = state.applications.find(
+        (app) => app.id === applicationId,
+      );
+      if (!application) return;
+
+      const updatedApp = {
+        ...application,
+        status: "withdrawn",
+        withdrawnAt: new Date().toISOString(),
+      };
+
+      dispatch({ type: "UPDATE_APPLICATION", payload: updatedApp });
+
+      // Add notification
+      dispatch({
+        type: "ADD_NOTIFICATION",
+        payload: {
+          id: `withdraw_${applicationId}_${Date.now()}`,
+          title: "Bewerbung zurückgezogen",
+          message: `Bewerbung für Dienst ${application.shiftId} zurückgezogen`,
+          timestamp: new Date().toLocaleString(),
+          isRead: false,
+        },
+      });
+
+      // TODO: Add repository persistence when available
+    },
+    [state.applications],
   );
 
   const updateShiftStatus = useCallback(
@@ -807,6 +841,7 @@ export function ShiftProvider({
       repository: repoRef.current, // Expose repository for CSV operations
       applyToShift,
       applyToSeries,
+      withdrawApplication,
       updateShiftStatus,
       assignShift,
       cancelShift,
@@ -825,6 +860,7 @@ export function ShiftProvider({
       state,
       applyToShift,
       applyToSeries,
+      withdrawApplication,
       updateShiftStatus,
       assignShift,
       cancelShift,

@@ -20,6 +20,7 @@ import Audit from "./pages/Audit";
 import Settings from "./pages/Settings";
 import TestPage from "./pages/TestPage";
 import ShiftDesigner from "./pages/ShiftDesigner";
+import PersonalApplications from "./pages/PersonalApplications";
 import { Login } from "./features/people";
 import "./App.css";
 
@@ -136,6 +137,10 @@ function App() {
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/calendar" element={<Calendar />} />
+                            <Route
+                              path="/applications"
+                              element={<PersonalApplications />}
+                            />
                             <Route path="/admin" element={<Administration />} />
                             <Route
                               path="/shift-designer"

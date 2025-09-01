@@ -15,6 +15,7 @@ export const APPLICATION_STATUS = {
   PENDING: "pending",
   APPROVED: "approved",
   REJECTED: "rejected",
+  WITHDRAWN: "withdrawn",
 };
 
 export const WORK_LOCATIONS = {
