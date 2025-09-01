@@ -1,6 +1,6 @@
 /**
  * Assignment Feature - Assignment logic and utilities
- * 
+ *
  * This module contains utilities for managing shift assignments,
  * applications, and related business logic.
  */
@@ -14,17 +14,17 @@
  */
 export function applyUserToShift(shiftId, userId, existingApplications = []) {
   // Check if user already applied
-  const existingApplication = existingApplications.find(app => 
-    app.shiftId === shiftId && app.userId === userId
-  )
-  
+  const existingApplication = existingApplications.find(
+    (app) => app.shiftId === shiftId && app.userId === userId,
+  );
+
   if (existingApplication) {
     return {
       success: false,
-      error: 'User has already applied to this shift'
-    }
+      error: "User has already applied to this shift",
+    };
   }
-  
+
   return {
     success: true,
     application: {
@@ -32,9 +32,37 @@ export function applyUserToShift(shiftId, userId, existingApplications = []) {
       shiftId,
       userId,
       appliedAt: new Date().toISOString(),
-      status: 'pending'
-    }
-  }
+      status: "pending",
+    },
+  };
+}
+
+/**
+ * Reject an application
+ * @param {Object} application - The application to reject
+ * @param {string} reason - Optional reason for rejection
+ * @returns {Object} Updated application object
+ */
+export function rejectApplication(application, reason = "") {
+  return {
+    ...application,
+    status: "rejected",
+    rejectedAt: new Date().toISOString(),
+    rejectionReason: reason,
+  };
+}
+
+/**
+ * Approve an application
+ * @param {Object} application - The application to approve
+ * @returns {Object} Updated application object
+ */
+export function approveApplication(application) {
+  return {
+    ...application,
+    status: "approved",
+    approvedAt: new Date().toISOString(),
+  };
 }
 
 /**
@@ -48,9 +76,9 @@ export function assignUserToShift(shiftId, userId, shift) {
   return {
     ...shift,
     assignedTo: userId,
-    status: 'assigned',
-    assignedAt: new Date().toISOString()
-  }
+    status: "assigned",
+    assignedAt: new Date().toISOString(),
+  };
 }
 
 /**
@@ -62,9 +90,9 @@ export function unassignShift(shift) {
   return {
     ...shift,
     assignedTo: null,
-    status: 'open',
-    assignedAt: null
-  }
+    status: "open",
+    assignedAt: null,
+  };
 }
 
 /**
@@ -74,7 +102,7 @@ export function unassignShift(shift) {
  * @returns {Array} Applications for the specified shift
  */
 export function getApplicationsForShift(shiftId, applications) {
-  return applications.filter(app => app.shiftId === shiftId)
+  return applications.filter((app) => app.shiftId === shiftId);
 }
 
 /**
@@ -84,7 +112,7 @@ export function getApplicationsForShift(shiftId, applications) {
  * @returns {Array} Applications by the specified user
  */
 export function getApplicationsByUser(userId, applications) {
-  return applications.filter(app => app.userId === userId)
+  return applications.filter((app) => app.userId === userId);
 }
 
 /**
@@ -95,26 +123,27 @@ export function getApplicationsByUser(userId, applications) {
  * @returns {Object} Result with canAssign boolean and reasons
  */
 export function canAssignUserToShift(shift, userId, existingShifts = []) {
-  const reasons = []
-  
+  const reasons = [];
+
   // Check if shift is already assigned
   if (shift.assignedTo && shift.assignedTo !== userId) {
-    reasons.push('Shift is already assigned to another user')
+    reasons.push("Shift is already assigned to another user");
   }
-  
+
   // Check for time conflicts with other assigned shifts
-  const conflictingShifts = existingShifts.filter(existingShift => 
-    existingShift.assignedTo === userId &&
-    existingShift.date === shift.date &&
-    existingShift.id !== shift.id
-  )
-  
+  const conflictingShifts = existingShifts.filter(
+    (existingShift) =>
+      existingShift.assignedTo === userId &&
+      existingShift.date === shift.date &&
+      existingShift.id !== shift.id,
+  );
+
   if (conflictingShifts.length > 0) {
-    reasons.push('User has conflicting shifts on the same day')
+    reasons.push("User has conflicting shifts on the same day");
   }
-  
+
   return {
     canAssign: reasons.length === 0,
-    reasons
-  }
+    reasons,
+  };
 }
