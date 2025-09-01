@@ -113,6 +113,92 @@
   }
 }
 
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 300px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 300px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* Mobile Shift Cards */
+.shift-card {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.shift-card-header {
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.shift-card-header:hover,
+.shift-card-header:focus {
+  border-bottom-color: var(--color-border);
+}
+
+.shift-card-details {
+  overflow: hidden;
+  transition:
+    max-height 0.3s ease-out,
+    opacity 0.3s ease-out;
+}
+
+.shift-card-details.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.shift-card-details.expanded {
+  max-height: 300px;
+  opacity: 1;
+}
+
+.mobile-shift-container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.mobile-shift-cards {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Reduced motion support for card animations */
+@media (prefers-reduced-motion: reduce) {
+  .shift-card-details {
+    transition: none;
+  }
+
+  .shift-card-details.collapsed {
+    display: none;
+  }
+
+  .shift-card-details.expanded {
+    display: block;
+    max-height: none;
+    opacity: 1;
+  }
+
+  .shift-card-header {
+    transition: none;
+  }
+}
+
 @keyframes slideIn {
   from {
     transform: translateY(-10px);
