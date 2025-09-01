@@ -7,7 +7,13 @@ import React, {
 } from "react";
 
 import { useShifts } from "../contexts/useShifts";
-import { SHIFT_STATUS, WORK_LOCATIONS } from "../utils/constants";
+import { useAuth } from "../contexts/useAuth";
+import {
+  SHIFT_STATUS,
+  WORK_LOCATIONS,
+  canAssignShifts,
+} from "../utils/constants";
+import { BatchAssignmentModal } from "../features/assignments";
 
 import { dragDropAria, keyboardNav, LiveRegion } from "./accessibility";
 
@@ -55,6 +61,7 @@ const AVAILABILITY_OPTIONS = ["all", "available", "busy"];
 
 export default function AssignmentDragDrop() {
   const { state, assignShift } = useShifts();
+  const { user } = useAuth();
   const [draggedShift, setDraggedShift] = useState(null);
   const [draggedOver, setDraggedOver] = useState(null);
   const [selectedShifts, setSelectedShifts] = useState(new Set());
@@ -63,10 +70,14 @@ export default function AssignmentDragDrop() {
   const [focusedShift] = useState(null);
   const [focusedDisponent] = useState(null);
   const [assignmentMode, setAssignmentMode] = useState(false); // Keyboard assignment mode
+  const [showBatchModal, setShowBatchModal] = useState(false);
 
   const shiftsRef = useRef(null);
   const disponentiRef = useRef(null);
   const liveRegionRef = useRef(null);
+
+  // Check if user can assign shifts (Chief or Admin)
+  const canAssign = user && canAssignShifts(user.role);
 
   // Initialize live region for announcements
   useEffect(() => {
@@ -438,9 +449,20 @@ export default function AssignmentDragDrop() {
               Alle abwählen
             </button>
             {selectedShifts.size > 0 && (
-              <span className="text-sm text-gray-500" aria-live="polite">
-                {selectedShifts.size} ausgewählt
-              </span>
+              <>
+                <span className="text-sm text-gray-500" aria-live="polite">
+                  {selectedShifts.size} ausgewählt
+                </span>
+                {canAssign && (
+                  <button
+                    onClick={() => setShowBatchModal(true)}
+                    className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1"
+                    aria-label={`${selectedShifts.size} Schichten als Sammelzuweisung zuweisen`}
+                  >
+                    Sammelzuweisung
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -701,6 +723,19 @@ export default function AssignmentDragDrop() {
           )}
         </div>
       </div>
+
+      {/* Batch Assignment Modal */}
+      <BatchAssignmentModal
+        isOpen={showBatchModal}
+        onClose={() => {
+          setShowBatchModal(false);
+          // Clear selections after assignment
+          setSelectedShifts(new Set());
+          setAssignmentMode(false);
+        }}
+        selectedShifts={Array.from(selectedShifts)}
+        disponenten={SAMPLE_DISPONENTEN}
+      />
     </div>
   );
 }
