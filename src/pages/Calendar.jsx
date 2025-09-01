@@ -12,6 +12,7 @@ import {
   TimelineShiftCell,
   QUICK_ACTIONS,
 } from "../ui/calendar-views.jsx";
+import { keyboardNav, skipLinks } from "../ui/accessibility";
 
 const DAYS = [
   "Montag",
@@ -155,6 +156,10 @@ export default function Calendar() {
   const [draggedShift, setDraggedShift] = useState(null);
   const [dragOverDay, setDragOverDay] = useState(null);
   const [dragOverTime, setDragOverTime] = useState(null);
+
+  // Keyboard navigation state
+  const [focusedDay, setFocusedDay] = useState(null);
+  const [focusedTimeSlot, setFocusedTimeSlot] = useState(null);
 
   const auth = useContext(AuthContext);
   const userRole = auth?.user?.role || "analyst";
@@ -424,6 +429,71 @@ export default function Calendar() {
     [undoLastShiftUpdate],
   );
 
+  // Calendar grid keyboard navigation
+  const handleCalendarKeyDown = useCallback(
+    (e) => {
+      if (viewMode === "assignment") return; // Skip in assignment mode
+
+      const calendarGrid = e.currentTarget;
+      const focusableElements = calendarGrid.querySelectorAll(
+        '[tabindex="0"], [role="gridcell"][tabindex="0"]',
+      );
+
+      switch (e.key) {
+        case "ArrowLeft":
+        case "ArrowRight":
+        case "ArrowUp":
+        case "ArrowDown":
+          keyboardNav.handleArrowKeys(e, calendarGrid, e.target, {
+            orientation: "both",
+            itemSelector: '[role="gridcell"][tabindex="0"]',
+          });
+          break;
+        case "Home":
+          e.preventDefault();
+          if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+          }
+          break;
+        case "End":
+          e.preventDefault();
+          if (focusableElements.length > 0) {
+            focusableElements[focusableElements.length - 1].focus();
+          }
+          break;
+        case "PageUp":
+          e.preventDefault();
+          // Navigate to previous week/month
+          if (viewMode === "week") {
+            const newDate = new Date(selectedDate);
+            newDate.setDate(newDate.getDate() - 7);
+            setSelectedDate(newDate);
+          } else if (viewMode === "month") {
+            const newDate = new Date(selectedDate);
+            newDate.setMonth(newDate.getMonth() - 1);
+            setSelectedDate(newDate);
+          }
+          break;
+        case "PageDown":
+          e.preventDefault();
+          // Navigate to next week/month
+          if (viewMode === "week") {
+            const newDate = new Date(selectedDate);
+            newDate.setDate(newDate.getDate() + 7);
+            setSelectedDate(newDate);
+          } else if (viewMode === "month") {
+            const newDate = new Date(selectedDate);
+            newDate.setMonth(newDate.getMonth() + 1);
+            setSelectedDate(newDate);
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    [viewMode, selectedDate],
+  );
+
   // Add keyboard listener
   React.useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -431,10 +501,30 @@ export default function Calendar() {
   }, [handleKeyDown]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div
+      className="container mx-auto px-4 py-8"
+      role="main"
+      aria-labelledby="calendar-title"
+    >
+      {/* Skip links */}
+      <a
+        href="#calendar-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-2 focus:bg-blue-600 focus:text-white"
+      >
+        Zum Kalender springen
+      </a>
+      <a
+        href="#view-controls"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-2 focus:bg-blue-600 focus:text-white"
+      >
+        Zu den Ansichtsoptionen springen
+      </a>
+
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Kalender</h1>
+          <h1 id="calendar-title" className="text-3xl font-bold">
+            Kalender
+          </h1>
           <p className="mt-1 text-sm text-gray-500">
             {viewMode === "month"
               ? "Monatsübersicht der Dienste"
@@ -443,13 +533,19 @@ export default function Calendar() {
                 : "Wochenübersicht der Dienste"}
           </p>
         </div>
-        <div className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
+        <div id="view-controls" className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
           {/* View Mode Toggle */}
-          <div className="flex rounded-md shadow-sm" role="group">
+          <div
+            className="flex rounded-md shadow-sm"
+            role="group"
+            aria-label="Ansichtsmodus auswählen"
+          >
             <button
               type="button"
               onClick={() => setViewMode("week")}
-              className={`px-3 py-2 text-sm font-medium rounded-l-md border ${
+              aria-pressed={viewMode === "week"}
+              aria-label="Wochenansicht"
+              className={`px-3 py-2 text-sm font-medium rounded-l-md border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
                 viewMode === "week"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                   : "bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
@@ -460,7 +556,9 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => setViewMode("month")}
-              className={`px-3 py-2 text-sm font-medium border-l-0 border ${
+              aria-pressed={viewMode === "month"}
+              aria-label="Monatsansicht"
+              className={`px-3 py-2 text-sm font-medium border-l-0 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
                 viewMode === "month"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                   : "bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
@@ -472,7 +570,9 @@ export default function Calendar() {
               <button
                 type="button"
                 onClick={() => setViewMode("assignment")}
-                className={`px-3 py-2 text-sm font-medium rounded-r-md border-l-0 border ${
+                aria-pressed={viewMode === "assignment"}
+                aria-label="Zuweisungsansicht"
+                className={`px-3 py-2 text-sm font-medium rounded-r-md border-l-0 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
                   viewMode === "assignment"
                     ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                     : "bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
@@ -487,7 +587,12 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              aria-label={
+                viewMode === "month"
+                  ? "Zum vorherigen Monat navigieren"
+                  : "Zur vorherigen Woche navigieren"
+              }
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               {viewMode === "month" ? "Vorheriger Monat" : "Vorherige Woche"}
             </button>
@@ -496,7 +601,8 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => setSelectedDate(new Date())}
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              aria-label="Zu heute navigieren"
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               Heute
             </button>
@@ -505,7 +611,12 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => navigate(1)}
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              aria-label={
+                viewMode === "month"
+                  ? "Zum nächsten Monat navigieren"
+                  : "Zur nächsten Woche navigieren"
+              }
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               {viewMode === "month" ? "Nächster Monat" : "Nächste Woche"}
             </button>
@@ -514,7 +625,8 @@ export default function Calendar() {
             <button
               type="button"
               onClick={handleCreateShift}
-              className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90"
+              aria-label="Neuen Dienst erstellen"
+              className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               Dienst erstellen
             </button>
@@ -539,11 +651,24 @@ export default function Calendar() {
         </div>
       ) : viewMode === "week" ? (
         // Week View
-        <div className="bg-white shadow rounded-lg overflow-x-auto">
-          <div className="min-w-[960px]">
+        <div
+          id="calendar-content"
+          className="bg-white shadow rounded-lg overflow-x-auto"
+          role="application"
+          aria-label="Wochenkalender"
+        >
+          <div className="min-w-[960px]" onKeyDown={handleCalendarKeyDown}>
             {/* Header */}
-            <div className="grid grid-cols-8 bg-gray-100 border-b border-gray-200">
-              <div className="p-2 text-xs font-medium text-gray-500">Zeit</div>
+            <div
+              className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
+              role="rowgroup"
+            >
+              <div
+                className="p-2 text-xs font-medium text-gray-500"
+                role="columnheader"
+              >
+                Zeit
+              </div>
               {DAYS.map((label, idx) => {
                 const d = new Date(weekStart);
                 d.setDate(weekStart.getDate() + idx);
@@ -551,6 +676,12 @@ export default function Calendar() {
                   <div
                     key={label}
                     className="p-2 text-center text-xs font-medium text-gray-600"
+                    role="columnheader"
+                    aria-label={`${label}, ${d.toLocaleDateString("de-DE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}`}
                   >
                     <div>{label}</div>
                     <div className="text-[10px] text-gray-400">
@@ -563,7 +694,11 @@ export default function Calendar() {
                 );
               })}
             </div>
-            <div className="grid grid-cols-8">
+            <div
+              className="grid grid-cols-8"
+              role="grid"
+              aria-label={`Kalenderwoche vom ${weekStart.toLocaleDateString("de-DE")}`}
+            >
               {/* Time column */}
               <div
                 className="relative border-r border-gray-200"
@@ -606,9 +741,22 @@ export default function Calendar() {
                         : ""
                     }`}
                     style={{ height: DAY_HEIGHT }}
+                    role="gridcell"
+                    tabIndex={0}
+                    aria-label={`${DAYS[dayIdx]}, ${dayDate.toLocaleDateString("de-DE")}${dayShifts.length > 0 ? `, ${dayShifts.length} Dienst${dayShifts.length > 1 ? "e" : ""}` : ", keine Dienste"}`}
                     onDragOver={(e) => handleDayDragOver(e, dayDate)}
                     onDragLeave={handleDayDragLeave}
                     onDrop={(e) => handleDayDrop(e, dayDate)}
+                    onFocus={() => setFocusedDay(dayDate)}
+                    onBlur={() => setFocusedDay(null)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        // Open create shift modal for this day
+                        setSelectedDate(dayDate);
+                        setIsCreateOpen(true);
+                      }
+                    }}
                   >
                     {/* Hour grid lines */}
                     {HOURS.map((_, i) => (
@@ -663,10 +811,18 @@ export default function Calendar() {
         </div>
       ) : (
         // Month View
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div
+          id="calendar-content"
+          className="bg-white shadow rounded-lg overflow-hidden"
+          role="application"
+          aria-label="Monatskalender"
+        >
           {/* Month Header */}
           <div className="bg-gray-100 border-b border-gray-200 p-4">
-            <h2 className="text-lg font-semibold text-center">
+            <h2
+              className="text-lg font-semibold text-center"
+              id="month-heading"
+            >
               {selectedDate.toLocaleDateString("de-DE", {
                 month: "long",
                 year: "numeric",
@@ -675,11 +831,16 @@ export default function Calendar() {
           </div>
 
           {/* Day headers */}
-          <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+          <div
+            className="grid grid-cols-7 bg-gray-50 border-b border-gray-200"
+            role="rowgroup"
+          >
             {DAYS.map((day) => (
               <div
                 key={day}
                 className="p-2 text-center text-xs font-medium text-gray-600 border-r border-gray-200 last:border-r-0"
+                role="columnheader"
+                aria-label={day}
               >
                 {day.slice(0, 2)}
               </div>
@@ -687,7 +848,12 @@ export default function Calendar() {
           </div>
 
           {/* Month Grid */}
-          <div className="grid grid-cols-7">
+          <div
+            className="grid grid-cols-7"
+            role="grid"
+            aria-labelledby="month-heading"
+            onKeyDown={handleCalendarKeyDown}
+          >
             {monthDays.map((day, index) => (
               <CalendarCell
                 key={index}
