@@ -21,7 +21,10 @@
     color: var(--color-text);
     margin: 0;
     min-width: 320px;
-    min-height: 100vh;
+    min-height: calc(var(--vh-dynamic, 1vh) * 100);
+    /* Safe area padding for devices with notches */
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
     /* Font smoothing for improved typography rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

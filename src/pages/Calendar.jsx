@@ -744,7 +744,7 @@ export default function Calendar() {
 
       {viewMode === "assignment" ? (
         // Assignment View
-        <div className="bg-white shadow rounded-lg h-[calc(100vh-12rem)]">
+        <div className="bg-white shadow rounded-lg" style={{ height: 'calc(var(--vh-dynamic, 1vh) * 100 - 12rem)' }}>
           <AssignmentDragDrop />
         </div>
       ) : viewMode === "week" ? (
