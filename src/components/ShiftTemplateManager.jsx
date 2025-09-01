@@ -1,11 +1,13 @@
 import { useState } from "react";
 
 import { useShiftTemplates } from "../contexts/useShiftTemplates";
+import { useTimeInputStep } from "../hooks/useMobileDevice";
 import AuditService from "../services/auditService";
 
 function ShiftTemplateManager() {
   const { templates, addTemplate, updateTemplate, deleteTemplate } =
     useShiftTemplates();
+  const timeStep = useTimeInputStep();
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [formState, setFormState] = useState({
     name: "",
@@ -138,7 +140,7 @@ function ShiftTemplateManager() {
               className="p-2 border rounded"
               data-testid="template-start-time-input"
               placeholder="--:--"
-              step="900"
+              step={timeStep}
               required
             />
           </div>
@@ -155,7 +157,7 @@ function ShiftTemplateManager() {
               className="p-2 border rounded"
               data-testid="template-end-time-input"
               placeholder="--:--"
-              step="900"
+              step={timeStep}
               required
             />
           </div>
