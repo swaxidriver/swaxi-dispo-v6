@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
-import { useShifts } from "../contexts/useShifts";
-import { useAuth } from "../contexts/useAuth";
-import { SHIFT_STATUS } from "../utils/constants";
-import { computeShiftConflicts } from "../utils/shifts";
-import { describeConflicts } from "../utils/conflicts";
+import { useShifts } from "../../../contexts/useShifts";
+import { useAuth } from "../../../contexts/useAuth";
+import { SHIFT_STATUS } from "../../../utils/constants";
+import { computeShiftConflicts } from "../../../utils/shifts";
+import { describeConflicts } from "../../../utils/conflicts";
 import ApplicationConfirmationModal from "../../../components/ApplicationConfirmationModal";
 
 export default function SeriesApplicationModal({
