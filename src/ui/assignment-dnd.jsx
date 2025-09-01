@@ -264,7 +264,7 @@ export default function AssignmentDragDrop() {
           break;
       }
     },
-    [selectedShifts],
+    [selectedShifts, assignmentMode],
   );
 
   const handleDisponentKeyDown = useCallback(
@@ -321,7 +321,7 @@ export default function AssignmentDragDrop() {
           break;
       }
     },
-    [selectedShifts, assignShift, assignmentMode],
+    [selectedShifts, assignShift],
   );
 
   // Bulk operations
@@ -382,7 +382,9 @@ export default function AssignmentDragDrop() {
   }, [draggedShift, draggedOver, filteredDisponenten]);
 
   return (
-    <div className="h-full flex bg-white">
+    <div
+      className={`h-full flex bg-white relative ${selectedShifts.size > 0 || assignmentMode ? "pt-16" : ""}`}
+    >
       {/* Hidden instructions for screen readers */}
       <div id="drag-instructions" className="sr-only">
         Use drag and drop or keyboard navigation to assign shifts. For keyboard:
@@ -404,13 +406,41 @@ export default function AssignmentDragDrop() {
         Skip to disponenten
       </a>
 
-      {/* Assignment mode indicator */}
-      {assignmentMode && (
-        <div className="absolute top-0 left-0 right-0 bg-blue-100 border-b border-blue-200 p-2 z-40">
-          <div className="text-sm text-blue-800 font-medium text-center">
-            🎯 Zuweisungsmodus aktiv - {selectedShifts.size} Schicht
-            {selectedShifts.size !== 1 ? "en" : ""} ausgewählt. Tab zu
-            Disponenten, Enter zum Zuweisen, Escape zum Abbrechen.
+      {/* Enhanced persistent selection indicator */}
+      {(selectedShifts.size > 0 || assignmentMode) && (
+        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-100 to-green-100 border-b border-blue-200 p-3 z-40 shadow-sm">
+          <div className="flex items-center justify-between max-w-4xl mx-auto">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-blue-800">
+                  {assignmentMode
+                    ? "🎯 Zuweisungsmodus aktiv"
+                    : "📋 Mehrfachauswahl"}
+                </span>
+              </div>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-200 text-blue-800">
+                {selectedShifts.size} Schicht
+                {selectedShifts.size !== 1 ? "en" : ""} ausgewählt
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-blue-700">
+              {assignmentMode ? (
+                <span>
+                  Tab zu Disponenten, Enter zum Zuweisen, Escape zum Abbrechen
+                </span>
+              ) : (
+                <span>Schichten ausgewählt - bereit für Sammelzuweisung</span>
+              )}
+              <button
+                onClick={handleDeselectAll}
+                className="ml-2 text-blue-600 hover:text-blue-800 font-medium"
+                aria-label="Alle Auswahlen entfernen"
+              >
+                ✕ Abbrechen
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -430,39 +460,60 @@ export default function AssignmentDragDrop() {
             Nicht zugewiesene Schichten ({unassignedShifts.length})
           </h2>
 
-          {/* Bulk actions */}
-          <div className="mt-3 flex items-center gap-2">
-            <button
-              onClick={handleSelectAll}
-              className="text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded px-1"
-              disabled={unassignedShifts.length === 0}
-              aria-label="Alle Schichten auswählen"
-            >
-              Alle auswählen
-            </button>
-            <button
-              onClick={handleDeselectAll}
-              className="text-sm text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 rounded px-1"
-              disabled={selectedShifts.size === 0}
-              aria-label="Alle Auswahlen entfernen"
-            >
-              Alle abwählen
-            </button>
+          {/* Enhanced Bulk actions toolbar */}
+          <div className="mt-3">
+            {/* Selection controls */}
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                onClick={handleSelectAll}
+                className="text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded px-2 py-1"
+                disabled={unassignedShifts.length === 0}
+                aria-label="Alle Schichten auswählen"
+              >
+                ☑️ Alle auswählen
+              </button>
+              <button
+                onClick={handleDeselectAll}
+                className="text-sm text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 rounded px-2 py-1"
+                disabled={selectedShifts.size === 0}
+                aria-label="Alle Auswahlen entfernen"
+              >
+                ❌ Alle abwählen
+              </button>
+            </div>
+
+            {/* Selection status and batch actions */}
             {selectedShifts.size > 0 && (
-              <>
-                <span className="text-sm text-gray-500" aria-live="polite">
-                  {selectedShifts.size} ausgewählt
-                </span>
-                {canAssign && (
-                  <button
-                    onClick={() => setShowBatchModal(true)}
-                    className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1"
-                    aria-label={`${selectedShifts.size} Schichten als Sammelzuweisung zuweisen`}
-                  >
-                    Sammelzuweisung
-                  </button>
-                )}
-              </>
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {selectedShifts.size} ausgewählt
+                    </span>
+                    <span className="text-sm text-blue-700" aria-live="polite">
+                      Schichten für Sammelzuweisung bereit
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {canAssign && (
+                      <button
+                        onClick={() => setShowBatchModal(true)}
+                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        aria-label={`${selectedShifts.size} Schichten als Sammelzuweisung zuweisen`}
+                      >
+                        📋 Sammelzuweisung ({selectedShifts.size})
+                      </button>
+                    )}
+                    <button
+                      onClick={handleDeselectAll}
+                      className="inline-flex items-center px-2 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                      aria-label="Auswahl abbrechen"
+                    >
+                      Abbrechen
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -496,11 +547,11 @@ export default function AssignmentDragDrop() {
                   aria-selected={selectedShifts.has(shift.id)}
                   aria-describedby={`shift-${shift.id}-description`}
                   className={`
-                    p-3 border rounded-lg cursor-move transition-all
+                    relative p-3 border rounded-lg cursor-move transition-all group
                     ${
                       selectedShifts.has(shift.id)
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                     }
                     ${focusedShift === shift.id ? "ring-2 ring-blue-500" : ""}
                     hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
@@ -517,38 +568,82 @@ export default function AssignmentDragDrop() {
                     }
                   }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {shift.type || shift.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {shift.date} • {shift.start}-{shift.end}
-                      </div>
-                      {shift.workLocation && (
-                        <div className="text-xs text-gray-400">
-                          📍{" "}
-                          {WORK_LOCATIONS[shift.workLocation] ||
-                            shift.workLocation}
-                        </div>
-                      )}
+                  {/* Selection indicator overlay */}
+                  {selectedShifts.has(shift.id) && (
+                    <div className="absolute top-2 left-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
                     </div>
-                    <div className="flex items-center">
-                      {selectedShifts.has(shift.id) && (
-                        <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                          <svg
-                            className="w-2.5 h-2.5 text-white"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                  )}
+
+                  <div className="flex items-start justify-between">
+                    {/* Checkbox for selection */}
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        checked={selectedShifts.has(shift.id)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          if (e.target.checked) {
+                            setSelectedShifts(
+                              (prev) => new Set([...prev, shift.id]),
+                            );
+                          } else {
+                            setSelectedShifts((prev) => {
+                              const next = new Set(prev);
+                              next.delete(shift.id);
+                              return next;
+                            });
+                          }
+                        }}
+                        aria-label={`Schicht ${shift.type || shift.name} auswählen`}
+                      />
+
+                      {/* Shift details */}
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          {shift.type || shift.name}
                         </div>
+                        <div className="text-sm text-gray-500">
+                          📅 {shift.date} • ⏰ {shift.start}-{shift.end}
+                        </div>
+                        {shift.workLocation && (
+                          <div className="text-xs text-gray-400">
+                            📍{" "}
+                            {WORK_LOCATIONS[shift.workLocation] ||
+                              shift.workLocation}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Selection status indicator */}
+                    <div className="flex items-center gap-2">
+                      {selectedShifts.has(shift.id) && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          ✓ Ausgewählt
+                        </span>
                       )}
+                      {/* Drag handle */}
+                      <div className="text-gray-400 group-hover:text-gray-600">
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                   <div id={`shift-${shift.id}-description`} className="sr-only">
