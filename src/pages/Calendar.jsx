@@ -4,6 +4,7 @@ import { useShifts } from "../contexts/useShifts";
 import { useShiftTemplates } from "../contexts/useShiftTemplates";
 import { canManageShifts } from "../lib/rbac";
 import AuthContext from "../contexts/AuthContext";
+import { useMobileDevice } from "../hooks/useMobileDevice";
 import _ShiftTable from "../components/ShiftTable";
 import { CreateShiftModal, ShiftDetailsModal } from "../features/shifts";
 import AssignmentDragDrop from "../ui/assignment-dnd";
@@ -11,8 +12,10 @@ import {
   ShiftCell,
   TimelineShiftCell,
   QUICK_ACTIONS,
+  getShiftTemplateColor,
 } from "../ui/calendar-views.jsx";
 import { keyboardNav, skipLinks } from "../ui/accessibility";
+import ConflictBadge from "../components/ConflictBadge";
 
 const DAYS = [
   "Montag",
@@ -104,6 +107,84 @@ const CalendarCell = React.memo(
 );
 CalendarCell.displayName = "CalendarCell";
 
+// Mobile Calendar Day Card Component
+const MobileCalendarDay = React.memo(({ 
+  day, 
+  shifts, 
+  onShiftClick, 
+  onQuickAction, 
+  templates, 
+  isToday 
+}) => (
+  <div className="calendar-mobile-day-card" role="region" aria-labelledby={`mobile-day-${day.getDate()}`}>
+    <div className="calendar-mobile-day-header">
+      <div>
+        <h3 id={`mobile-day-${day.getDate()}`} className="text-lg font-semibold text-gray-900">
+          {day.toLocaleDateString("de-DE", { weekday: "long" })}
+        </h3>
+        <p className="text-sm text-gray-500">
+          {day.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
+          {isToday && <span className="ml-2 text-blue-600 font-medium">(Heute)</span>}
+        </p>
+      </div>
+      <div className="text-right">
+        <span className="text-sm text-gray-600">
+          {shifts.length === 0 ? "Keine Dienste" : `${shifts.length} Dienst${shifts.length > 1 ? "e" : ""}`}
+        </span>
+      </div>
+    </div>
+    
+    {shifts.length > 0 ? (
+      <div className="calendar-mobile-shifts" role="list" aria-label={`Dienste für ${day.toLocaleDateString("de-DE", { weekday: "long" })}`}>
+        {shifts.map((shift) => (
+          <div
+            key={shift.id}
+            className="calendar-mobile-shift-item"
+            role="listitem"
+            tabIndex={0}
+            aria-label={`${shift.type || shift.name}, ${shift.start} bis ${shift.end}, ${shift.assignedTo ? `zugewiesen an ${shift.assignedTo}` : "offen"}`}
+            onClick={() => onShiftClick?.(shift)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onShiftClick?.(shift);
+              }
+            }}
+            style={{
+              borderLeftColor: getShiftTemplateColor(shift, templates),
+              borderLeftWidth: "4px",
+            }}
+          >
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <div className="calendar-mobile-shift-name">
+                  {shift.type || shift.name}
+                </div>
+                <div className="calendar-mobile-shift-time">
+                  {shift.start} - {shift.end}
+                </div>
+              </div>
+              <div className={`calendar-mobile-shift-status ${shift.assignedTo ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}>
+                {shift.assignedTo ? shift.assignedTo : "Offen"}
+              </div>
+            </div>
+            {shift.conflicts?.length > 0 && (
+              <div className="mt-2">
+                <ConflictBadge conflicts={shift.conflicts} />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center py-8 text-gray-500">
+        <div className="text-sm">Keine Dienste an diesem Tag</div>
+      </div>
+    )}
+  </div>
+));
+MobileCalendarDay.displayName = "MobileCalendarDay";
+
 export default function Calendar() {
   // Named export for clearer stack traces
   const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } =
@@ -151,6 +232,23 @@ export default function Calendar() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  // Mobile device detection with resize handling
+  const isMobileDevice = useMobileDevice();
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1024
+  );
+  
+  React.useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
+  const isMobile = isMobileDevice || windowWidth <= 420;
 
   // Drag & Drop state
   const [draggedShift, setDraggedShift] = useState(null);
@@ -536,7 +634,7 @@ export default function Calendar() {
         <div id="view-controls" className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
           {/* View Mode Toggle */}
           <div
-            className="flex rounded-md shadow-sm"
+            className="flex rounded-md shadow-sm view-mode-toggle"
             role="group"
             aria-label="Ansichtsmodus auswählen"
           >
@@ -545,7 +643,7 @@ export default function Calendar() {
               onClick={() => setViewMode("week")}
               aria-pressed={viewMode === "week"}
               aria-label="Wochenansicht"
-              className={`px-3 py-2 text-sm font-medium rounded-l-md border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
+              className={`px-3 py-2 xs:px-4 xs:py-3 text-sm font-medium rounded-l-md border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 xs:min-h-[44px] ${
                 viewMode === "week"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                   : "bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
@@ -558,7 +656,7 @@ export default function Calendar() {
               onClick={() => setViewMode("month")}
               aria-pressed={viewMode === "month"}
               aria-label="Monatsansicht"
-              className={`px-3 py-2 text-sm font-medium border-l-0 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
+              className={`px-3 py-2 xs:px-4 xs:py-3 text-sm font-medium border-l-0 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 xs:min-h-[44px] ${
                 viewMode === "month"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
                   : "bg-white text-gray-900 border-gray-300 hover:bg-gray-50"
@@ -650,14 +748,55 @@ export default function Calendar() {
           <AssignmentDragDrop />
         </div>
       ) : viewMode === "week" ? (
-        // Week View
-        <div
-          id="calendar-content"
-          className="bg-white shadow rounded-lg overflow-x-auto"
-          role="application"
-          aria-label="Wochenkalender"
-        >
-          <div className="min-w-[960px]" onKeyDown={handleCalendarKeyDown}>
+        // Week View - Mobile vs Desktop Layout
+        isMobile ? (
+          // Mobile Vertical Calendar Layout
+          <div
+            id="calendar-content-mobile"
+            className="calendar-mobile-vertical"
+            role="application"
+            aria-label="Mobile Wochenkalender"
+          >
+            {DAYS.map((dayName, dayIdx) => {
+              const dayDate = new Date(weekStart);
+              dayDate.setDate(weekStart.getDate() + dayIdx);
+              const dayStart = new Date(dayDate);
+              dayStart.setHours(0, 0, 0, 0);
+              const dayEnd = new Date(dayStart);
+              dayEnd.setDate(dayEnd.getDate() + 1);
+              
+              const dayShifts = weekShifts.filter((shift) => {
+                const base = buildDate(shift.date);
+                const s = combine(base, shift.start);
+                let e = combine(base, shift.end);
+                if (e <= s) e.setDate(e.getDate() + 1);
+                return s < dayEnd && e > dayStart;
+              });
+
+              const isToday = dayDate.toDateString() === new Date().toDateString();
+
+              return (
+                <MobileCalendarDay
+                  key={dayIdx}
+                  day={dayDate}
+                  shifts={dayShifts}
+                  onShiftClick={handleShiftClick}
+                  onQuickAction={handleQuickAction}
+                  templates={templates}
+                  isToday={isToday}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          // Desktop Horizontal Calendar Layout
+          <div
+            id="calendar-content"
+            className="bg-white shadow rounded-lg overflow-x-auto calendar-week-container"
+            role="application"
+            aria-label="Wochenkalender"
+          >
+            <div className="min-w-[960px] calendar-week-grid" onKeyDown={handleCalendarKeyDown}>
             {/* Header */}
             <div
               className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
@@ -809,6 +948,7 @@ export default function Calendar() {
             </div>
           </div>
         </div>
+        )
       ) : (
         // Month View
         <div
