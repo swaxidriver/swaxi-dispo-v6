@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from "react";
 
-import { logError } from '../utils/logger'
+import { logError } from "../utils/logger";
 
 /**
  * Custom hook for managing async operations with loading, error states, and retry capabilities
@@ -14,75 +14,97 @@ import { logError } from '../utils/logger'
  * @returns {Object} - { execute, retry, isLoading, error, clearError, retryCount, canRetry }
  */
 export function useAsyncOperation(asyncFn, options = {}) {
-  const { logErrors = true, onSuccess, onError, maxRetries = 3, retryDelay = 1000 } = options
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [retryCount, setRetryCount] = useState(0)
-  const [lastArgs, setLastArgs] = useState(null)
+  const {
+    logErrors = true,
+    onSuccess,
+    onError,
+    maxRetries = 3,
+    retryDelay = 1000,
+  } = options;
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastArgs, setLastArgs] = useState(null);
 
   const clearError = useCallback(() => {
-    setError(null)
-    setRetryCount(0)
-    setLastArgs(null)
-  }, [])
+    setError(null);
+    setRetryCount(0);
+    setLastArgs(null);
+  }, []);
 
-  const executeInternal = useCallback(async (args, isRetry = false) => {
-    if (isLoading && !isRetry) return null
-    
-    setIsLoading(true)
-    if (!isRetry) {
-      setError(null)
-      setRetryCount(0)
-      setLastArgs(args)
-    }
-    
-    try {
-      const result = await asyncFn(...args)
-      // Reset retry state on success
-      setRetryCount(0)
-      setLastArgs(null)
-      onSuccess?.(result)
-      return result
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred'
-      setError(errorMessage)
-      
-      if (logErrors) {
-        logError('Async operation failed:', err)
+  const executeInternal = useCallback(
+    async (args, isRetry = false) => {
+      if (isLoading && !isRetry) return null;
+
+      setIsLoading(true);
+      if (!isRetry) {
+        setError(null);
+        setRetryCount(0);
+        setLastArgs(args);
       }
-      
-      onError?.(err)
-      throw err
-    } finally {
-      setIsLoading(false)
-    }
-  }, [asyncFn, isLoading, logErrors, onSuccess, onError])
 
-  const execute = useCallback(async (...args) => {
-    return executeInternal(args, false)
-  }, [executeInternal])
+      try {
+        const result = await asyncFn(...args);
+        // Reset retry state on success
+        setRetryCount(0);
+        setLastArgs(null);
+        onSuccess?.(result);
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        setError(errorMessage);
+
+        if (logErrors) {
+          logError("Async operation failed:", err);
+        }
+
+        onError?.(err);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [asyncFn, isLoading, logErrors, onSuccess, onError],
+  );
+
+  const execute = useCallback(
+    async (...args) => {
+      return executeInternal(args, false);
+    },
+    [executeInternal],
+  );
 
   const retry = useCallback(async () => {
     if (!lastArgs || retryCount >= maxRetries || isLoading) {
-      return null
+      return null;
     }
-    
-    setRetryCount(prev => prev + 1)
-    
+
+    setRetryCount((prev) => prev + 1);
+
     // Add delay before retry
     if (retryDelay > 0) {
-      await new Promise(resolve => setTimeout(resolve, retryDelay * retryCount))
+      await new Promise((resolve) =>
+        setTimeout(resolve, retryDelay * retryCount),
+      );
     }
-    
-    try {
-      return await executeInternal(lastArgs, true)
-    } catch (err) {
-      // Error is already handled in executeInternal
-      return null
-    }
-  }, [lastArgs, retryCount, maxRetries, isLoading, retryDelay, executeInternal])
 
-  const canRetry = lastArgs && retryCount < maxRetries && !isLoading
+    try {
+      return await executeInternal(lastArgs, true);
+    } catch (_err) {
+      // Error is already handled in executeInternal
+      return null;
+    }
+  }, [
+    lastArgs,
+    retryCount,
+    maxRetries,
+    isLoading,
+    retryDelay,
+    executeInternal,
+  ]);
+
+  const canRetry = lastArgs && retryCount < maxRetries && !isLoading;
 
   return {
     execute,
@@ -91,8 +113,8 @@ export function useAsyncOperation(asyncFn, options = {}) {
     error,
     clearError,
     retryCount,
-    canRetry
-  }
+    canRetry,
+  };
 }
 
 /**
@@ -102,54 +124,63 @@ export function useAsyncOperation(asyncFn, options = {}) {
  * @returns {Object} - Form state management utilities
  */
 export function useFormState(initialState = {}, validator = null) {
-  const [values, setValues] = useState(initialState)
-  const [errors, setErrors] = useState({})
-  const [touched, setTouched] = useState({})
+  const [values, setValues] = useState(initialState);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
-  const setValue = useCallback((name, value) => {
-    setValues(prev => ({ ...prev, [name]: value }))
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }))
-    }
-  }, [errors])
+  const setValue = useCallback(
+    (name, value) => {
+      setValues((prev) => ({ ...prev, [name]: value }));
+
+      // Clear error when user starts typing
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: null }));
+      }
+    },
+    [errors],
+  );
 
   const setTouchedField = useCallback((name) => {
-    setTouched(prev => ({ ...prev, [name]: true }))
-  }, [])
+    setTouched((prev) => ({ ...prev, [name]: true }));
+  }, []);
 
   const validate = useCallback(() => {
-    if (!validator) return true
-    
-    const validationErrors = validator(values)
-    setErrors(validationErrors || {})
-    
-    return Object.keys(validationErrors || {}).length === 0
-  }, [values, validator])
+    if (!validator) return true;
+
+    const validationErrors = validator(values);
+    setErrors(validationErrors || {});
+
+    return Object.keys(validationErrors || {}).length === 0;
+  }, [values, validator]);
 
   const reset = useCallback(() => {
-    setValues(initialState)
-    setErrors({})
-    setTouched({})
-  }, [initialState])
+    setValues(initialState);
+    setErrors({});
+    setTouched({});
+  }, [initialState]);
 
-  const handleInputChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target
-    setValue(name, type === 'checkbox' ? checked : value)
-  }, [setValue])
+  const handleInputChange = useCallback(
+    (e) => {
+      const { name, value, type, checked } = e.target;
+      setValue(name, type === "checkbox" ? checked : value);
+    },
+    [setValue],
+  );
 
-  const handleBlur = useCallback((e) => {
-    const { name } = e.target
-    setTouchedField(name)
-    
-    if (validator) {
-      const fieldErrors = validator({ ...values, [name]: values[name] })
-      if (fieldErrors[name]) {
-        setErrors(prev => ({ ...prev, [name]: fieldErrors[name] }))
+  const handleBlur = useCallback(
+    (e) => {
+      const { name } = e.target;
+      setTouchedField(name);
+
+      if (validator) {
+        const fieldErrors = validator({ ...values, [name]: values[name] });
+        if (fieldErrors[name]) {
+          setErrors((prev) => ({ ...prev, [name]: fieldErrors[name] }));
+        }
       }
-    }
-  }, [values, validator, setTouchedField])
+    },
+    [values, validator, setTouchedField],
+  );
 
   return {
     values,
@@ -161,8 +192,8 @@ export function useFormState(initialState = {}, validator = null) {
     reset,
     handleInputChange,
     handleBlur,
-    isValid: Object.keys(errors).length === 0
-  }
+    isValid: Object.keys(errors).length === 0,
+  };
 }
 
 /**
@@ -174,38 +205,43 @@ export function useFormState(initialState = {}, validator = null) {
 export function useLocalStorage(key, defaultValue = null) {
   const [value, setValue] = useState(() => {
     try {
-      const item = localStorage.getItem(key)
-      return item ? JSON.parse(item) : defaultValue
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
-      logError('Failed to read from localStorage:', error)
-      return defaultValue
+      logError("Failed to read from localStorage:", error);
+      return defaultValue;
     }
-  })
+  });
 
-  const setStoredValue = useCallback((newValue) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(newValue))
-      setValue(newValue)
-    } catch (error) {
-      logError('Failed to write to localStorage:', error)
-      // Don't update state if localStorage fails
-    }
-  }, [key])
+  const setStoredValue = useCallback(
+    (newValue) => {
+      try {
+        localStorage.setItem(key, JSON.stringify(newValue));
+        setValue(newValue);
+      } catch (error) {
+        logError("Failed to write to localStorage:", error);
+        // Don't update state if localStorage fails
+      }
+    },
+    [key],
+  );
 
   const removeValue = useCallback(() => {
     try {
-      setValue(defaultValue)
-      localStorage.removeItem(key)
+      setValue(defaultValue);
+      localStorage.removeItem(key);
     } catch (error) {
-      logError('Failed to remove from localStorage:', error)
+      logError("Failed to remove from localStorage:", error);
     }
-  }, [key, defaultValue])
+  }, [key, defaultValue]);
 
-  return [value, setStoredValue, removeValue]
+  return [value, setStoredValue, removeValue];
 }
+
+export { useMobileDevice, useTimeInputStep } from "./useMobileDevice";
 
 export default {
   useAsyncOperation,
   useFormState,
-  useLocalStorage
-}
+  useLocalStorage,
+};

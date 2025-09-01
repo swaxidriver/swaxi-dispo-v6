@@ -1,112 +1,125 @@
-import { useState } from 'react'
-import { format, addDays, startOfWeek } from 'date-fns'
+import { useState } from "react";
+import { format, addDays, startOfWeek } from "date-fns";
 
-import { generateShifts } from '../services/shiftGenerationService'
-import { useShiftTemplates } from '../contexts/useShiftTemplates'
-import { useShifts } from '../contexts/useShifts'
-import AuditService from '../services/auditService'
+import { generateShifts } from "../services/shiftGenerationService";
+import { useShiftTemplates } from "../contexts/useShiftTemplates";
+import { useShifts } from "../contexts/useShifts";
+import AuditService from "../services/auditService";
 
 function ShiftWeeklyGenerator() {
-  const { templates } = useShiftTemplates()
-  const { addShift } = useShifts()
+  const { templates } = useShiftTemplates();
+  const { addShift } = useShifts();
   const [startDate, setStartDate] = useState(() => {
     // Default to next Monday
-    const now = new Date()
-    return format(startOfWeek(addDays(now, 7), { weekStartsOn: 1 }), 'yyyy-MM-dd')
-  })
-  const [weeks, setWeeks] = useState(1)
-  const [selectedTemplates, setSelectedTemplates] = useState([])
-  const [preview, setPreview] = useState(null)
-  const [isGenerating, setIsGenerating] = useState(false)
+    const now = new Date();
+    return format(
+      startOfWeek(addDays(now, 7), { weekStartsOn: 1 }),
+      "yyyy-MM-dd",
+    );
+  });
+  const [weeks, setWeeks] = useState(1);
+  const [selectedTemplates, setSelectedTemplates] = useState([]);
+  const [preview, setPreview] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleTemplateToggle = (templateId) => {
-    setSelectedTemplates(prev => 
-      prev.includes(templateId) 
-        ? prev.filter(id => id !== templateId)
-        : [...prev, templateId]
-    )
-  }
+    setSelectedTemplates((prev) =>
+      prev.includes(templateId)
+        ? prev.filter((id) => id !== templateId)
+        : [...prev, templateId],
+    );
+  };
 
   const generatePreview = () => {
     if (selectedTemplates.length === 0) {
-      alert('Please select at least one template')
-      return
+      alert("Please select at least one template");
+      return;
     }
 
-    const templatesToUse = templates.filter(t => selectedTemplates.includes(t.id))
-    const daysToGenerate = weeks * 7
-    
+    const templatesToUse = templates.filter((t) =>
+      selectedTemplates.includes(t.id),
+    );
+    const daysToGenerate = weeks * 7;
+
     const generatedShifts = generateShifts(templatesToUse, {
       startDate: new Date(startDate),
       daysToGenerate,
-      enhanceWithDatetime: true
-    })
+      enhanceWithDatetime: true,
+    });
 
     setPreview({
       shifts: generatedShifts,
       templates: templatesToUse,
       startDate,
       weeks,
-      count: generatedShifts.length
-    })
+      count: generatedShifts.length,
+    });
 
     AuditService.logCurrentUserAction(
-      'Shift generation preview',
-      { 
+      "Shift generation preview",
+      {
         startDate,
         weeks,
         templatesCount: templatesToUse.length,
-        shiftsCount: generatedShifts.length
+        shiftsCount: generatedShifts.length,
       },
-      generatedShifts.length
-    )
-  }
+      generatedShifts.length,
+    );
+  };
 
   const executeGeneration = () => {
     if (!preview) {
-      alert('Please generate a preview first')
-      return
+      alert("Please generate a preview first");
+      return;
     }
 
-    setIsGenerating(true)
-    
+    setIsGenerating(true);
+
     try {
       // Add each shift to the context
-      preview.shifts.forEach(shift => {
-        addShift(shift)
-      })
+      preview.shifts.forEach((shift) => {
+        addShift(shift);
+      });
 
       AuditService.logCurrentUserAction(
-        'Shifts generated from templates',
+        "Shifts generated from templates",
         {
           startDate: preview.startDate,
           weeks: preview.weeks,
-          templatesUsed: preview.templates.map(t => t.name),
-          shiftsGenerated: preview.count
+          templatesUsed: preview.templates.map((t) => t.name),
+          shiftsGenerated: preview.count,
         },
-        preview.count
-      )
+        preview.count,
+      );
 
-      alert(`Successfully generated ${preview.count} shifts!`)
-      
+      alert(`Successfully generated ${preview.count} shifts!`);
+
       // Clear preview after successful generation
-      setPreview(null)
+      setPreview(null);
     } catch (error) {
-      console.error('Error generating shifts:', error)
-      alert('Error generating shifts. Please try again.')
+      console.error("Error generating shifts:", error);
+      alert("Error generating shifts. Please try again.");
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-lg" data-testid="shift-weekly-generator">
+    <div
+      className="p-4 bg-white shadow-md rounded-lg"
+      data-testid="shift-weekly-generator"
+    >
       <h2 className="text-xl font-bold mb-4">Weekly Shift Generator</h2>
-      
+
       {/* Generation Parameters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label htmlFor="start-date" className="block text-sm font-medium mb-2">Start Date</label>
+          <label
+            htmlFor="start-date"
+            className="block text-sm font-medium mb-2"
+          >
+            Start Date
+          </label>
           <input
             id="start-date"
             type="date"
@@ -117,7 +130,9 @@ function ShiftWeeklyGenerator() {
           />
         </div>
         <div>
-          <label htmlFor="weeks" className="block text-sm font-medium mb-2">Number of Weeks</label>
+          <label htmlFor="weeks" className="block text-sm font-medium mb-2">
+            Number of Weeks
+          </label>
           <input
             id="weeks"
             type="number"
@@ -125,6 +140,7 @@ function ShiftWeeklyGenerator() {
             max="12"
             value={weeks}
             onChange={(e) => setWeeks(parseInt(e.target.value) || 1)}
+            inputMode="numeric"
             className="w-full p-2 border rounded"
             data-testid="weeks-input"
           />
@@ -145,13 +161,13 @@ function ShiftWeeklyGenerator() {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3">Select Templates</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {templates.map(template => (
+          {templates.map((template) => (
             <label
               key={template.id}
               className={`flex items-center space-x-3 p-3 border rounded cursor-pointer transition-colors ${
-                selectedTemplates.includes(template.id) 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-200 hover:border-gray-300'
+                selectedTemplates.includes(template.id)
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
               }`}
               data-testid={`template-selector-${template.id}`}
             >
@@ -161,14 +177,15 @@ function ShiftWeeklyGenerator() {
                 onChange={() => handleTemplateToggle(template.id)}
                 className="w-4 h-4"
               />
-              <div 
+              <div
                 className="w-4 h-4 rounded border"
-                style={{ backgroundColor: template.color || '#3B82F6' }}
+                style={{ backgroundColor: template.color || "#3B82F6" }}
               />
               <div className="flex-1">
                 <div className="font-medium">{template.name}</div>
                 <div className="text-sm text-gray-600">
-                  {template.days.join(', ')} • {template.startTime}-{template.endTime}
+                  {template.days.join(", ")} • {template.startTime}-
+                  {template.endTime}
                 </div>
               </div>
             </label>
@@ -188,11 +205,23 @@ function ShiftWeeklyGenerator() {
             <span className="mr-2">📊</span>
             Generation Preview
           </h3>
-          
+
           <div className="mb-4">
-            <p><strong>Period:</strong> {format(new Date(preview.startDate), 'MMM dd, yyyy')} - {format(addDays(new Date(preview.startDate), preview.weeks * 7 - 1), 'MMM dd, yyyy')}</p>
-            <p><strong>Templates:</strong> {preview.templates.map(t => t.name).join(', ')}</p>
-            <p><strong>Total Shifts:</strong> {preview.count}</p>
+            <p>
+              <strong>Period:</strong>{" "}
+              {format(new Date(preview.startDate), "MMM dd, yyyy")} -{" "}
+              {format(
+                addDays(new Date(preview.startDate), preview.weeks * 7 - 1),
+                "MMM dd, yyyy",
+              )}
+            </p>
+            <p>
+              <strong>Templates:</strong>{" "}
+              {preview.templates.map((t) => t.name).join(", ")}
+            </p>
+            <p>
+              <strong>Total Shifts:</strong> {preview.count}
+            </p>
           </div>
 
           {/* Shift Preview Table */}
@@ -200,19 +229,24 @@ function ShiftWeeklyGenerator() {
             <h4 className="font-medium mb-2">Shifts to be created:</h4>
             <div className="grid gap-2">
               {preview.shifts.slice(0, 20).map((shift, index) => (
-                <div 
+                <div
                   key={index}
                   className="flex items-center justify-between p-2 bg-white rounded border text-sm"
                 >
                   <div className="flex items-center space-x-2">
-                    <div 
+                    <div
                       className="w-3 h-3 rounded"
-                      style={{ backgroundColor: preview.templates.find(t => t.name === shift.name)?.color || '#3B82F6' }}
+                      style={{
+                        backgroundColor:
+                          preview.templates.find((t) => t.name === shift.name)
+                            ?.color || "#3B82F6",
+                      }}
                     />
                     <span className="font-medium">{shift.name}</span>
                   </div>
                   <div className="text-gray-600">
-                    {format(new Date(shift.date), 'MMM dd')} • {shift.start}-{shift.end}
+                    {format(new Date(shift.date), "MMM dd")} • {shift.start}-
+                    {shift.end}
                   </div>
                 </div>
               ))}
@@ -231,7 +265,7 @@ function ShiftWeeklyGenerator() {
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
               data-testid="execute-generation-btn"
             >
-              {isGenerating ? 'Generating...' : 'Confirm & Generate'}
+              {isGenerating ? "Generating..." : "Confirm & Generate"}
             </button>
             <button
               onClick={() => setPreview(null)}
@@ -244,7 +278,7 @@ function ShiftWeeklyGenerator() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default ShiftWeeklyGenerator
+export default ShiftWeeklyGenerator;

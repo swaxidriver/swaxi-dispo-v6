@@ -2,8 +2,8 @@ import { useEffect } from "react";
 
 import { useShifts } from "../../../contexts/useShifts";
 import { useFormState, useAsyncOperation } from "../../../hooks";
+import { useTimeInputStep } from "../../../hooks/useMobileDevice";
 import {
-  toast,
   createValidator,
   validationRules,
   formPersistence,
@@ -23,6 +23,7 @@ const shiftValidator = createValidator({
 export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
   const { createShift } = useShifts();
   const { t } = useI18n();
+  const timeStep = useTimeInputStep();
 
   // Initialize form state with persistence
   const initialState = formPersistence.load("create-shift", {
@@ -225,6 +226,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
               onChange={formState.handleInputChange}
               onBlur={formState.handleBlur}
               name="start"
+              step={timeStep}
               className={getFieldClasses("start")}
               aria-describedby={
                 getFieldError("start") ? "start-error" : undefined
@@ -254,6 +256,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
               onChange={formState.handleInputChange}
               onBlur={formState.handleBlur}
               name="end"
+              step={timeStep}
               className={getFieldClasses("end")}
               aria-describedby={getFieldError("end") ? "end-error" : undefined}
             />
