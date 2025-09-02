@@ -196,9 +196,9 @@ Jane Smith,jane@example.com,disponent
 Bob Johnson,bob@example.com,analyst`;
       case "templates":
         return `name,start_time,end_time,weekday_mask,cross_midnight,color
-Morning Shift,08:00,16:00,31,false,#3B82F6
-Night Shift,22:00,06:00,127,true,#EF4444
-Weekend Early,06:00,14:00,96,false,#10B981`;
+Morning Shift,08:00,16:00,31,false,#222f88
+Night Shift,22:00,06:00,127,true,#dc2626
+Weekend Early,06:00,14:00,96,false,#16a34a`;
       default:
         return "";
     }

@@ -1,0 +1,112 @@
+/**
+ * SWA Corporate Design Theme
+ * Central theming system with CSS variables for consistent brand application
+ * 
+ * This file serves as the main entry point for SWA's corporate design system,
+ * providing semantic color tokens and typography that support both light and dark modes.
+ */
+
+/* Import core design tokens */
+@import "./tokens.css";
+
+/* SWA Corporate Design Variables */
+:root {
+  /* SWA Brand Palette - Primary Colors */
+  --swa-primary: var(--color-primary);
+  --swa-primary-emphasis: var(--color-primary-emphasis);
+  --swa-accent: var(--color-accent);
+
+  /* SWA Semantic Colors */
+  --swa-background: var(--color-bg);
+  --swa-surface: var(--color-surface);
+  --swa-border: var(--color-border);
+  --swa-text: var(--color-text);
+  --swa-text-muted: var(--color-muted);
+
+  /* SWA Status Colors */
+  --swa-success: var(--color-ok);
+  --swa-warning: var(--color-warn);
+  --swa-error: var(--color-err);
+
+  /* SWA Typography */
+  --swa-font-family: var(--font-sans);
+  --swa-font-mono: var(--font-mono);
+
+  /* Common component colors for migration from hard-coded values */
+  --swa-blue: var(--color-primary); /* Replaces old blue values */
+  --swa-red: var(--color-err); /* Replaces old red values */
+  --swa-green: var(--color-ok); /* Replaces old green values */
+  --swa-gray: var(--color-muted); /* Replaces old gray values */
+  --swa-yellow: var(--color-warn); /* Replaces old yellow values */
+  --swa-purple: #8b5cf6; /* Specialty color for specific needs */
+}
+
+/* SWA Corporate Design Utility Classes */
+.swa-bg-primary {
+  background-color: var(--swa-primary);
+}
+
+.swa-bg-surface {
+  background-color: var(--swa-surface);
+}
+
+.swa-text-primary {
+  color: var(--swa-primary);
+}
+
+.swa-text-muted {
+  color: var(--swa-text-muted);
+}
+
+.swa-border {
+  border-color: var(--swa-border);
+}
+
+/* Component-specific SWA theme classes */
+.swa-button-primary {
+  background-color: var(--swa-primary);
+  color: white;
+  border-color: var(--swa-primary);
+}
+
+.swa-button-primary:hover {
+  background-color: var(--swa-primary-emphasis);
+  border-color: var(--swa-primary-emphasis);
+}
+
+.swa-button-danger {
+  background-color: var(--swa-error);
+  color: white;
+  border-color: var(--swa-error);
+}
+
+.swa-button-success {
+  background-color: var(--swa-success);
+  color: white;
+  border-color: var(--swa-success);
+}
+
+/* Template color indicators for shift management */
+.swa-template-blue {
+  background-color: var(--swa-blue);
+}
+
+.swa-template-red {
+  background-color: var(--swa-red);
+}
+
+.swa-template-green {
+  background-color: var(--swa-green);
+}
+
+.swa-template-yellow {
+  background-color: var(--swa-yellow);
+}
+
+.swa-template-purple {
+  background-color: var(--swa-purple);
+}
+
+.swa-template-gray {
+  background-color: var(--swa-gray);
+}

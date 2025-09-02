@@ -6,40 +6,67 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
-      /* Legacy brand-* color tokens retained for incremental migration; prefer CSS variables in tokens.css */
+      /* SWA Corporate Design Colors - All mapped to CSS variables */
       colors: {
-        "brand-primary": "#222F88",
-        "brand-primary-light": "#2f3d99",
-        "brand-primary-dark": "#1a2566",
-        "brand-secondary": "#27ADE7",
-        "brand-accent": "#27ADE7",
-        "brand-surface": "#ffffff",
-        "brand-bg": "#f8fafc",
-        "brand-border": "#e2e8f0",
-        "brand-text": "#0f172a",
-        err: "#dc2626",
-        /* Semantic design token mappings to CSS variables */
-        primary: "var(--color-primary)",
-        "primary-emphasis": "var(--color-primary-emphasis)",
-        accent: "var(--color-accent)",
-        surface: "var(--color-surface)",
-        bg: "var(--color-bg)",
-        border: "var(--color-border)",
-        text: "var(--color-text)",
-        muted: "var(--color-muted)",
-        ok: "var(--color-ok)",
-        warn: "var(--color-warn)",
-        danger: "var(--color-err)",
+        /* SWA Primary Brand Colors */
+        primary: "var(--swa-primary)",
+        "primary-emphasis": "var(--swa-primary-emphasis)",
+        accent: "var(--swa-accent)",
+
+        /* SWA Semantic Colors */
+        surface: "var(--swa-surface)",
+        bg: "var(--swa-background)",
+        border: "var(--swa-border)",
+        text: "var(--swa-text)",
+        muted: "var(--swa-text-muted)",
+
+        /* SWA Status Colors */
+        ok: "var(--swa-success)",
+        success: "var(--swa-success)",
+        warn: "var(--swa-warning)",
+        warning: "var(--swa-warning)",
+        danger: "var(--swa-error)",
+        error: "var(--swa-error)",
+
+        /* Common SWA Component Colors (replaces hard-coded values) */
+        "swa-blue": "var(--swa-blue)",
+        "swa-red": "var(--swa-red)",
+        "swa-green": "var(--swa-green)",
+        "swa-gray": "var(--swa-gray)",
+        "swa-yellow": "var(--swa-yellow)",
+        "swa-purple": "var(--swa-purple)",
+
+        /* Legacy brand-* mappings for backward compatibility - now using variables */
+        "brand-primary": "var(--swa-primary)",
+        "brand-primary-light": "var(--swa-primary)",
+        "brand-primary-dark": "var(--swa-primary-emphasis)",
+        "brand-secondary": "var(--swa-accent)",
+        "brand-accent": "var(--swa-accent)",
+        "brand-surface": "var(--swa-surface)",
+        "brand-bg": "var(--swa-background)",
+        "brand-border": "var(--swa-border)",
+        "brand-text": "var(--swa-text)",
+        err: "var(--swa-error)",
       },
       fontFamily: {
-        /* Modern geometric humanist font with CSS variable fallback */
+        /* SWA Corporate Design Typography */
         sans: [
-          "var(--font-sans)",
+          "var(--swa-font-family)",
           "Manrope",
           "Inter",
           "system-ui",
           "-apple-system",
           "sans-serif",
+        ],
+        mono: [
+          "var(--swa-font-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Monaco",
+          "Consolas",
+          "Liberation Mono",
+          "monospace",
         ],
         /* Legacy direct mapping for backward compatibility */
         "sans-legacy": [

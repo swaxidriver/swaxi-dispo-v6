@@ -6,6 +6,15 @@ import { useShiftTemplates } from "../contexts/useShiftTemplates";
 import { useShifts } from "../contexts/useShifts";
 import AuditService from "../services/auditService";
 
+// Get default template color from CSS variable
+const getDefaultTemplateColor = () => {
+  if (typeof window !== "undefined") {
+    const style = getComputedStyle(document.documentElement);
+    return style.getPropertyValue("--swa-blue").trim() || "#222f88";
+  }
+  return "#222f88"; // SWA Primary Blue fallback
+};
+
 function ShiftWeeklyGenerator() {
   const { templates } = useShiftTemplates();
   const { addShift } = useShifts();
@@ -179,7 +188,9 @@ function ShiftWeeklyGenerator() {
               />
               <div
                 className="w-4 h-4 rounded border"
-                style={{ backgroundColor: template.color || "#3B82F6" }}
+                style={{
+                  backgroundColor: template.color || getDefaultTemplateColor(),
+                }}
               />
               <div className="flex-1">
                 <div className="font-medium">{template.name}</div>
@@ -239,7 +250,7 @@ function ShiftWeeklyGenerator() {
                       style={{
                         backgroundColor:
                           preview.templates.find((t) => t.name === shift.name)
-                            ?.color || "#3B82F6",
+                            ?.color || getDefaultTemplateColor(),
                       }}
                     />
                     <span className="font-medium">{shift.name}</span>

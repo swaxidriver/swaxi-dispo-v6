@@ -4,6 +4,15 @@ import { useShiftTemplates } from "../contexts/useShiftTemplates";
 import { useTimeInputStep } from "../hooks/useMobileDevice";
 import AuditService from "../services/auditService";
 
+// Get default template color from CSS variable
+const getDefaultTemplateColor = () => {
+  if (typeof window !== "undefined") {
+    const style = getComputedStyle(document.documentElement);
+    return style.getPropertyValue("--swa-blue").trim() || "#222f88";
+  }
+  return "#222f88"; // SWA Primary Blue fallback
+};
+
 function ShiftTemplateManager() {
   const { templates, addTemplate, updateTemplate, deleteTemplate } =
     useShiftTemplates();
@@ -14,7 +23,7 @@ function ShiftTemplateManager() {
     startTime: "",
     endTime: "",
     days: [],
-    color: "#3B82F6", // Default blue color
+    color: getDefaultTemplateColor(), // Default SWA blue color
   });
 
   const handleInputChange = (e) => {
@@ -53,7 +62,7 @@ function ShiftTemplateManager() {
     setEditingTemplate(template);
     setFormState({
       ...template,
-      color: template.color || "#3B82F6", // Ensure color is always defined
+      color: template.color || getDefaultTemplateColor(), // Ensure color is always defined
     });
   };
 
@@ -61,7 +70,7 @@ function ShiftTemplateManager() {
     const clonedTemplate = {
       ...template,
       name: `${template.name} (Copy)`,
-      color: template.color || "#3B82F6", // Ensure color is always defined
+      color: template.color || getDefaultTemplateColor(), // Ensure color is always defined
       id: undefined, // Remove ID so it gets a new one
     };
     setFormState(clonedTemplate);
@@ -93,7 +102,7 @@ function ShiftTemplateManager() {
       startTime: "",
       endTime: "",
       days: [],
-      color: "#3B82F6",
+      color: getDefaultTemplateColor(),
     });
   };
 
@@ -228,7 +237,10 @@ function ShiftTemplateManager() {
               <div className="flex items-center space-x-3">
                 <div
                   className="w-4 h-4 rounded border"
-                  style={{ backgroundColor: template.color || "#3B82F6" }}
+                  style={{
+                    backgroundColor:
+                      template.color || getDefaultTemplateColor(),
+                  }}
                   title="Template Color"
                 />
                 <div>

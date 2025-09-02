@@ -25,7 +25,7 @@ export class SeedService {
         start_time: "06:00",
         end_time: "14:00",
         cross_midnight: false,
-        color: "#3B82F6", // Blue
+        color: "#222f88", // SWA Primary Blue
         active: true,
       },
       {
@@ -35,7 +35,7 @@ export class SeedService {
         start_time: "14:00",
         end_time: "22:00",
         cross_midnight: false,
-        color: "#F59E0B", // Amber
+        color: "#f59e0b", // SWA Warning
         active: true,
       },
       {
@@ -53,7 +53,7 @@ export class SeedService {
         start_time: "22:00",
         end_time: "06:00",
         cross_midnight: true,
-        color: "#8B5CF6", // Purple
+        color: "#8B5CF6", // Purple (keeping as is - specialty color)
         active: true,
       },
       {
@@ -63,7 +63,7 @@ export class SeedService {
         start_time: "11:45",
         end_time: "21:00",
         cross_midnight: false,
-        color: "#10B981", // Emerald
+        color: "#16a34a", // SWA Success Green
         active: true,
       },
       {
@@ -73,7 +73,7 @@ export class SeedService {
         start_time: "21:00",
         end_time: "05:30",
         cross_midnight: true,
-        color: "#EF4444", // Red
+        color: "#dc2626", // SWA Error Red
         active: true,
       },
     ];

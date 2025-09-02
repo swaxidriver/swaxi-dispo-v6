@@ -6,6 +6,7 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
+
 import { dayNamesToMask, maskToDayNames } from "../repository/schemas.js";
 import { computeDuration } from "../features/shifts/shifts.js";
 
@@ -281,7 +282,7 @@ export async function importShiftTemplates(csvContent, repository) {
         start_time: row.start_time,
         end_time: row.end_time,
         cross_midnight: crossMidnight,
-        color: row.color || "#3B82F6",
+        color: row.color || "#222f88", // SWA Primary Blue
         active: row.active !== "false" && row.active !== "0",
       };
 
