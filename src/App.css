@@ -23,8 +23,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Table styles */
@@ -115,6 +119,73 @@
   animation: slide-in-right 0.3s ease-out;
 }
 
+/* Mobile menu animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile navigation styles */
+.mobile-menu-panel {
+  /* Base styles are in component, animation handled by inline style */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.mobile-menu-overlay {
+  /* Base styles are in component, animation handled by inline style */
+  backdrop-filter: blur(2px);
+}
+
+/* Touch-friendly mobile navigation targets */
+@media (max-width: 480px) {
+  .mobile-nav-toggle {
+    /* Ensure hamburger button is properly sized for touch */
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 0.375rem;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-panel,
+  .mobile-menu-overlay {
+    animation: none !important;
+  }
+
+  @keyframes slideInLeft {
+    from,
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from,
+    to {
+      opacity: 1;
+    }
+  }
+}
+
 /* Modal styles */
 .modal-backdrop {
   position: fixed;
@@ -144,8 +215,9 @@
   background-color: var(--brand-surface);
   padding: 1.5rem;
   border-radius: 0.5rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   max-width: 32rem;
   margin: 2rem auto;
   width: 100%;
