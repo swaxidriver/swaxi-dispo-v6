@@ -1,5 +1,5 @@
-/* Import design tokens first (prevent PostCSS @import warnings) */
-@import "./styles/tokens.css";
+/* Import SWA Corporate Design theme (includes design tokens) */
+@import "./styles/theme.css";
 /* Self-hosted Manrope font with optimized loading */
 @import "./styles/fonts.css";
 /* Enhanced focus states for accessibility */

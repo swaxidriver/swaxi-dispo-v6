@@ -7,6 +7,9 @@ import React from "react";
 
 import ConflictBadge from "../components/ConflictBadge";
 
+// SWA Corporate Design default colors
+const SWA_DEFAULT_GRAY = "#64748b"; // SWA muted color from tokens
+
 /**
  * Get template color for a shift
  * @param {Object} shift - The shift object
@@ -15,7 +18,7 @@ import ConflictBadge from "../components/ConflictBadge";
  */
 export function getShiftTemplateColor(shift, templates = []) {
   if (!shift || !templates?.length) {
-    return "#6B7280"; // Default gray
+    return SWA_DEFAULT_GRAY; // SWA muted gray
   }
 
   // Try to find template by templateId first
@@ -35,7 +38,7 @@ export function getShiftTemplateColor(shift, templates = []) {
     }
   }
 
-  return "#6B7280"; // Default gray
+  return SWA_DEFAULT_GRAY; // SWA muted gray
 }
 
 /**
