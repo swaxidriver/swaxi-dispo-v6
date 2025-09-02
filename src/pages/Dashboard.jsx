@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 
 import { useShifts } from "../contexts/useShifts";
 import { useAuth } from "../contexts/useAuth";
+import { useI18n } from "../hooks/useI18n";
 import { ROLES } from "../utils/constants";
 import { canManageShifts } from "../lib/rbac";
 import MiniAnalytics from "../components/MiniAnalytics";
@@ -11,16 +12,18 @@ import ThemeToggle from "../components/ThemeToggle";
 import ConnectionStatus from "../components/ConnectionStatus";
 
 function QuickFilters({ onChange }) {
+  const { t } = useI18n();
+
   // Memoize filters array to prevent recreation on every render
   const filters = useMemo(
     () => [
-      { id: "today", name: "Heute" },
-      { id: "7days", name: "7 Tage" },
-      { id: "open", name: "Offen" },
-      { id: "assigned", name: "Zugewiesen" },
-      { id: "cancelled", name: "Abgesagt" },
+      { id: "today", name: t("filterToday") },
+      { id: "7days", name: t("filter7Days") },
+      { id: "open", name: t("filterOpen") },
+      { id: "assigned", name: t("filterAssigned") },
+      { id: "cancelled", name: t("filterCancelled") },
     ],
-    [],
+    [t],
   );
 
   return (
@@ -41,6 +44,7 @@ function QuickFilters({ onChange }) {
 export default function Dashboard() {
   const { state } = useShifts();
   const { user } = useAuth();
+  const { t } = useI18n();
   const [filter, setFilter] = useState("today");
   const userRole = user?.role || ROLES.ANALYST; // fallback to lowest privilege if unauthenticated
 
@@ -101,9 +105,9 @@ export default function Dashboard() {
 
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t("dashboard")}</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Überblick über alle Dienste und Aktivitäten
+            {t("dashboardDescription")}
           </p>
         </div>
         <div className="mt-4 flex items-center space-x-3 md:ml-4 md:mt-0">
@@ -112,14 +116,10 @@ export default function Dashboard() {
           {canManageShifts(userRole) && (
             <button
               type="button"
-              onClick={() =>
-                alert(
-                  "Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉",
-                )
-              }
+              onClick={() => alert(t("automaticAssignmentEasterEgg"))}
               className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90"
             >
-              Automatisch zuteilen
+              {t("automaticAssignment")}
             </button>
           )}
         </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
       </div>
 
       <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-4">Aktuelle Dienste</h2>
+        <h2 className="text-lg font-semibold mb-4">{t("currentShifts")}</h2>
         <ShiftTable shifts={filteredShifts} />
       </div>
     </div>

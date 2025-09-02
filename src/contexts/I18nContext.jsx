@@ -117,6 +117,21 @@ const I18N_DICT = {
     errorCreatingShift: "Fehler beim Erstellen des Dienstes",
     shiftCreatedSuccessfully: "Dienst erfolgreich erstellt!",
     createNewShift: "Neuen Dienst erstellen",
+
+    // Dashboard
+    dashboard: "Dashboard",
+    dashboardDescription: "Überblick über alle Dienste und Aktivitäten",
+    automaticAssignment: "Automatisch zuteilen",
+    automaticAssignmentEasterEgg:
+      "Easter Egg: Automatische Zuteilung... Nein, das machen wir doch lieber manuell! 😉",
+    currentShifts: "Aktuelle Dienste",
+
+    // Quick Filters
+    filterToday: "Heute",
+    filter7Days: "7 Tage",
+    filterOpen: "Offen",
+    filterAssigned: "Zugewiesen",
+    filterCancelled: "Abgesagt",
   },
   en: {
     // Navigation
@@ -230,6 +245,21 @@ const I18N_DICT = {
     errorCreatingShift: "Error creating shift",
     shiftCreatedSuccessfully: "Shift created successfully!",
     createNewShift: "Create New Shift",
+
+    // Dashboard
+    dashboard: "Dashboard",
+    dashboardDescription: "Overview of all shifts and activities",
+    automaticAssignment: "Auto Assign",
+    automaticAssignmentEasterEgg:
+      "Easter Egg: Automatic assignment... No, let's do it manually! 😉",
+    currentShifts: "Current Shifts",
+
+    // Quick Filters
+    filterToday: "Today",
+    filter7Days: "7 Days",
+    filterOpen: "Open",
+    filterAssigned: "Assigned",
+    filterCancelled: "Cancelled",
   },
 };
 
