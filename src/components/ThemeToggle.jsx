@@ -9,7 +9,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={() => dispatch({ type: "TOGGLE_THEME" })}
-      className="rounded-full p-1 text-gray-400 hover:text-gray-600"
+      className="rounded-full p-1 text-gray-400 hover:text-gray-600 focus-ring-primary"
     >
       <span className="sr-only">Toggle theme</span>
       {state.isDark ? (
