@@ -12,12 +12,12 @@ const app = null;
 
 // Utility to detect if firebase is configured (all essential env vars present)
 export function isFirebaseConfigured() {
-  const env = (typeof process !== 'undefined' && process.env) ? process.env : {}
+  const env = typeof process !== "undefined" && process.env ? process.env : {};
   return !!(
     env.VITE_FIREBASE_API_KEY &&
     env.VITE_FIREBASE_PROJECT_ID &&
     env.VITE_FIREBASE_APP_ID
-  )
+  );
 }
 
 export default app;

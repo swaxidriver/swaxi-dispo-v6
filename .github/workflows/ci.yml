@@ -6,16 +6,16 @@ concurrency:
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22]  # LTS and current
+        node-version: [20, 22] # LTS and current
         package-manager: [npm, yarn]
     steps:
       - name: Checkout

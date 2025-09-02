@@ -1,7 +1,7 @@
-import { useContext } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import AuthContext from '../contexts/AuthContext';
-import { Permissions } from '../utils/auth.js';
+import { useContext } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import { Permissions } from "../utils/auth.js";
 
 /**
  * Higher-order component for protecting routes based on user permissions
@@ -11,46 +11,46 @@ import { Permissions } from '../utils/auth.js';
  * @param {string} props.fallbackPath - Path to redirect if access denied (default: '/')
  * @returns {React.Component} - Protected component or redirect
  */
-export function PermissionGuard({ children, permission, fallbackPath = '/' }) {
+export function PermissionGuard({ children, permission, fallbackPath = "/" }) {
   const { user } = useContext(AuthContext);
   const location = useLocation();
-  
+
   // Not authenticated
   if (!user || !user.role) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  
+
   // Check permission
   if (!Permissions[permission] || !Permissions[permission](user.role)) {
     return <Navigate to={fallbackPath} replace />;
   }
-  
+
   return children;
 }
 
 /**
  * Higher-order component for protecting routes based on specific roles
- * @param {Object} props - Component props  
+ * @param {Object} props - Component props
  * @param {React.Component} props.children - Protected component to render
  * @param {string|string[]} props.allowedRoles - Single role or array of allowed roles
  * @param {string} props.fallbackPath - Path to redirect if access denied (default: '/')
  * @returns {React.Component} - Protected component or redirect
  */
-export function RoleGuard({ children, allowedRoles, fallbackPath = '/' }) {
+export function RoleGuard({ children, allowedRoles, fallbackPath = "/" }) {
   const { user } = useContext(AuthContext);
   const location = useLocation();
-  
+
   // Not authenticated
   if (!user || !user.role) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  
+
   // Check roles
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   if (!roles.includes(user.role)) {
     return <Navigate to={fallbackPath} replace />;
   }
-  
+
   return children;
 }
 
@@ -64,12 +64,17 @@ export function RoleGuard({ children, allowedRoles, fallbackPath = '/' }) {
  */
 export function PermissionCheck({ children, permission, fallback = null }) {
   const { user } = useContext(AuthContext);
-  
+
   // Not authenticated or no permission
-  if (!user || !user.role || !Permissions[permission] || !Permissions[permission](user.role)) {
+  if (
+    !user ||
+    !user.role ||
+    !Permissions[permission] ||
+    !Permissions[permission](user.role)
+  ) {
     return fallback;
   }
-  
+
   return children;
 }
 
@@ -83,18 +88,18 @@ export function PermissionCheck({ children, permission, fallback = null }) {
  */
 export function RoleCheck({ children, allowedRoles, fallback = null }) {
   const { user } = useContext(AuthContext);
-  
+
   // Not authenticated
   if (!user || !user.role) {
     return fallback;
   }
-  
+
   // Check roles
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   if (!roles.includes(user.role)) {
     return fallback;
   }
-  
+
   return children;
 }
 
@@ -105,11 +110,11 @@ export function RoleCheck({ children, allowedRoles, fallback = null }) {
  */
 export function usePermission(permission) {
   const { user } = useContext(AuthContext);
-  
+
   if (!user || !user.role || !Permissions[permission]) {
     return false;
   }
-  
+
   return Permissions[permission](user.role);
 }
 
@@ -120,11 +125,11 @@ export function usePermission(permission) {
  */
 export function useRole(allowedRoles) {
   const { user } = useContext(AuthContext);
-  
+
   if (!user || !user.role) {
     return false;
   }
-  
+
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   return roles.includes(user.role);
 }
@@ -135,7 +140,7 @@ export function useRole(allowedRoles) {
  */
 export function useUserCapabilities() {
   const { user } = useContext(AuthContext);
-  
+
   if (!user || !user.role) {
     return {
       canManageShifts: false,
@@ -143,16 +148,16 @@ export function useUserCapabilities() {
       canApplyForShifts: false,
       canViewAnalytics: false,
       canAssignShifts: false,
-      canManageTemplates: false
+      canManageTemplates: false,
     };
   }
-  
+
   return {
     canManageShifts: Permissions.canManageShifts(user.role),
     canViewAudit: Permissions.canViewAudit(user.role),
     canApplyForShifts: Permissions.canApplyForShifts(user.role),
     canViewAnalytics: Permissions.canViewAnalytics(user.role),
     canAssignShifts: Permissions.canAssignShifts(user.role),
-    canManageTemplates: Permissions.canManageTemplates(user.role)
+    canManageTemplates: Permissions.canManageTemplates(user.role),
   };
 }

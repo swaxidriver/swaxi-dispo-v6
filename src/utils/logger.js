@@ -6,23 +6,26 @@
 const isTestEnv = (() => {
   try {
     // eslint-disable-next-line no-undef
-    return typeof process !== 'undefined' && process?.env?.JEST_WORKER_ID !== undefined
+    return (
+      typeof process !== "undefined" &&
+      process?.env?.JEST_WORKER_ID !== undefined
+    );
   } catch (_) {
-    return false
+    return false;
   }
-})()
-let silent = isTestEnv
+})();
+let silent = isTestEnv;
 
 export function setLoggerSilent(val) {
-  silent = !!val
+  silent = !!val;
 }
 
 export function logError(...args) {
-  if (!silent) console.error(...args)
+  if (!silent) console.error(...args);
 }
 
 export function logInfo(...args) {
-  if (!silent) console.log(...args)
+  if (!silent) console.log(...args);
 }
 
-export default { logError, logInfo, setLoggerSilent }
+export default { logError, logInfo, setLoggerSilent };

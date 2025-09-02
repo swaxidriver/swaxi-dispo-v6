@@ -80,12 +80,14 @@ The smoke tests cover these core flows:
 All tests use `data-testid` attributes for reliable element selection. Key test IDs include:
 
 ### Navigation
+
 - `main-nav` - Main navigation container
 - `nav-dashboard`, `nav-calendar`, `nav-admin`, `nav-audit` - Navigation links
 - `nav-login`, `nav-logout` - Authentication buttons
 - `feedback-btn` - Feedback button
 
 ### Template Management
+
 - `shift-template-manager` - Template manager container
 - `create-template-form` - Template creation form
 - `template-name-input`, `template-start-time-input`, `template-end-time-input` - Form inputs
@@ -94,11 +96,13 @@ All tests use `data-testid` attributes for reliable element selection. Key test 
 - `template-list` - Template list container
 
 ### Shift Management
+
 - `shift-table` - Shift table container
 - `shift-item` - Individual shift rows
 - `assign-shift-btn` - Assignment button
 
 ### UI Elements
+
 - `conflict-badge`, `conflict-tooltip` - Conflict indicators
 - `export-btn` - Export functionality
 - `version-banner`, `version-reload-btn` - Version update banner
@@ -118,6 +122,7 @@ The Playwright configuration supports:
 ### Screenshots and Videos
 
 Failed tests automatically capture:
+
 - Screenshots (on failure)
 - Videos (retained on failure)
 - Traces (on retry)
@@ -158,16 +163,16 @@ When adding new tests:
 Example test structure:
 
 ```javascript
-test('should perform some action', async ({ page }) => {
+test("should perform some action", async ({ page }) => {
   // Navigate
-  await page.goto('/');
-  
+  await page.goto("/");
+
   // Wait for app to be ready
-  await expect(page.locator('#main-content')).toBeVisible();
-  
+  await expect(page.locator("#main-content")).toBeVisible();
+
   // Perform actions
   await page.click('[data-testid="some-button"]');
-  
+
   // Verify results
   await expect(page.locator('[data-testid="expected-result"]')).toBeVisible();
 });

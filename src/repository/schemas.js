@@ -54,42 +54,50 @@
 // IndexedDB Object Store Configurations
 export const STORES = {
   SHIFT_TEMPLATES: {
-    name: 'shift_templates',
-    keyPath: 'id',
+    name: "shift_templates",
+    keyPath: "id",
     indexes: [
-      { name: 'active', keyPath: 'active', unique: false },
-      { name: 'name', keyPath: 'name', unique: false }
-    ]
+      { name: "active", keyPath: "active", unique: false },
+      { name: "name", keyPath: "name", unique: false },
+    ],
   },
   SHIFT_INSTANCES: {
-    name: 'shift_instances',
-    keyPath: 'id',
+    name: "shift_instances",
+    keyPath: "id",
     indexes: [
-      { name: 'date', keyPath: 'date', unique: false },
-      { name: 'start_dt', keyPath: 'start_dt', unique: false },
-      { name: 'end_dt', keyPath: 'end_dt', unique: false },
-      { name: 'template_id', keyPath: 'template_id', unique: false }
-    ]
+      { name: "date", keyPath: "date", unique: false },
+      { name: "start_dt", keyPath: "start_dt", unique: false },
+      { name: "end_dt", keyPath: "end_dt", unique: false },
+      { name: "template_id", keyPath: "template_id", unique: false },
+    ],
   },
   ASSIGNMENTS: {
-    name: 'assignments',
-    keyPath: 'id',
+    name: "assignments",
+    keyPath: "id",
     indexes: [
-      { name: 'shift_instance_id', keyPath: 'shift_instance_id', unique: false },
-      { name: 'disponent_id', keyPath: 'disponent_id', unique: false },
-      { name: 'status', keyPath: 'status', unique: false },
+      {
+        name: "shift_instance_id",
+        keyPath: "shift_instance_id",
+        unique: false,
+      },
+      { name: "disponent_id", keyPath: "disponent_id", unique: false },
+      { name: "status", keyPath: "status", unique: false },
       // Compound index for unique constraint
-      { name: 'shift_disponent', keyPath: ['shift_instance_id', 'disponent_id'], unique: true }
-    ]
+      {
+        name: "shift_disponent",
+        keyPath: ["shift_instance_id", "disponent_id"],
+        unique: true,
+      },
+    ],
   },
   PERSONS: {
-    name: 'persons',
-    keyPath: 'id',
+    name: "persons",
+    keyPath: "id",
     indexes: [
-      { name: 'email', keyPath: 'email', unique: true },
-      { name: 'role', keyPath: 'role', unique: false }
-    ]
-  }
+      { name: "email", keyPath: "email", unique: true },
+      { name: "role", keyPath: "role", unique: false },
+    ],
+  },
 };
 
 // Database version for migrations
@@ -97,9 +105,9 @@ export const DB_VERSION = 2; // Increment from existing version 1
 
 // Assignment status constants
 export const ASSIGNMENT_STATUS = {
-  ASSIGNED: 'assigned',
-  TENTATIVE: 'tentative',
-  RELEASED: 'released'
+  ASSIGNED: "assigned",
+  TENTATIVE: "tentative",
+  RELEASED: "released",
 };
 
 // Helper functions for weekday mask
@@ -110,7 +118,7 @@ export const WEEKDAY_MASKS = {
   THURSDAY: 8,
   FRIDAY: 16,
   SATURDAY: 32,
-  SUNDAY: 64
+  SUNDAY: 64,
 };
 
 /**
@@ -120,15 +128,15 @@ export const WEEKDAY_MASKS = {
  */
 export function dayNamesToMask(days) {
   const dayMap = {
-    'Mo': WEEKDAY_MASKS.MONDAY,
-    'Tu': WEEKDAY_MASKS.TUESDAY,
-    'We': WEEKDAY_MASKS.WEDNESDAY,
-    'Th': WEEKDAY_MASKS.THURSDAY,
-    'Fr': WEEKDAY_MASKS.FRIDAY,
-    'Sa': WEEKDAY_MASKS.SATURDAY,
-    'Su': WEEKDAY_MASKS.SUNDAY
+    Mo: WEEKDAY_MASKS.MONDAY,
+    Tu: WEEKDAY_MASKS.TUESDAY,
+    We: WEEKDAY_MASKS.WEDNESDAY,
+    Th: WEEKDAY_MASKS.THURSDAY,
+    Fr: WEEKDAY_MASKS.FRIDAY,
+    Sa: WEEKDAY_MASKS.SATURDAY,
+    Su: WEEKDAY_MASKS.SUNDAY,
   };
-  
+
   return days.reduce((mask, day) => mask | (dayMap[day] || 0), 0);
 }
 
@@ -139,13 +147,13 @@ export function dayNamesToMask(days) {
  */
 export function maskToDayNames(mask) {
   const days = [];
-  if (mask & WEEKDAY_MASKS.MONDAY) days.push('Mo');
-  if (mask & WEEKDAY_MASKS.TUESDAY) days.push('Tu');
-  if (mask & WEEKDAY_MASKS.WEDNESDAY) days.push('We');
-  if (mask & WEEKDAY_MASKS.THURSDAY) days.push('Th');
-  if (mask & WEEKDAY_MASKS.FRIDAY) days.push('Fr');
-  if (mask & WEEKDAY_MASKS.SATURDAY) days.push('Sa');
-  if (mask & WEEKDAY_MASKS.SUNDAY) days.push('Su');
+  if (mask & WEEKDAY_MASKS.MONDAY) days.push("Mo");
+  if (mask & WEEKDAY_MASKS.TUESDAY) days.push("Tu");
+  if (mask & WEEKDAY_MASKS.WEDNESDAY) days.push("We");
+  if (mask & WEEKDAY_MASKS.THURSDAY) days.push("Th");
+  if (mask & WEEKDAY_MASKS.FRIDAY) days.push("Fr");
+  if (mask & WEEKDAY_MASKS.SATURDAY) days.push("Sa");
+  if (mask & WEEKDAY_MASKS.SUNDAY) days.push("Su");
   return days;
 }
 
@@ -158,14 +166,14 @@ export function maskToDayNames(mask) {
 export function isDayActive(mask, dayOfWeek) {
   // Convert JS Date.getDay() format (0=Sunday) to our Monday-based format
   const dayMasks = [
-    WEEKDAY_MASKS.SUNDAY,    // 0
-    WEEKDAY_MASKS.MONDAY,    // 1
-    WEEKDAY_MASKS.TUESDAY,   // 2
+    WEEKDAY_MASKS.SUNDAY, // 0
+    WEEKDAY_MASKS.MONDAY, // 1
+    WEEKDAY_MASKS.TUESDAY, // 2
     WEEKDAY_MASKS.WEDNESDAY, // 3
-    WEEKDAY_MASKS.THURSDAY,  // 4
-    WEEKDAY_MASKS.FRIDAY,    // 5
-    WEEKDAY_MASKS.SATURDAY   // 6
+    WEEKDAY_MASKS.THURSDAY, // 4
+    WEEKDAY_MASKS.FRIDAY, // 5
+    WEEKDAY_MASKS.SATURDAY, // 6
   ];
-  
+
   return Boolean(mask & dayMasks[dayOfWeek]);
 }

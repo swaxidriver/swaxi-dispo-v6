@@ -1,42 +1,45 @@
-import { sharePointService } from '../services/sharePointService'
+import { sharePointService } from "../services/sharePointService";
 
-import { ShiftRepository } from './ShiftRepository'
+import { ShiftRepository } from "./ShiftRepository";
 
 // Adapter wrapping existing sharePointService functions to conform to repository interface.
 export class SharePointShiftRepository extends ShiftRepository {
   async list() {
-    return sharePointService.getShifts()
+    return sharePointService.getShifts();
   }
   async create(shift) {
-    return sharePointService.createShift(shift)
+    return sharePointService.createShift(shift);
   }
   async update(id, patch) {
-    await sharePointService.updateShift(id, patch)
+    await sharePointService.updateShift(id, patch);
     // Re-fetch single shift (simplest path) – could optimize later
-    const all = await this.list()
-    return all.find(s => String(s.id) === String(id))
+    const all = await this.list();
+    return all.find((s) => String(s.id) === String(id));
   }
   async applyToShift(id, userId) {
     // For MVP just log audit; real implementation would write to Applications list
-    await sharePointService.logAudit('APPLY_SHIFT', { shiftId: id, userId })
-    return { success: true }
+    await sharePointService.logAudit("APPLY_SHIFT", { shiftId: id, userId });
+    return { success: true };
   }
   async assignShift(id, userName) {
-    await sharePointService.updateShift(id, { status: 'assigned', AssignedTo: userName })
-    return { success: true }
+    await sharePointService.updateShift(id, {
+      status: "assigned",
+      AssignedTo: userName,
+    });
+    return { success: true };
   }
   async cancelShift(id) {
-    await sharePointService.updateShift(id, { status: 'cancelled' })
-    return { success: true }
+    await sharePointService.updateShift(id, { status: "cancelled" });
+    return { success: true };
   }
   async ping() {
     try {
-      const shifts = await sharePointService.getShifts()
-      return Array.isArray(shifts)
+      const shifts = await sharePointService.getShifts();
+      return Array.isArray(shifts);
     } catch {
-      return false
+      return false;
     }
   }
 }
 
-export default SharePointShiftRepository
+export default SharePointShiftRepository;

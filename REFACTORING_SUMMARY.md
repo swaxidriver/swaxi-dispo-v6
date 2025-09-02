@@ -7,6 +7,7 @@ This refactoring successfully reorganized the codebase into feature folders and 
 ### 📁 New Directory Structure
 
 #### Features (`/src/features/`)
+
 ```
 src/features/
 ├── shifts/
@@ -33,6 +34,7 @@ src/features/
 ```
 
 #### Libraries (`/src/lib/`)
+
 ```
 src/lib/
 ├── scheduling.js      # Core scheduling logic (pure functions)
@@ -49,6 +51,7 @@ src/lib/
 The scheduling library provides **pure functions** that are **Copilot-friendly**:
 
 #### Key Functions:
+
 - `calculateTimeOverlap(aStart, aEnd, bStart, bEnd)` - Check if time ranges overlap
 - `calculateShiftDuration(start, end)` - Calculate shift duration in minutes
 - `findSchedulingConflicts(targetShift, existingShifts, applications)` - Find all conflicts
@@ -58,6 +61,7 @@ The scheduling library provides **pure functions** that are **Copilot-friendly**
 - `validateShift(shift)` - Validate shift data structure
 
 #### Copilot-Friendly Features:
+
 - ✅ **Pure functions** (no side effects)
 - ✅ **Clear interfaces** with detailed JSDoc documentation
 - ✅ **Predictable inputs/outputs**
@@ -67,10 +71,11 @@ The scheduling library provides **pure functions** that are **Copilot-friendly**
 ### 🧪 Test Coverage
 
 Created comprehensive tests for the scheduling library:
+
 ```javascript
 // All tests passing ✅
 ✓ detects overlap between regular shifts
-✓ handles overnight shifts correctly  
+✓ handles overnight shifts correctly
 ✓ calculates regular shift duration
 ✓ calculates overnight shift duration
 ✓ detects time overlap conflicts
@@ -92,18 +97,25 @@ Created comprehensive tests for the scheduling library:
 
 ```javascript
 // Import from feature modules
-import { ShiftTable, CreateShiftModal } from '../features/shifts'
-import { SeriesApplicationModal } from '../features/assignments'
-import { Login, RoleManagement } from '../features/people'
+import { ShiftTable, CreateShiftModal } from "../features/shifts";
+import { SeriesApplicationModal } from "../features/assignments";
+import { Login, RoleManagement } from "../features/people";
 
 // Import from utility libraries
-import { calculateTimeOverlap, findSchedulingConflicts } from '../lib/scheduling'
-import { canManageShifts, canViewAudit } from '../lib/rbac'
-import { apiRequest, debounce } from '../lib/api'
+import {
+  calculateTimeOverlap,
+  findSchedulingConflicts,
+} from "../lib/scheduling";
+import { canManageShifts, canViewAudit } from "../lib/rbac";
+import { apiRequest, debounce } from "../lib/api";
 
 // Use pure scheduling functions
-const hasConflict = calculateTimeOverlap('08:00', '12:00', '10:00', '14:00')
-const conflicts = findSchedulingConflicts(newShift, existingShifts, applications)
+const hasConflict = calculateTimeOverlap("08:00", "12:00", "10:00", "14:00");
+const conflicts = findSchedulingConflicts(
+  newShift,
+  existingShifts,
+  applications,
+);
 ```
 
 ### ✅ Acceptance Criteria Met

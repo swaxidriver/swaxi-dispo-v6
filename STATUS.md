@@ -4,11 +4,11 @@ P0-5 definiert ein einfaches, deterministisches Statusmodell für Schichten.
 
 ## Stati
 
-| Status     | Bedeutung                | Notizen |
-|------------|--------------------------|---------|
-| `open`     | Buchbar / Bewerbungen ok | Initialzustand |
-| `assigned` | Zuweisung erfolgt        | Keine Bewerbungen mehr |
-| `cancelled`| Abgesagt                 | Terminal |
+| Status      | Bedeutung                | Notizen                |
+| ----------- | ------------------------ | ---------------------- |
+| `open`      | Buchbar / Bewerbungen ok | Initialzustand         |
+| `assigned`  | Zuweisung erfolgt        | Keine Bewerbungen mehr |
+| `cancelled` | Abgesagt                 | Terminal               |
 
 ## Erlaubte Transitionen
 

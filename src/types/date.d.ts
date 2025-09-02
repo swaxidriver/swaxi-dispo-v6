@@ -11,11 +11,7 @@ interface DateTime {
 }
 
 // Timezone string literals for better type safety
-type Timezone = 
-  | 'Europe/Berlin'
-  | 'Europe/London' 
-  | 'UTC'
-  | string; // Allow other valid timezone strings
+type Timezone = "Europe/Berlin" | "Europe/London" | "UTC" | string; // Allow other valid timezone strings
 
 // Date string in ISO format (YYYY-MM-DD)
 type DateString = string;
@@ -53,14 +49,20 @@ interface ShiftWithDateTime {
 
 // Time utility function types
 interface TimeUtils {
-  create_datetime(dateStr: DateString, timeStr: TimeString, timezone?: Timezone): DateTime;
+  create_datetime(
+    dateStr: DateString,
+    timeStr: TimeString,
+    timezone?: Timezone,
+  ): DateTime;
   to_local(dt: Date | string, timezone?: Timezone): Date;
   to_utc(dt: Date | string, timezone?: Timezone): Date;
   format_datetime(dt: DateTime | Date | null | undefined): string;
   get_timezone_offset(date: Date | string, timezone?: Timezone): number;
   is_overlap(a: DateTimeRange, b: DateTimeRange): boolean;
   compute_duration_dt(start: DateTime | Date, end: DateTime | Date): number;
-  enhance_shift_with_datetime(shift: Partial<ShiftWithDateTime>): ShiftWithDateTime;
+  enhance_shift_with_datetime(
+    shift: Partial<ShiftWithDateTime>,
+  ): ShiftWithDateTime;
 }
 
 // Export the types
@@ -72,7 +74,7 @@ export {
   DateTimeParams,
   DateTimeRange,
   ShiftWithDateTime,
-  TimeUtils
+  TimeUtils,
 };
 
 // Re-export built-in Date type with enhanced methods

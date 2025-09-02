@@ -2,6 +2,12 @@
 
 Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/localStorage** Unterstützung für Stadtwerke Augsburg.
 
+[![Build Status](https://github.com/swaxidriver/swaxi-dispo-v6/actions/workflows/ci.yml/badge.svg)](https://github.com/swaxidriver/swaxi-dispo-v6/actions)
+[![Version](https://img.shields.io/github/package-json/v/swaxidriver/swaxi-dispo-v6)](https://github.com/swaxidriver/swaxi-dispo-v6/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Demo](https://img.shields.io/badge/demo-live-green.svg)](https://swaxidriver.github.io/swaxi-dispo-v6/)
+[![Issues](https://img.shields.io/github/issues/swaxidriver/swaxi-dispo-v6)](https://github.com/swaxidriver/swaxi-dispo-v6/issues)
+
 🌐 **Live Demo:** [https://swaxidriver.github.io/swaxi-dispo-v6/](https://swaxidriver.github.io/swaxi-dispo-v6/)
 
 ## ✨ Features
@@ -67,23 +73,27 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 ## 📚 Documentation
 
 ### **📋 Project Planning & Issue Management**
+
 - **[CSV Import Guide](docs/CSV_IMPORT_GUIDE.md)** - Bulk create GitHub issues from CSV files
 - **[Issue Planning](docs/swaxi_issue_plan.md)** - Comprehensive project structure and templates
 - **[GitHub Issues Template](docs/github-issues.md)** - Structured issue examples
 - **[CSV Templates](docs/templates/)** - Ready-to-use CSV templates for issue import
 
 ### **🔧 Development & Setup**
+
 - **[RBAC Integration](docs/RBAC_INTEGRATION.md)** - Role-based access control documentation
 - **[GitHub Setup Guide](docs/github-setup-guide.md)** - Repository configuration and workflow
 - **[Contrast Audit Plan](docs/contrast-audit-plan.md)** - Accessibility compliance guidelines
 
 ### **🛠 Scripts & Automation**
+
 - **[Import Script](scripts/import-issues.sh)** - Automated CSV to GitHub issues import
 - **[Validation Script](scripts/validate-csv.sh)** - CSV format and data validation tool
 - **GitHub CLI Integration** - Bulk operations and automation tools
 - **Development Scripts** - Build, test, and deployment automation
 
 ### **📖 Quick References**
+
 - **Project Structure**: Modular React architecture with context-based state management
 - **Issue Workflow**: CSV → GitHub Issues → Epics → Milestones → Implementation
 - **Test Coverage**: Comprehensive test suite accessible at `/test` route
@@ -160,12 +170,12 @@ Schichtzeiten werden rein als `HH:MM` Strings verarbeitet und mittels `toMinutes
 
 Konflikte werden pro Schicht dynamisch berechnet (`computeShiftConflicts` in `src/utils/shifts.js`). Aktuelle Codes:
 
-| Code | Beschreibung |
-|------|--------------|
-| `TIME_OVERLAP` | Zeitliche Überlappung mit mind. einer anderen Schicht |
-| `DOUBLE_APPLICATION` | Ein Benutzer hat sich auf überlappende Schichten beworben |
-| `ASSIGNMENT_COLLISION` | Überlappende Schichten derselben Person zugewiesen |
-| `LOCATION_MISMATCH` | Überlappende zugewiesene Schichten gleicher Person aber widersprüchlicher Arbeitsort |
+| Code                   | Beschreibung                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `TIME_OVERLAP`         | Zeitliche Überlappung mit mind. einer anderen Schicht                                |
+| `DOUBLE_APPLICATION`   | Ein Benutzer hat sich auf überlappende Schichten beworben                            |
+| `ASSIGNMENT_COLLISION` | Überlappende Schichten derselben Person zugewiesen                                   |
+| `LOCATION_MISMATCH`    | Überlappende zugewiesene Schichten gleicher Person aber widersprüchlicher Arbeitsort |
 
 UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping auf verständlichere Texte / Icons möglich.
 
@@ -176,7 +186,7 @@ UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping 
 - **`sharePointService.js`** - Intelligente SharePoint Integration mit automatischem Fallback
 - **`ShiftContext.jsx`** - Zentrale Datenverwaltung mit dual-source support
 - **`ConnectionStatus.jsx`** - Real-time Status-Anzeige der Datenquelle
-**`firebaseConfig.js` (stub)** - Firebase aktuell deaktiviert / Platzhalter. Re-Aktivierung geplant.
+  **`firebaseConfig.js` (stub)** - Firebase aktuell deaktiviert / Platzhalter. Re-Aktivierung geplant.
 
 ### **📊 Analytics & Monitoring**
 
@@ -221,11 +231,11 @@ npm run lint
 
 Layered Strategy (v2):
 
-| Layer | Pfad | Zweck | Tools |
-|-------|------|-------|-------|
-| Unit | `src/tests/unit` | Pure Funktionen, Reducer, kleine Komponenten | Jest + RTL |
-| Integration | `src/tests/integration` | Kontext + Services + Persistence Zusammenspiel | Jest + RTL + fake-indexeddb |
-| Accessibility | `src/tests/a11y` | Semantik, Kontraste, Fokus-Fluss | jest-axe + Custom Matcher |
+| Layer         | Pfad                    | Zweck                                          | Tools                       |
+| ------------- | ----------------------- | ---------------------------------------------- | --------------------------- |
+| Unit          | `src/tests/unit`        | Pure Funktionen, Reducer, kleine Komponenten   | Jest + RTL                  |
+| Integration   | `src/tests/integration` | Kontext + Services + Persistence Zusammenspiel | Jest + RTL + fake-indexeddb |
+| Accessibility | `src/tests/a11y`        | Semantik, Kontraste, Fokus-Fluss               | jest-axe + Custom Matcher   |
 
 Custom Matcher: `expect(container).toHaveNoA11yViolations()` (siehe `jest.setup.js`).
 
@@ -269,14 +279,14 @@ Features:
 Example:
 
 ```jsx
-import ErrorBoundary from './components/ErrorBoundary'
+import ErrorBoundary from "./components/ErrorBoundary";
 
 function Root() {
-   return (
-      <ErrorBoundary>
-         <AppRoutes />
-      </ErrorBoundary>
-   )
+  return (
+    <ErrorBoundary>
+      <AppRoutes />
+    </ErrorBoundary>
+  );
 }
 ```
 
@@ -286,7 +296,6 @@ Telemetry & Logger Tipps:
 - `dispatchErrorTelemetry(payload)` wird vom `ErrorBoundary` genutzt; gibt `true` (gesendet) oder `false` (kein Handler) zurück.
 - `setLoggerSilent(true)` für eingebettete Iframes / Storybook.
 - Remote Logging: eigenen Handler registrieren oder in Handler intern `fetch('/error-log', { method:'POST', body: JSON.stringify(payload) })` verwenden.
-
 
 ## 🚀 Deployment
 
@@ -365,7 +374,7 @@ User Action → ShiftContext → sharePointService
 - **`HYBRID_TESTING_GUIDE.md`** - Sofort testbare Features
 - **`docs/archive/SHAREPOINT_SETUP.md`** - (Archiv) SharePoint Integration Guide
 - (Archiv) Historische Backlogs jetzt unter `docs/archive/` (`BACKLOG.md`, `PRIORITIZED_BACKLOG.md`)
-**Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
+  **Firebase Hinweis**: Firebase ist derzeit deaktiviert (stub). MigrationService-Funktionen sind bis zur Aktivierung ausgesetzt.
 
 ### Historische Planung / Backlog
 
@@ -473,8 +482,9 @@ Seit v0.3.1 sind semantische Design-Tokens als Tailwind-Utilities verfügbar:
 Seit v0.3.x ist eine konsistente Spacing Scale als CSS Custom Properties verfügbar:
 
 **Verfügbare Werte:**
+
 - `--space-1`: 4px
-- `--space-2`: 8px  
+- `--space-2`: 8px
 - `--space-3`: 12px
 - `--space-4`: 16px
 - `--space-6`: 24px
@@ -484,13 +494,17 @@ Seit v0.3.x ist eine konsistente Spacing Scale als CSS Custom Properties verfüg
 **Verwendung in Komponenten:**
 
 ```jsx
-{/* Mit CSS Custom Properties */}
-<div style={{ padding: 'var(--space-4)', margin: 'var(--space-2)' }}>
+{
+  /* Mit CSS Custom Properties */
+}
+<div style={{ padding: "var(--space-4)", margin: "var(--space-2)" }}>
   Konsistente Abstände
-</div>
+</div>;
 
-{/* Als CSS-Klassen (bei Bedarf) */}
-<div className="space-4">Content mit Standard-Spacing</div>
+{
+  /* Als CSS-Klassen (bei Bedarf) */
+}
+<div className="space-4">Content mit Standard-Spacing</div>;
 ```
 
 **Best Practice:** Verwende ausschließlich Werte aus der Spacing Scale für Padding, Margin und Gaps. Vermeide hardcodierte Pixelwerte (13, 18, 22px etc.).
@@ -544,7 +558,7 @@ This generates `src/styles/tokens.json` with structured token data:
   "light": {
     "colors": {
       "color-primary": "#222F88",
-      "color-accent": "#27ADE7",
+      "color-accent": "#27ADE7"
       // ... all light theme colors
     },
     "typography": {
@@ -564,7 +578,7 @@ This generates `src/styles/tokens.json` with structured token data:
   },
   "dark": {
     "colors": {
-      "color-primary": "#8094ff",
+      "color-primary": "#8094ff"
       // ... dark theme overrides
     }
   }
@@ -574,40 +588,44 @@ This generates `src/styles/tokens.json` with structured token data:
 #### Usage Examples
 
 **Figma Plugin Integration:**
+
 ```javascript
-import tokens from './src/styles/tokens.json';
+import tokens from "./src/styles/tokens.json";
 
 // Create Figma color styles from tokens
 Object.entries(tokens.light.colors).forEach(([name, value]) => {
   figma.createPaintStyle({
     name: `Light/${name}`,
-    paints: [{ type: 'SOLID', color: hexToRgb(value) }]
+    paints: [{ type: "SOLID", color: hexToRgb(value) }],
   });
 });
 ```
 
 **Storybook Theme Config:**
+
 ```javascript
-import tokens from '../src/styles/tokens.json';
+import tokens from "../src/styles/tokens.json";
 
 export const lightTheme = {
   colors: tokens.light.colors,
   typography: tokens.light.typography,
-  spacing: tokens.light.spacing
+  spacing: tokens.light.spacing,
 };
 ```
 
 **Build Tool Integration:**
+
 ```javascript
 // Custom CSS-in-JS theme generation
-import tokens from './tokens.json';
+import tokens from "./tokens.json";
 
 const theme = {
   colors: Object.fromEntries(
     Object.entries(tokens.light.colors).map(([k, v]) => [
-      k.replace('color-', ''), v
-    ])
-  )
+      k.replace("color-", ""),
+      v,
+    ]),
+  ),
 };
 ```
 

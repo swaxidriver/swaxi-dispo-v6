@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Project Hygiene)
+
+- **LICENSE file** - MIT License for open source project
+- **Repository Metadata** - Added description, homepage, repository URLs, keywords to package.json
+- **README Badges** - Build status, version, license, demo, and issues badges
+- **GitHub Repository Settings Guide** (`docs/github-repository-settings.md`) - Recommended topics and settings for repository discoverability
+
 ### Added (Documentation)
 
 - **CSV Import Guide** (`docs/CSV_IMPORT_GUIDE.md`) - Comprehensive documentation for bulk creating GitHub issues from structured CSV data
@@ -54,7 +61,6 @@ All notable changes to this project will be documented in this file.
 - Expand role-based conditional rendering tests to other components (Shift creation, templates, audit gating).
 - Introduce test categorization folders (unit/, integration/, accessibility/).
 - Consider migrating offline queue tests to isolated integration suite.
-
 
 ## [0.2.0] - 2025-08-26
 

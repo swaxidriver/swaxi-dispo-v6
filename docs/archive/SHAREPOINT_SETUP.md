@@ -14,6 +14,7 @@ Re-Aktivierung Schritte:
 Fallback Verhalten: Ist das Flag `false`, erzwingt `repositoryFactory` eine automatische Rückfall-Logik und nutzt IndexedDB auch wenn `VITE_SHIFT_BACKEND=sharepoint` gesetzt wurde.
 
 ---
+
 Gekürzte Original-Notizen (vollständige Version in Git Historie):
 
 - Listen: Shifts, Users, Applications, AuditLog

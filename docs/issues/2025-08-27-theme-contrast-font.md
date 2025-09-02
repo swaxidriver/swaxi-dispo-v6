@@ -28,4 +28,5 @@ Date: 2025-08-27
 Re-run after second emphasis adjustment (`#4f67d2`): all contrast pairs PASS (button text ratio ≈5.00).
 
 ---
+
 Tracking document; consider converting to GitHub issue if external tracker preferred.

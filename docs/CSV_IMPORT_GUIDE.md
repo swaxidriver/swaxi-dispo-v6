@@ -12,22 +12,22 @@ The CSV import process allows you to bulk create GitHub issues from structured d
 
 The CSV file should contain the following columns:
 
-| Column | Description | Example | Required |
-|--------|-------------|---------|----------|
-| `title` | Issue title following project naming convention | `[P1] Feature: Live Update Banner` | ✅ |
-| `priority` | Priority level (P0, P1, P2) | `P1` | ✅ |
-| `type` | Issue type (feature, bug, docs, chore) | `feature` | ✅ |
-| `area` | Project area (UI, state, perf, docs, etc.) | `UI` | ✅ |
-| `epic` | Epic identifier (E0, E1, E2, etc.) | `E1` | ✅ |
-| `milestone` | Target milestone | `v6.3.0` | ✅ |
-| `context` | Problem description | `Users can't see version changes` | ✅ |
-| `outcome` | Expected user-visible outcome | `Banner shows when new version detected` | ✅ |
-| `scope_ui` | UI scope description | `Sticky banner with reload button` | ✅ |
-| `scope_state` | State scope description | `Version comparison logic` | ✅ |
-| `acceptance_criteria` | Acceptance criteria (semicolon-separated) | `Poll version periodically;Show banner on change` | ✅ |
-| `test_cases` | Test cases (semicolon-separated) | `Version change shows banner;Click reload refreshes` | ✅ |
-| `notes` | Notes for implementation | `Touch files: index.html, styles block` | ❌ |
-| `labels` | Additional labels (comma-separated) | `i18n,accessibility` | ❌ |
+| Column                | Description                                     | Example                                              | Required |
+| --------------------- | ----------------------------------------------- | ---------------------------------------------------- | -------- |
+| `title`               | Issue title following project naming convention | `[P1] Feature: Live Update Banner`                   | ✅       |
+| `priority`            | Priority level (P0, P1, P2)                     | `P1`                                                 | ✅       |
+| `type`                | Issue type (feature, bug, docs, chore)          | `feature`                                            | ✅       |
+| `area`                | Project area (UI, state, perf, docs, etc.)      | `UI`                                                 | ✅       |
+| `epic`                | Epic identifier (E0, E1, E2, etc.)              | `E1`                                                 | ✅       |
+| `milestone`           | Target milestone                                | `v6.3.0`                                             | ✅       |
+| `context`             | Problem description                             | `Users can't see version changes`                    | ✅       |
+| `outcome`             | Expected user-visible outcome                   | `Banner shows when new version detected`             | ✅       |
+| `scope_ui`            | UI scope description                            | `Sticky banner with reload button`                   | ✅       |
+| `scope_state`         | State scope description                         | `Version comparison logic`                           | ✅       |
+| `acceptance_criteria` | Acceptance criteria (semicolon-separated)       | `Poll version periodically;Show banner on change`    | ✅       |
+| `test_cases`          | Test cases (semicolon-separated)                | `Version change shows banner;Click reload refreshes` | ✅       |
+| `notes`               | Notes for implementation                        | `Touch files: index.html, styles block`              | ❌       |
+| `labels`              | Additional labels (comma-separated)             | `i18n,accessibility`                                 | ❌       |
 
 ### Example CSV Content
 
@@ -65,22 +65,27 @@ Use this template for the issue body, filling in values from CSV columns:
 **Epic:** {epic} - {epic_description}
 
 ### Context
+
 - **Problem:** {context}
 - **Outcome (user visible):** {outcome}
 - **Non-goals:** [From context or manual input]
 
 ### Scope
+
 - **UI:** {scope_ui}
 - **State:** {scope_state}
 - **Edge cases:** [Manual input if needed]
 
 ### Acceptance Criteria
+
 {acceptance_criteria split by semicolon into bullet points}
 
 ### Test Plan
+
 {test_cases split by semicolon into test cases}
 
 ### Notes for Copilot
+
 {notes}
 ```
 
@@ -105,6 +110,7 @@ chmod +x scripts/import-issues.sh
 ```
 
 **Script Features:**
+
 - ✅ **Dry run mode** - Preview what will be created without making changes
 - ✅ **Error handling** - Validates CSV format and GitHub authentication
 - ✅ **Rate limiting** - Prevents API rate limit issues

@@ -3,6 +3,26 @@
   "private": true,
   "version": "0.3.0",
   "type": "module",
+  "description": "Modern shift planning system for Swaxi drivers with hybrid SharePoint/localStorage support",
+  "license": "MIT",
+  "homepage": "https://swaxidriver.github.io/swaxi-dispo-v6/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swaxidriver/swaxi-dispo-v6.git"
+  },
+  "bugs": {
+    "url": "https://github.com/swaxidriver/swaxi-dispo-v6/issues"
+  },
+  "keywords": [
+    "shift-planning",
+    "react",
+    "typescript",
+    "vite",
+    "tailwindcss",
+    "sharepoint",
+    "indexeddb",
+    "scheduling"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

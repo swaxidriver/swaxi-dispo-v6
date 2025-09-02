@@ -1,7 +1,7 @@
-import { addDays, format } from 'date-fns';
+import { addDays, format } from "date-fns";
 
-import { EnhancedIndexedDBRepository } from '../repository/EnhancedIndexedDBRepository';
-import { dayNamesToMask, isDayActive } from '../repository/schemas';
+import { EnhancedIndexedDBRepository } from "../repository/EnhancedIndexedDBRepository";
+import { dayNamesToMask, isDayActive } from "../repository/schemas";
 
 /**
  * Seed service for populating initial data according to P0 requirements:
@@ -19,55 +19,63 @@ export class SeedService {
   getDefaultTemplates() {
     return [
       {
-        id: 'template_frueh',
-        name: 'Frueh',
-        weekday_mask: dayNamesToMask(['Mo', 'Tu', 'We', 'Th', 'Fr']), // Weekdays only
-        start_time: '06:00',
-        end_time: '14:00',
+        id: "template_frueh",
+        name: "Frueh",
+        weekday_mask: dayNamesToMask(["Mo", "Tu", "We", "Th", "Fr"]), // Weekdays only
+        start_time: "06:00",
+        end_time: "14:00",
         cross_midnight: false,
-        color: '#3B82F6', // Blue
-        active: true
+        color: "#3B82F6", // Blue
+        active: true,
       },
       {
-        id: 'template_spaet',
-        name: 'Spaet',
-        weekday_mask: dayNamesToMask(['Mo', 'Tu', 'We', 'Th', 'Fr']), // Weekdays only
-        start_time: '14:00',
-        end_time: '22:00',
+        id: "template_spaet",
+        name: "Spaet",
+        weekday_mask: dayNamesToMask(["Mo", "Tu", "We", "Th", "Fr"]), // Weekdays only
+        start_time: "14:00",
+        end_time: "22:00",
         cross_midnight: false,
-        color: '#F59E0B', // Amber
-        active: true
+        color: "#F59E0B", // Amber
+        active: true,
       },
       {
-        id: 'template_nacht',
-        name: 'Nacht',
-        weekday_mask: dayNamesToMask(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']), // All days
-        start_time: '22:00',
-        end_time: '06:00',
+        id: "template_nacht",
+        name: "Nacht",
+        weekday_mask: dayNamesToMask([
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr",
+          "Sa",
+          "Su",
+        ]), // All days
+        start_time: "22:00",
+        end_time: "06:00",
         cross_midnight: true,
-        color: '#8B5CF6', // Purple
-        active: true
+        color: "#8B5CF6", // Purple
+        active: true,
       },
       {
-        id: 'template_weekend_early',
-        name: 'Weekend Early',
-        weekday_mask: dayNamesToMask(['Sa', 'Su']), // Weekends only
-        start_time: '11:45',
-        end_time: '21:00',
+        id: "template_weekend_early",
+        name: "Weekend Early",
+        weekday_mask: dayNamesToMask(["Sa", "Su"]), // Weekends only
+        start_time: "11:45",
+        end_time: "21:00",
         cross_midnight: false,
-        color: '#10B981', // Emerald
-        active: true
+        color: "#10B981", // Emerald
+        active: true,
       },
       {
-        id: 'template_weekend_night',
-        name: 'Weekend Night',
-        weekday_mask: dayNamesToMask(['Sa', 'Su']), // Weekends only
-        start_time: '21:00',
-        end_time: '05:30',
+        id: "template_weekend_night",
+        name: "Weekend Night",
+        weekday_mask: dayNamesToMask(["Sa", "Su"]), // Weekends only
+        start_time: "21:00",
+        end_time: "05:30",
         cross_midnight: true,
-        color: '#EF4444', // Red
-        active: true
-      }
+        color: "#EF4444", // Red
+        active: true,
+      },
     ];
   }
 
@@ -79,9 +87,13 @@ export class SeedService {
    */
   async generateShiftInstances(startDate = new Date(), weeks = 8) {
     try {
-      const templates = await this.repository.listShiftTemplates({ active: true });
+      const templates = await this.repository.listShiftTemplates({
+        active: true,
+      });
       if (!templates || !Array.isArray(templates) || templates.length === 0) {
-        console.warn('No active templates found for generating shift instances');
+        console.warn(
+          "No active templates found for generating shift instances",
+        );
         return [];
       }
 
@@ -91,7 +103,7 @@ export class SeedService {
       for (let dayOffset = 0; dayOffset < totalDays; dayOffset++) {
         const currentDate = addDays(startDate, dayOffset);
         const dayOfWeek = currentDate.getDay(); // 0=Sunday, 1=Monday, etc.
-        const dateString = format(currentDate, 'yyyy-MM-dd');
+        const dateString = format(currentDate, "yyyy-MM-dd");
 
         for (const template of templates) {
           // Check if template is active for this day of week
@@ -99,7 +111,7 @@ export class SeedService {
             const instance = this._createShiftInstanceFromTemplate(
               template,
               currentDate,
-              dateString
+              dateString,
             );
             instances.push(instance);
           }
@@ -108,7 +120,7 @@ export class SeedService {
 
       return instances;
     } catch (error) {
-      console.error('Error generating shift instances:', error);
+      console.error("Error generating shift instances:", error);
       return [];
     }
   }
@@ -122,7 +134,7 @@ export class SeedService {
       date,
       template.start_time,
       template.end_time,
-      template.cross_midnight
+      template.cross_midnight,
     );
 
     return {
@@ -131,7 +143,7 @@ export class SeedService {
       start_dt,
       end_dt,
       template_id: template.id,
-      notes: null
+      notes: null,
     };
   }
 
@@ -140,8 +152,8 @@ export class SeedService {
    * @private
    */
   _calculateDatetimes(date, startTime, endTime, crossMidnight) {
-    const [startHour, startMin] = startTime.split(':').map(Number);
-    const [endHour, endMin] = endTime.split(':').map(Number);
+    const [startHour, startMin] = startTime.split(":").map(Number);
+    const [endHour, endMin] = endTime.split(":").map(Number);
 
     const start_dt = new Date(date);
     start_dt.setHours(startHour, startMin, 0, 0);
@@ -163,35 +175,35 @@ export class SeedService {
   getDefaultPersons() {
     return [
       {
-        id: 'person_admin',
-        name: 'Admin User',
-        email: 'admin@swaxi.local',
-        role: 'admin'
+        id: "person_admin",
+        name: "Admin User",
+        email: "admin@swaxi.local",
+        role: "admin",
       },
       {
-        id: 'person_chief',
-        name: 'Chief Dispatcher',
-        email: 'chief@swaxi.local',
-        role: 'chief'
+        id: "person_chief",
+        name: "Chief Dispatcher",
+        email: "chief@swaxi.local",
+        role: "chief",
       },
       {
-        id: 'person_disp1',
-        name: 'Dispatcher One',
-        email: 'disp1@swaxi.local',
-        role: 'disponent'
+        id: "person_disp1",
+        name: "Dispatcher One",
+        email: "disp1@swaxi.local",
+        role: "disponent",
       },
       {
-        id: 'person_disp2',
-        name: 'Dispatcher Two',
-        email: 'disp2@swaxi.local',
-        role: 'disponent'
+        id: "person_disp2",
+        name: "Dispatcher Two",
+        email: "disp2@swaxi.local",
+        role: "disponent",
       },
       {
-        id: 'person_analyst',
-        name: 'Data Analyst',
-        email: 'analyst@swaxi.local',
-        role: 'analyst'
-      }
+        id: "person_analyst",
+        name: "Data Analyst",
+        email: "analyst@swaxi.local",
+        role: "analyst",
+      },
     ];
   }
 
@@ -203,12 +215,17 @@ export class SeedService {
       const templates = await this.repository.listShiftTemplates();
       const instances = await this.repository.listShiftInstances();
       const persons = await this.repository.listPersons();
-      
-      return (templates && templates.length === 0) && 
-             (instances && instances.length === 0) && 
-             (persons && persons.length === 0);
+
+      return (
+        templates &&
+        templates.length === 0 &&
+        instances &&
+        instances.length === 0 &&
+        persons &&
+        persons.length === 0
+      );
     } catch (error) {
-      console.warn('Could not check seeding status:', error);
+      console.warn("Could not check seeding status:", error);
       return true; // Assume needs seeding if we can't check
     }
   }
@@ -218,10 +235,10 @@ export class SeedService {
    */
   async seedIfEmpty() {
     const needsSeeding = await this.needsSeeding();
-    
+
     if (!needsSeeding) {
-      console.log('Database already has data, skipping seed');
-      return { seeded: false, reason: 'Database not empty' };
+      console.log("Database already has data, skipping seed");
+      return { seeded: false, reason: "Database not empty" };
     }
 
     return this.performSeed();
@@ -232,12 +249,12 @@ export class SeedService {
    */
   async performSeed() {
     try {
-      console.log('Starting database seeding...');
+      console.log("Starting database seeding...");
       const results = {
         templates: 0,
         instances: 0,
         persons: 0,
-        errors: []
+        errors: [],
       };
 
       // 1. Seed shift templates
@@ -271,26 +288,31 @@ export class SeedService {
           await this.repository.createShiftInstance(instance);
           results.instances++;
         } catch (error) {
-          console.error(`Failed to create shift instance ${instance.id}:`, error);
+          console.error(
+            `Failed to create shift instance ${instance.id}:`,
+            error,
+          );
           results.errors.push(`Instance ${instance.id}: ${error.message}`);
         }
       }
 
-      console.log(`Seeding completed: ${results.templates} templates, ${results.instances} instances, ${results.persons} persons`);
-      
+      console.log(
+        `Seeding completed: ${results.templates} templates, ${results.instances} instances, ${results.persons} persons`,
+      );
+
       if (results.errors.length > 0) {
-        console.warn('Seeding had errors:', results.errors);
+        console.warn("Seeding had errors:", results.errors);
       }
 
       return {
         seeded: true,
-        results
+        results,
       };
     } catch (error) {
-      console.error('Seeding failed:', error);
+      console.error("Seeding failed:", error);
       return {
         seeded: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -301,10 +323,12 @@ export class SeedService {
   async clearAll() {
     try {
       // Note: This would require implementation of delete methods in the repository
-      console.warn('clearAll not implemented - would require delete methods in repository');
-      return { cleared: false, reason: 'Not implemented' };
+      console.warn(
+        "clearAll not implemented - would require delete methods in repository",
+      );
+      return { cleared: false, reason: "Not implemented" };
     } catch (error) {
-      console.error('Clear failed:', error);
+      console.error("Clear failed:", error);
       return { cleared: false, error: error.message };
     }
   }
