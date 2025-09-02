@@ -117,7 +117,7 @@ describe("Accessibility Loading Components", () => {
       );
 
       expect(mainOverlay).toBeInTheDocument();
-      expect(screen.getByText("Daten werden geladen...")).toBeInTheDocument();
+      expect(screen.getAllByText("Daten werden geladen...")).toHaveLength(2); // Both SR and visible text
     });
 
     it("only shows content when not loading", () => {

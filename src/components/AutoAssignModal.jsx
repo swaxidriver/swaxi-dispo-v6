@@ -3,6 +3,8 @@ import { Dialog } from "@headlessui/react";
 
 import { useI18n } from "../hooks/useI18n";
 
+import { LoadingButton } from "./LoadingComponents";
+
 /**
  * AutoAssignModal - Confirmation modal for auto-assignment with preview
  * Features:
@@ -198,22 +200,23 @@ export default function AutoAssignModal({
                 type="button"
                 onClick={onClose}
                 disabled={isConfirming || isProcessing}
+                aria-disabled={isConfirming || isProcessing}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Abbrechen
               </button>
-              <button
+              <LoadingButton
                 type="button"
                 onClick={handleConfirm}
+                isLoading={isConfirming || isProcessing}
                 disabled={isConfirming || isProcessing || !hasAssignments}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                loadingText="Zuweisungen werden verarbeitet..."
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
               >
-                {isConfirming || isProcessing
-                  ? "Zuweisen..."
-                  : hasAssignments
-                    ? `${plannedAssignments.length} Zuweisung${plannedAssignments.length !== 1 ? "en" : ""} bestätigen`
-                    : "Keine Zuweisungen möglich"}
-              </button>
+                {hasAssignments
+                  ? `${plannedAssignments.length} Zuweisung${plannedAssignments.length !== 1 ? "en" : ""} bestätigen`
+                  : "Keine Zuweisungen möglich"}
+              </LoadingButton>
             </div>
           </div>
         </Dialog.Panel>

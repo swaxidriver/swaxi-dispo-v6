@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
+import { LoadingButton } from "./LoadingComponents";
+
 // Helper to format date consistently for display
 const formatDateForDisplay = (date) => {
   const d = new Date(date);
@@ -204,23 +206,25 @@ export default function ApplicationConfirmationModal({
               paddingBottom: "var(--space-1)",
             }}
             disabled={isSubmitting}
+            aria-disabled={isSubmitting}
           >
             Abbrechen
           </button>
-          <button
+          <LoadingButton
             type="button"
             onClick={handleConfirm}
-            className="text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            isLoading={isSubmitting}
+            loadingText="Bewerbung wird eingereicht..."
+            className="text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
             style={{
               paddingLeft: "var(--space-3)",
               paddingRight: "var(--space-3)",
               paddingTop: "var(--space-1)",
               paddingBottom: "var(--space-1)",
             }}
-            disabled={isSubmitting}
           >
-            {isSubmitting ? "Bewerbe..." : "Bewerben"}
-          </button>
+            Bewerben
+          </LoadingButton>
         </div>
       </div>
     </div>
