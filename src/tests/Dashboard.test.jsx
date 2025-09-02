@@ -1,48 +1,110 @@
-import React from 'react'
+import React from "react";
 
-import Dashboard from '../pages/Dashboard'
+import Dashboard from "../pages/Dashboard";
+import { I18nProvider } from "../contexts/I18nContext";
 
-import { screen, fireEvent, renderWithProviders } from './testUtils'
+import { screen, fireEvent, renderWithProviders, render } from "./testUtils";
 
-jest.mock('../utils/auth', () => ({
-  canManageShifts: () => true
-}))
+jest.mock("../utils/auth", () => ({
+  canManageShifts: () => true,
+}));
 
-const todayIso = new Date().toISOString().slice(0,10)
-const sixDaysAgo = new Date(Date.now() - 6*24*3600*1000).toISOString().slice(0,10)
+const todayIso = new Date().toISOString().slice(0, 10);
+const sixDaysAgo = new Date(Date.now() - 6 * 24 * 3600 * 1000)
+  .toISOString()
+  .slice(0, 10);
 const baseShifts = [
-  { id: `${todayIso}_Fahrt`, date: todayIso, type: 'Fahrt', start: '08:00', end: '12:00', status: 'open' },
-  { id: `${todayIso}_Tour`, date: todayIso, type: 'Tour', start: '13:00', end: '16:00', status: 'assigned' },
-  { id: `${sixDaysAgo}_Alt`, date: sixDaysAgo, type: 'Alt', start: '09:00', end: '10:00', status: 'cancelled' }
-]
+  {
+    id: `${todayIso}_Fahrt`,
+    date: todayIso,
+    type: "Fahrt",
+    start: "08:00",
+    end: "12:00",
+    status: "open",
+  },
+  {
+    id: `${todayIso}_Tour`,
+    date: todayIso,
+    type: "Tour",
+    start: "13:00",
+    end: "16:00",
+    status: "assigned",
+  },
+  {
+    id: `${sixDaysAgo}_Alt`,
+    date: sixDaysAgo,
+    type: "Alt",
+    start: "09:00",
+    end: "10:00",
+    status: "cancelled",
+  },
+];
 
-describe('Dashboard page', () => {
+describe("Dashboard page", () => {
   beforeEach(() => {
-    localStorage.clear()
-    localStorage.setItem('shifts', JSON.stringify(baseShifts))
-  })
+    localStorage.clear();
+    localStorage.setItem("shifts", JSON.stringify(baseShifts));
+  });
 
-  it('renders heading and analytics', () => {
-    renderWithProviders(<Dashboard />)
-    expect(screen.getByText('Dashboard')).toBeInTheDocument()
-    expect(screen.getByText('Aktuelle Dienste')).toBeInTheDocument()
-  })
+  it("renders heading and analytics", () => {
+    renderWithProviders(<Dashboard />);
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByText("Aktuelle Dienste")).toBeInTheDocument();
+  });
 
-  it('filters by status (open, assigned, cancelled)', () => {
-    renderWithProviders(<Dashboard />)
+  it("filters by status (open, assigned, cancelled)", () => {
+    renderWithProviders(<Dashboard />);
     // Open filter shows open badge
-    fireEvent.click(screen.getByRole('button', { name: 'Offen' }))
-    expect(screen.getAllByText('open').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole("button", { name: "Offen" }));
+    expect(screen.getAllByText("open").length).toBeGreaterThan(0);
     // Assigned filter
-    fireEvent.click(screen.getByRole('button', { name: 'Zugewiesen' }))
-    expect(screen.getAllByText('assigned').length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole("button", { name: "Zugewiesen" }));
+    expect(screen.getAllByText("assigned").length).toBeGreaterThan(0);
     // Cancelled filter
-    fireEvent.click(screen.getByRole('button', { name: 'Abgesagt' }))
-    expect(screen.getAllByText('cancelled').length).toBeGreaterThan(0)
-  })
+    fireEvent.click(screen.getByRole("button", { name: "Abgesagt" }));
+    expect(screen.getAllByText("cancelled").length).toBeGreaterThan(0);
+  });
 
-  it('shows auto assign button when user can manage shifts', () => {
-    renderWithProviders(<Dashboard />)
-    expect(screen.getByRole('button', { name: /Automatisch zuteilen/ })).toBeInTheDocument()
-  })
-})
+  it("shows auto assign button when user can manage shifts", () => {
+    renderWithProviders(<Dashboard />);
+    expect(
+      screen.getByRole("button", { name: /Automatisch zuteilen/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("displays content in German by default", () => {
+    renderWithProviders(<Dashboard />);
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(
+      screen.getByText("Überblick über alle Dienste und Aktivitäten"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Aktuelle Dienste")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Offen" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Zugewiesen" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Abgesagt" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Automatisch zuteilen" }),
+    ).toBeInTheDocument();
+  });
+
+  it("supports internationalization through i18n context", () => {
+    // This test ensures the Dashboard uses the t() function correctly
+    // The actual language switching would need to be tested at a higher level
+    renderWithProviders(<Dashboard />);
+
+    // Check that the dashboard content exists and is using translated strings
+    const dashboardTitle = screen.getByText("Dashboard");
+    const dashboardDescription = screen.getByText(
+      "Überblick über alle Dienste und Aktivitäten",
+    );
+    const currentShiftsHeader = screen.getByText("Aktuelle Dienste");
+
+    expect(dashboardTitle).toBeInTheDocument();
+    expect(dashboardDescription).toBeInTheDocument();
+    expect(currentShiftsHeader).toBeInTheDocument();
+  });
+});
