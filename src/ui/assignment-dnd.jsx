@@ -588,26 +588,29 @@ export default function AssignmentDragDrop() {
                   <div className="flex items-start justify-between">
                     {/* Checkbox for selection */}
                     <div className="flex items-start gap-3">
-                      <input
-                        type="checkbox"
-                        className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        checked={selectedShifts.has(shift.id)}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          if (e.target.checked) {
-                            setSelectedShifts(
-                              (prev) => new Set([...prev, shift.id]),
-                            );
-                          } else {
-                            setSelectedShifts((prev) => {
-                              const next = new Set(prev);
-                              next.delete(shift.id);
-                              return next;
-                            });
-                          }
-                        }}
-                        aria-label={`Schicht ${shift.type || shift.name} auswählen`}
-                      />
+                      {/* Visual selection indicator - not interactive */}
+                      <div
+                        className={`mt-1 h-4 w-4 border-2 rounded transition-colors ${
+                          selectedShifts.has(shift.id)
+                            ? "bg-blue-600 border-blue-600"
+                            : "border-gray-300"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {selectedShifts.has(shift.id) && (
+                          <svg
+                            className="w-3 h-3 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                      </div>
 
                       {/* Shift details */}
                       <div className="flex-1">
@@ -791,16 +794,9 @@ export default function AssignmentDragDrop() {
                         aria-label={`Status: ${disp.availability}`}
                       />
                       {selectedShifts.size > 0 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleBulkAssign(disp.name);
-                          }}
-                          className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
-                          aria-label={`Assign ${selectedShifts.size} selected shifts to ${disp.name}`}
-                        >
+                        <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded">
                           Assign {selectedShifts.size}
-                        </button>
+                        </span>
                       )}
                     </div>
                   </div>

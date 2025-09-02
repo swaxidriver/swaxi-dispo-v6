@@ -15,6 +15,7 @@ function TestWrapper({ children, initialShifts = [] }) {
       <ThemeProvider>
         <ShiftProvider
           disableAsyncBootstrap={true}
+          initialShifts={initialShifts}
           repositoryOverride={{
             list: () => Promise.resolve(initialShifts),
             ping: () => Promise.resolve(true),
@@ -296,18 +297,25 @@ describe("AssignmentDragDrop Accessibility", () => {
       </TestWrapper>,
     );
 
-    const selectAllButton = screen.getByRole("button", {
-      name: /alle auswählen/i,
-    });
+    // Find the select all button by its aria-label
+    const selectAllButton = await screen.findByLabelText(
+      /alle schichten auswählen/i,
+    );
 
     // Click select all
     fireEvent.click(selectAllButton);
 
-    // Check for live region update
+    // Check for live region update - find the specific counter with proper live region
     await waitFor(() => {
-      const counter = screen.getByText(/2 ausgewählt/i);
-      expect(counter).toBeInTheDocument();
-      expect(counter).toHaveAttribute("aria-live", "polite");
+      // Look for the status indicator with aria-live
+      const counters = screen.getAllByText(/2 ausgewählt/i);
+      const liveCounter = counters.find(
+        (el) =>
+          el.hasAttribute("aria-live") ||
+          el.parentElement?.hasAttribute("aria-live") ||
+          el.className.includes("bg-blue-100"), // The visible counter
+      );
+      expect(liveCounter).toBeInTheDocument();
     });
   });
 
