@@ -228,30 +228,38 @@
     flex-direction: column;
     gap: var(--space-4);
   }
-  
+
   .calendar-mobile-day-card {
     background: white;
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    padding: var(--space-4);
+    padding: 0; /* Remove padding to allow header to extend full width */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensure sticky header doesn't overflow */
   }
-  
+
   .calendar-mobile-day-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-3);
+    margin-bottom: 0; /* Remove margin since we're using padding */
+    padding: var(--space-3) var(--space-4);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--color-border);
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
-  
+
   .calendar-mobile-shifts {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    padding: var(--space-3) var(--space-4) var(--space-4);
   }
-  
+
   .calendar-mobile-shift-item {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -262,30 +270,30 @@
     flex-direction: column;
     gap: var(--space-1);
   }
-  
+
   .calendar-mobile-shift-time {
     font-size: 0.75rem;
     color: var(--color-muted);
     font-weight: 500;
   }
-  
+
   .calendar-mobile-shift-name {
     font-weight: 600;
     color: var(--color-text);
   }
-  
+
   .calendar-mobile-shift-status {
     font-size: 0.75rem;
     padding: 2px 6px;
     border-radius: 4px;
     align-self: flex-start;
   }
-  
+
   /* Hide horizontal scroll and force vertical layout */
   .calendar-week-container {
     overflow-x: hidden;
   }
-  
+
   .calendar-week-grid {
     min-width: unset;
     width: 100%;
@@ -306,7 +314,7 @@
     min-height: 44px;
     padding: var(--space-3) var(--space-4);
   }
-  
+
   .view-mode-toggle button {
     min-height: 44px;
     padding: var(--space-3) var(--space-4);

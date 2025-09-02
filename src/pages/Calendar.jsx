@@ -108,81 +108,131 @@ const CalendarCell = React.memo(
 CalendarCell.displayName = "CalendarCell";
 
 // Mobile Calendar Day Card Component
-const MobileCalendarDay = React.memo(({ 
-  day, 
-  shifts, 
-  onShiftClick, 
-  onQuickAction, 
-  templates, 
-  isToday 
-}) => (
-  <div className="calendar-mobile-day-card" role="region" aria-labelledby={`mobile-day-${day.getDate()}`}>
-    <div className="calendar-mobile-day-header">
-      <div>
-        <h3 id={`mobile-day-${day.getDate()}`} className="text-lg font-semibold text-gray-900">
-          {day.toLocaleDateString("de-DE", { weekday: "long" })}
-        </h3>
-        <p className="text-sm text-gray-500">
-          {day.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}
-          {isToday && <span className="ml-2 text-blue-600 font-medium">(Heute)</span>}
-        </p>
-      </div>
-      <div className="text-right">
-        <span className="text-sm text-gray-600">
-          {shifts.length === 0 ? "Keine Dienste" : `${shifts.length} Dienst${shifts.length > 1 ? "e" : ""}`}
-        </span>
-      </div>
-    </div>
-    
-    {shifts.length > 0 ? (
-      <div className="calendar-mobile-shifts" role="list" aria-label={`Dienste für ${day.toLocaleDateString("de-DE", { weekday: "long" })}`}>
-        {shifts.map((shift) => (
-          <div
-            key={shift.id}
-            className="calendar-mobile-shift-item"
-            role="listitem"
-            tabIndex={0}
-            aria-label={`${shift.type || shift.name}, ${shift.start} bis ${shift.end}, ${shift.assignedTo ? `zugewiesen an ${shift.assignedTo}` : "offen"}`}
-            onClick={() => onShiftClick?.(shift)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onShiftClick?.(shift);
-              }
-            }}
-            style={{
-              borderLeftColor: getShiftTemplateColor(shift, templates),
-              borderLeftWidth: "4px",
-            }}
-          >
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <div className="calendar-mobile-shift-name">
-                  {shift.type || shift.name}
-                </div>
-                <div className="calendar-mobile-shift-time">
-                  {shift.start} - {shift.end}
-                </div>
-              </div>
-              <div className={`calendar-mobile-shift-status ${shift.assignedTo ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}>
-                {shift.assignedTo ? shift.assignedTo : "Offen"}
-              </div>
-            </div>
-            {shift.conflicts?.length > 0 && (
-              <div className="mt-2">
-                <ConflictBadge conflicts={shift.conflicts} />
-              </div>
+const MobileCalendarDay = React.memo(
+  ({ day, shifts, onShiftClick, onQuickAction, templates, isToday }) => {
+    // Calculate compressed time range for mobile display
+    const getTimeRange = () => {
+      if (shifts.length === 0) return null;
+
+      const times = shifts.map((shift) => ({
+        start: shift.start,
+        end: shift.end,
+      }));
+
+      const startTimes = times.map((t) => t.start).sort();
+      const endTimes = times.map((t) => t.end).sort();
+
+      const earliestStart = startTimes[0];
+      const latestEnd = endTimes[endTimes.length - 1];
+
+      return { start: earliestStart, end: latestEnd };
+    };
+
+    const timeRange = getTimeRange();
+
+    return (
+      <div
+        className="calendar-mobile-day-card"
+        role="region"
+        aria-labelledby={`mobile-day-${day.getDate()}`}
+      >
+        <div
+          className="calendar-mobile-day-header"
+          role="banner"
+          aria-label={`Tagesübersicht für ${day.toLocaleDateString("de-DE", { weekday: "long" })}`}
+        >
+          <div>
+            <h3
+              id={`mobile-day-${day.getDate()}`}
+              className="text-lg font-semibold text-gray-900"
+            >
+              {day.toLocaleDateString("de-DE", { weekday: "long" })}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {day.toLocaleDateString("de-DE", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+              {isToday && (
+                <span className="ml-2 text-blue-600 font-medium">(Heute)</span>
+              )}
+            </p>
+            {timeRange && (
+              <p
+                className="text-xs text-gray-400 mt-1"
+                aria-label={`Dienste von ${timeRange.start} bis ${timeRange.end}`}
+              >
+                📅 {timeRange.start} - {timeRange.end}
+              </p>
             )}
           </div>
-        ))}
+          <div className="text-right">
+            <span className="text-sm text-gray-600">
+              {shifts.length === 0
+                ? "Keine Dienste"
+                : `${shifts.length} Dienst${shifts.length > 1 ? "e" : ""}`}
+            </span>
+          </div>
+        </div>
+
+        {shifts.length > 0 ? (
+          <nav
+            className="calendar-mobile-shifts"
+            role="list"
+            aria-label={`Dienste für ${day.toLocaleDateString("de-DE", { weekday: "long" })}`}
+          >
+            {shifts.map((shift) => (
+              <div
+                key={shift.id}
+                className="calendar-mobile-shift-item"
+                role="listitem"
+                tabIndex={0}
+                aria-label={`${shift.type || shift.name}, ${shift.start} bis ${shift.end}, ${shift.assignedTo ? `zugewiesen an ${shift.assignedTo}` : "offen"}`}
+                onClick={() => onShiftClick?.(shift)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onShiftClick?.(shift);
+                  }
+                }}
+                style={{
+                  borderLeftColor: getShiftTemplateColor(shift, templates),
+                  borderLeftWidth: "4px",
+                }}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="calendar-mobile-shift-name">
+                      {shift.type || shift.name}
+                    </div>
+                    <div className="calendar-mobile-shift-time">
+                      {shift.start} - {shift.end}
+                    </div>
+                  </div>
+                  <div
+                    className={`calendar-mobile-shift-status ${shift.assignedTo ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800"}`}
+                  >
+                    {shift.assignedTo ? shift.assignedTo : "Offen"}
+                  </div>
+                </div>
+                {shift.conflicts?.length > 0 && (
+                  <div className="mt-2">
+                    <ConflictBadge conflicts={shift.conflicts} />
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <div className="text-sm">Keine Dienste an diesem Tag</div>
+          </div>
+        )}
       </div>
-    ) : (
-      <div className="text-center py-8 text-gray-500">
-        <div className="text-sm">Keine Dienste an diesem Tag</div>
-      </div>
-    )}
-  </div>
-));
+    );
+  },
+);
 MobileCalendarDay.displayName = "MobileCalendarDay";
 
 export default function Calendar() {
@@ -236,18 +286,18 @@ export default function Calendar() {
   // Mobile device detection with resize handling
   const isMobileDevice = useMobileDevice();
   const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1024
+    typeof window !== "undefined" ? window.innerWidth : 1024,
   );
-  
+
   React.useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   const isMobile = isMobileDevice || windowWidth <= 420;
 
   // Drag & Drop state
@@ -744,19 +794,28 @@ export default function Calendar() {
 
       {viewMode === "assignment" ? (
         // Assignment View
-        <div className="bg-white shadow rounded-lg" style={{ height: 'calc(var(--vh-dynamic, 1vh) * 100 - 12rem)' }}>
+        <div
+          className="bg-white shadow rounded-lg"
+          style={{ height: "calc(var(--vh-dynamic, 1vh) * 100 - 12rem)" }}
+        >
           <AssignmentDragDrop />
         </div>
       ) : viewMode === "week" ? (
         // Week View - Mobile vs Desktop Layout
         isMobile ? (
           // Mobile Vertical Calendar Layout
-          <div
+          <main
             id="calendar-content-mobile"
             className="calendar-mobile-vertical"
             role="application"
             aria-label="Mobile Wochenkalender"
+            aria-describedby="mobile-calendar-description"
           >
+            <div id="mobile-calendar-description" className="sr-only">
+              Mobile Kalenderansicht mit klebrigen Tagesüberschriften und
+              komprimierter Zeitanzeige. Navigieren Sie mit Pfeiltasten zwischen
+              den Diensten.
+            </div>
             {DAYS.map((dayName, dayIdx) => {
               const dayDate = new Date(weekStart);
               dayDate.setDate(weekStart.getDate() + dayIdx);
@@ -764,7 +823,7 @@ export default function Calendar() {
               dayStart.setHours(0, 0, 0, 0);
               const dayEnd = new Date(dayStart);
               dayEnd.setDate(dayEnd.getDate() + 1);
-              
+
               const dayShifts = weekShifts.filter((shift) => {
                 const base = buildDate(shift.date);
                 const s = combine(base, shift.start);
@@ -773,7 +832,8 @@ export default function Calendar() {
                 return s < dayEnd && e > dayStart;
               });
 
-              const isToday = dayDate.toDateString() === new Date().toDateString();
+              const isToday =
+                dayDate.toDateString() === new Date().toDateString();
 
               return (
                 <MobileCalendarDay
@@ -787,7 +847,7 @@ export default function Calendar() {
                 />
               );
             })}
-          </div>
+          </main>
         ) : (
           // Desktop Horizontal Calendar Layout
           <div
@@ -796,158 +856,162 @@ export default function Calendar() {
             role="application"
             aria-label="Wochenkalender"
           >
-            <div className="min-w-[960px] calendar-week-grid" onKeyDown={handleCalendarKeyDown}>
-            {/* Header */}
             <div
-              className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
-              role="rowgroup"
+              className="min-w-[960px] calendar-week-grid"
+              onKeyDown={handleCalendarKeyDown}
             >
+              {/* Header */}
               <div
-                className="p-2 text-xs font-medium text-gray-500"
-                role="columnheader"
+                className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
+                role="rowgroup"
               >
-                Zeit
-              </div>
-              {DAYS.map((label, idx) => {
-                const d = new Date(weekStart);
-                d.setDate(weekStart.getDate() + idx);
-                return (
-                  <div
-                    key={label}
-                    className="p-2 text-center text-xs font-medium text-gray-600"
-                    role="columnheader"
-                    aria-label={`${label}, ${d.toLocaleDateString("de-DE", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}`}
-                  >
-                    <div>{label}</div>
-                    <div className="text-[10px] text-gray-400">
-                      {d.toLocaleDateString("de-DE", {
+                <div
+                  className="p-2 text-xs font-medium text-gray-500"
+                  role="columnheader"
+                >
+                  Zeit
+                </div>
+                {DAYS.map((label, idx) => {
+                  const d = new Date(weekStart);
+                  d.setDate(weekStart.getDate() + idx);
+                  return (
+                    <div
+                      key={label}
+                      className="p-2 text-center text-xs font-medium text-gray-600"
+                      role="columnheader"
+                      aria-label={`${label}, ${d.toLocaleDateString("de-DE", {
                         day: "2-digit",
                         month: "2-digit",
+                        year: "numeric",
+                      })}`}
+                    >
+                      <div>{label}</div>
+                      <div className="text-[10px] text-gray-400">
+                        {d.toLocaleDateString("de-DE", {
+                          day: "2-digit",
+                          month: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div
+                className="grid grid-cols-8"
+                role="grid"
+                aria-label={`Kalenderwoche vom ${weekStart.toLocaleDateString("de-DE")}`}
+              >
+                {/* Time column */}
+                <div
+                  className="relative border-r border-gray-200"
+                  style={{ height: DAY_HEIGHT }}
+                >
+                  {HOURS.map((h, i) => (
+                    <div
+                      key={h}
+                      className="absolute left-0 w-full flex items-start"
+                      style={{ top: i * PX_PER_HOUR }}
+                    >
+                      <div className="text-[10px] text-gray-400 pl-1 -mt-2">
+                        {h}
+                      </div>
+                      <div className="w-full h-px bg-gray-100 translate-y-4" />
+                    </div>
+                  ))}
+                </div>
+                {/* Day columns */}
+                {DAYS.map((_, dayIdx) => {
+                  const dayDate = new Date(weekStart);
+                  dayDate.setDate(weekStart.getDate() + dayIdx);
+                  const dayStart = new Date(dayDate);
+                  dayStart.setHours(0, 0, 0, 0);
+                  const dayEnd = new Date(dayStart);
+                  dayEnd.setDate(dayEnd.getDate() + 1);
+                  const dayShifts = weekShifts.filter((shift) => {
+                    const base = buildDate(shift.date);
+                    const s = combine(base, shift.start);
+                    let e = combine(base, shift.end);
+                    if (e <= s) e.setDate(e.getDate() + 1);
+                    return s < dayEnd && e > dayStart;
+                  });
+                  return (
+                    <div
+                      key={dayIdx}
+                      className={`relative border-r border-gray-100 ${
+                        dragOverDay &&
+                        dragOverDay.getTime() === dayDate.getTime()
+                          ? "bg-blue-50"
+                          : ""
+                      }`}
+                      style={{ height: DAY_HEIGHT }}
+                      role="gridcell"
+                      tabIndex={0}
+                      aria-label={`${DAYS[dayIdx]}, ${dayDate.toLocaleDateString("de-DE")}${dayShifts.length > 0 ? `, ${dayShifts.length} Dienst${dayShifts.length > 1 ? "e" : ""}` : ", keine Dienste"}`}
+                      onDragOver={(e) => handleDayDragOver(e, dayDate)}
+                      onDragLeave={handleDayDragLeave}
+                      onDrop={(e) => handleDayDrop(e, dayDate)}
+                      onFocus={() => setFocusedDay(dayDate)}
+                      onBlur={() => setFocusedDay(null)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          // Open create shift modal for this day
+                          setSelectedDate(dayDate);
+                          setIsCreateOpen(true);
+                        }
+                      }}
+                    >
+                      {/* Hour grid lines */}
+                      {HOURS.map((_, i) => (
+                        <div
+                          key={i}
+                          className="absolute left-0 w-full h-px bg-gray-100"
+                          style={{ top: i * PX_PER_HOUR }}
+                        />
+                      ))}
+
+                      {/* Drag preview indicator */}
+                      {dragOverDay &&
+                        dragOverDay.getTime() === dayDate.getTime() &&
+                        dragOverTime && (
+                          <div
+                            className="absolute left-0 right-0 h-1 bg-blue-400 opacity-75 z-10"
+                            style={{
+                              top:
+                                ((parseInt(dragOverTime.split(":")[0]) * 60 +
+                                  parseInt(dragOverTime.split(":")[1])) /
+                                  DAY_MINUTES) *
+                                DAY_HEIGHT,
+                            }}
+                          />
+                        )}
+
+                      {dayShifts.map((shift) => {
+                        const span = getShiftSpanForDay(shift, dayDate);
+                        if (!span) return null;
+                        return (
+                          <TimelineShiftCell
+                            key={`${shift.id}_${dayIdx}`}
+                            shift={shift}
+                            templates={templates}
+                            span={span}
+                            dayIdx={dayIdx}
+                            onShiftClick={handleShiftClick}
+                            onQuickAction={handleQuickAction}
+                            onDragStart={(e) => handleShiftDragStart(e, shift)}
+                            onDragEnd={handleShiftDragEnd}
+                            isDraggable={canManageShifts(userRole)}
+                            isDragged={draggedShift?.id === shift.id}
+                            conflicts={shift.conflicts || []}
+                          />
+                        );
                       })}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div
-              className="grid grid-cols-8"
-              role="grid"
-              aria-label={`Kalenderwoche vom ${weekStart.toLocaleDateString("de-DE")}`}
-            >
-              {/* Time column */}
-              <div
-                className="relative border-r border-gray-200"
-                style={{ height: DAY_HEIGHT }}
-              >
-                {HOURS.map((h, i) => (
-                  <div
-                    key={h}
-                    className="absolute left-0 w-full flex items-start"
-                    style={{ top: i * PX_PER_HOUR }}
-                  >
-                    <div className="text-[10px] text-gray-400 pl-1 -mt-2">
-                      {h}
-                    </div>
-                    <div className="w-full h-px bg-gray-100 translate-y-4" />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-              {/* Day columns */}
-              {DAYS.map((_, dayIdx) => {
-                const dayDate = new Date(weekStart);
-                dayDate.setDate(weekStart.getDate() + dayIdx);
-                const dayStart = new Date(dayDate);
-                dayStart.setHours(0, 0, 0, 0);
-                const dayEnd = new Date(dayStart);
-                dayEnd.setDate(dayEnd.getDate() + 1);
-                const dayShifts = weekShifts.filter((shift) => {
-                  const base = buildDate(shift.date);
-                  const s = combine(base, shift.start);
-                  let e = combine(base, shift.end);
-                  if (e <= s) e.setDate(e.getDate() + 1);
-                  return s < dayEnd && e > dayStart;
-                });
-                return (
-                  <div
-                    key={dayIdx}
-                    className={`relative border-r border-gray-100 ${
-                      dragOverDay && dragOverDay.getTime() === dayDate.getTime()
-                        ? "bg-blue-50"
-                        : ""
-                    }`}
-                    style={{ height: DAY_HEIGHT }}
-                    role="gridcell"
-                    tabIndex={0}
-                    aria-label={`${DAYS[dayIdx]}, ${dayDate.toLocaleDateString("de-DE")}${dayShifts.length > 0 ? `, ${dayShifts.length} Dienst${dayShifts.length > 1 ? "e" : ""}` : ", keine Dienste"}`}
-                    onDragOver={(e) => handleDayDragOver(e, dayDate)}
-                    onDragLeave={handleDayDragLeave}
-                    onDrop={(e) => handleDayDrop(e, dayDate)}
-                    onFocus={() => setFocusedDay(dayDate)}
-                    onBlur={() => setFocusedDay(null)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        // Open create shift modal for this day
-                        setSelectedDate(dayDate);
-                        setIsCreateOpen(true);
-                      }
-                    }}
-                  >
-                    {/* Hour grid lines */}
-                    {HOURS.map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute left-0 w-full h-px bg-gray-100"
-                        style={{ top: i * PX_PER_HOUR }}
-                      />
-                    ))}
-
-                    {/* Drag preview indicator */}
-                    {dragOverDay &&
-                      dragOverDay.getTime() === dayDate.getTime() &&
-                      dragOverTime && (
-                        <div
-                          className="absolute left-0 right-0 h-1 bg-blue-400 opacity-75 z-10"
-                          style={{
-                            top:
-                              ((parseInt(dragOverTime.split(":")[0]) * 60 +
-                                parseInt(dragOverTime.split(":")[1])) /
-                                DAY_MINUTES) *
-                              DAY_HEIGHT,
-                          }}
-                        />
-                      )}
-
-                    {dayShifts.map((shift) => {
-                      const span = getShiftSpanForDay(shift, dayDate);
-                      if (!span) return null;
-                      return (
-                        <TimelineShiftCell
-                          key={`${shift.id}_${dayIdx}`}
-                          shift={shift}
-                          templates={templates}
-                          span={span}
-                          dayIdx={dayIdx}
-                          onShiftClick={handleShiftClick}
-                          onQuickAction={handleQuickAction}
-                          onDragStart={(e) => handleShiftDragStart(e, shift)}
-                          onDragEnd={handleShiftDragEnd}
-                          isDraggable={canManageShifts(userRole)}
-                          isDragged={draggedShift?.id === shift.id}
-                          conflicts={shift.conflicts || []}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-              })}
             </div>
           </div>
-        </div>
         )
       ) : (
         // Month View
