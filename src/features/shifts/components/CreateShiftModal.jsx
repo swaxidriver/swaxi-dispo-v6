@@ -10,6 +10,7 @@ import {
   createFormSubmitHandler,
 } from "../../../ui/form-validation";
 import { useI18n } from "../../../hooks/useI18n";
+import { LoadingButton } from "../../../components/LoadingComponents";
 
 // Validation rules for the shift form
 const shiftValidator = createValidator({
@@ -317,16 +318,15 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
           >
             {t("cancel")}
           </button>
-          <button
+          <LoadingButton
             type="submit"
+            isLoading={createShiftOp.isLoading}
             disabled={createShiftOp.isLoading || !formState.isValid}
-            className="btn btn-primary text-sm px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            loadingText="Speichert Schicht..."
+            className="btn btn-primary text-sm px-3 py-1"
           >
-            {createShiftOp.isLoading && (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            )}
             Speichern
-          </button>
+          </LoadingButton>
         </div>
       </form>
     </div>

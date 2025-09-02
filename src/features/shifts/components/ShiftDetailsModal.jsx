@@ -11,6 +11,7 @@ import { describeConflicts } from "../../../utils/conflicts";
 import { computeDuration } from "../../../utils/shifts";
 import { logError } from "../../../utils/logger";
 import ApplicationConfirmationModal from "../../../components/ApplicationConfirmationModal";
+import { LoadingButton } from "../../../components/LoadingComponents";
 
 function ShiftDetailsModal({
   shift,
@@ -244,25 +245,29 @@ function ShiftDetailsModal({
                   {/* Actions */}
                   <div className="mt-6 flex space-x-3">
                     {canApply && (
-                      <button
+                      <LoadingButton
                         type="button"
+                        isLoading={isApplying}
                         disabled={isApplying || hasConflicts}
                         onClick={handleApply}
-                        className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        loadingText="Bewerbung wird eingereicht..."
+                        className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >
-                        {isApplying ? "Bewerbe..." : "Bewerben"}
-                      </button>
+                        Bewerben
+                      </LoadingButton>
                     )}
 
                     {canAssign && shift.status === "open" && (
-                      <button
+                      <LoadingButton
                         type="button"
+                        isLoading={isAssigning}
                         disabled={isAssigning}
                         onClick={handleAssign}
-                        className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        loadingText="Schicht wird zugewiesen..."
+                        className="flex-1 inline-flex justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                       >
-                        {isAssigning ? "Zuweisen..." : "Zuweisen"}
-                      </button>
+                        Zuweisen
+                      </LoadingButton>
                     )}
 
                     <button
