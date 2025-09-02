@@ -63,7 +63,7 @@ const APP_COMMIT =
 function Footer({ onOpenChangelog }) {
   return (
     <footer
-      className="mt-auto py-4 text-center text-sm text-gray-500"
+      className="mt-auto py-4 text-center text-sm text-gray-500 safe-bottom safe-x"
       role="contentinfo"
       aria-label="Seiteninformationen"
     >

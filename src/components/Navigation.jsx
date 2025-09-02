@@ -43,7 +43,7 @@ export default function Navigation() {
       </a>
 
       <nav
-        className="bg-[var(--color-primary)]"
+        className="bg-[var(--color-primary)] safe-top safe-x"
         aria-label="Hauptnavigation"
         data-testid="main-nav"
         role="banner"
