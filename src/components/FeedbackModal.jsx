@@ -94,7 +94,7 @@ export default function FeedbackModal() {
           <button
             onClick={close}
             aria-label="Schließen"
-            className="text-gray-600 hover:text-gray-900 focus:outline-brand-accent"
+            className="text-gray-600 hover:text-gray-900 focus:outline-brand-accent focus-ring-primary"
           >
             ✕
           </button>
@@ -121,7 +121,7 @@ export default function FeedbackModal() {
               id="fb-category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="block w-full rounded border-gray-300 shadow-sm"
+              className="block w-full rounded border-gray-300 shadow-sm focus-ring-primary"
               style={{ marginTop: "var(--space-1)" }}
             >
               <option value="general">Allgemein</option>
@@ -143,7 +143,7 @@ export default function FeedbackModal() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={5}
-              className="block w-full rounded border-gray-300 shadow-sm"
+              className="block w-full rounded border-gray-300 shadow-sm focus-ring-primary"
               style={{ marginTop: "var(--space-1)" }}
               placeholder="Beschreibe dein Problem oder deine Idee…"
             />
@@ -156,7 +156,7 @@ export default function FeedbackModal() {
               <button
                 type="button"
                 onClick={exportJson}
-                className="text-xs rounded bg-gray-100 hover:bg-gray-200"
+                className="text-xs rounded bg-gray-100 hover:bg-gray-200 focus-ring-primary"
                 style={{
                   paddingLeft: "var(--space-2)",
                   paddingRight: "var(--space-2)",
@@ -169,7 +169,7 @@ export default function FeedbackModal() {
               <button
                 type="submit"
                 disabled={!message.trim()}
-                className="rounded bg-brand-accent text-white disabled:opacity-40"
+                className="rounded bg-brand-accent text-white disabled:opacity-40 focus-ring-accent"
                 style={{
                   paddingLeft: "var(--space-3)",
                   paddingRight: "var(--space-3)",

@@ -65,7 +65,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border rounded px-2 py-1"
+            className="w-full border rounded px-2 py-1 focus-ring-primary"
           />
         </div>
         <div className="space-y-1">
@@ -76,7 +76,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
             id="shift-type"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="w-full border rounded px-2 py-1"
+            className="w-full border rounded px-2 py-1 focus-ring-primary"
           >
             <option value="early">Früh</option>
             <option value="evening">Abend</option>
@@ -93,7 +93,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
               type="time"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border rounded px-2 py-1 focus-ring-primary"
             />
           </div>
           <div className="space-y-1">
@@ -105,7 +105,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
               type="time"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="w-full border rounded px-2 py-1"
+              className="w-full border rounded px-2 py-1 focus-ring-primary"
             />
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
             id="shift-location"
             value={workLocation}
             onChange={(e) => setWorkLocation(e.target.value)}
-            className="w-full border rounded px-2 py-1"
+            className="w-full border rounded px-2 py-1 focus-ring-primary"
           >
             <option value="">-- bitte wählen --</option>
             <option value="office">Büro</option>

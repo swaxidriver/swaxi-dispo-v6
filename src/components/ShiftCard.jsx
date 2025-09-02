@@ -195,7 +195,7 @@ function ShiftCard({
                         <button
                           disabled={assignDisabled}
                           onClick={() => !assignDisabled && onAssign(shift.id)}
-                          className={`w-full inline-flex items-center justify-center rounded-md text-sm font-semibold shadow-sm ring-1 ring-inset ${
+                          className={`w-full inline-flex items-center justify-center rounded-md text-sm font-semibold shadow-sm ring-1 ring-inset focus-ring-primary ${
                             assignDisabled
                               ? "bg-gray-200 text-gray-500 cursor-not-allowed ring-gray-200"
                               : "bg-white text-gray-900 ring-gray-300 hover:bg-gray-50"
@@ -231,7 +231,7 @@ function ShiftCard({
                     <button
                       disabled={cancelDisabled}
                       onClick={() => !cancelDisabled && onCancel(shift.id)}
-                      className={`w-full inline-flex items-center justify-center rounded-md text-sm font-semibold shadow-sm ${
+                      className={`w-full inline-flex items-center justify-center rounded-md text-sm font-semibold shadow-sm focus-ring-danger ${
                         cancelDisabled
                           ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                           : "bg-red-600 text-white hover:bg-red-500"
