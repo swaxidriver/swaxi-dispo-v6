@@ -13,7 +13,7 @@ Hallo IT-Team,
 ich möchte eine digitale Lösung für unsere Schichtplanung entwickeln und dafür SharePoint Listen nutzen.
 
 Anfrage:
-- SharePoint Site: "Swaxi Disposition" 
+- SharePoint Site: "Swaxi Disposition"
 - Berechtigung: Listen erstellen und verwalten
 - Zweck: Digitalisierung der manuellen Schichtplanung
 - Nutzer: ~20 Mitarbeiter (Disponenten, Fahrer)
@@ -26,7 +26,7 @@ Vorteile:
 
 Benötigte Listen:
 1. Schichten (Shifts)
-2. Mitarbeiter (Users) 
+2. Mitarbeiter (Users)
 3. Bewerbungen (Applications)
 4. Änderungsprotokoll (Audit)
 
@@ -37,10 +37,11 @@ Vielen Dank!
 ### Step 2: Create SharePoint Lists
 
 #### List 1: "Shifts" (Schichten)
+
 ```
 Spalten:
 - Title (Text) → "Schicht ID"
-- ShiftDate (Datum) → "Schichtdatum"  
+- ShiftDate (Datum) → "Schichtdatum"
 - StartTime (Text) → "Startzeit"
 - EndTime (Text) → "Endzeit"
 - ShiftType (Auswahl) → "Schichttyp"
@@ -54,6 +55,7 @@ Spalten:
 ```
 
 #### List 2: "Users" (Mitarbeiter)
+
 ```
 Spalten:
 - Title (Text) → "Name"
@@ -65,6 +67,7 @@ Spalten:
 ```
 
 #### List 3: "Applications" (Bewerbungen)
+
 ```
 Spalten:
 - Title (Text) → "Bewerbungs ID"
@@ -83,7 +86,7 @@ Spalten:
 
 ```javascript
 // In your ShiftContext.jsx
-import { sharePointService } from '../services/sharePointService';
+import { sharePointService } from "../services/sharePointService";
 
 export function ShiftProvider({ children }) {
   const [state, dispatch] = useReducer(shiftReducer, initialState);
@@ -92,7 +95,7 @@ export function ShiftProvider({ children }) {
   useEffect(() => {
     // Check if SharePoint is available
     sharePointService.isSharePointAvailable().then(setIsOnline);
-    
+
     // Load shifts
     loadShifts();
   }, []);
@@ -100,35 +103,37 @@ export function ShiftProvider({ children }) {
   const loadShifts = async () => {
     try {
       const shifts = await sharePointService.getShifts();
-      dispatch({ type: 'SET_SHIFTS', payload: shifts });
+      dispatch({ type: "SET_SHIFTS", payload: shifts });
     } catch (error) {
-      console.error('Error loading shifts:', error);
+      console.error("Error loading shifts:", error);
     }
   };
 
   const createShift = async (shiftData) => {
     try {
       const newShift = await sharePointService.createShift(shiftData);
-      dispatch({ type: 'ADD_SHIFT', payload: newShift });
-      
+      dispatch({ type: "ADD_SHIFT", payload: newShift });
+
       // Log audit trail
-      await sharePointService.logAudit('SHIFT_CREATED', {
+      await sharePointService.logAudit("SHIFT_CREATED", {
         shiftId: newShift.id,
-        date: shiftData.date
+        date: shiftData.date,
       });
     } catch (error) {
-      console.error('Error creating shift:', error);
+      console.error("Error creating shift:", error);
     }
   };
 
   return (
-    <ShiftContext.Provider value={{ 
-      state, 
-      dispatch, 
-      createShift, 
-      loadShifts,
-      isOnline 
-    }}>
+    <ShiftContext.Provider
+      value={{
+        state,
+        dispatch,
+        createShift,
+        loadShifts,
+        isOnline,
+      }}
+    >
       {children}
     </ShiftContext.Provider>
   );
@@ -141,17 +146,13 @@ export function ShiftProvider({ children }) {
 // Add to your Dashboard or App component
 function ConnectionStatus() {
   const { isOnline } = useShifts();
-  
+
   return (
-    <div className={`status-indicator ${isOnline ? 'online' : 'offline'}`}>
+    <div className={`status-indicator ${isOnline ? "online" : "offline"}`}>
       {isOnline ? (
-        <>
-          🟢 SharePoint verbunden
-        </>
+        <>🟢 SharePoint verbunden</>
       ) : (
-        <>
-          🟡 Offline-Modus (localStorage)
-        </>
+        <>🟡 Offline-Modus (localStorage)</>
       )}
     </div>
   );
@@ -172,29 +173,31 @@ function ConnectionStatus() {
 // src/config/environment.js
 export const config = {
   sharePoint: {
-    siteUrl: 'https://stadtwerke-augsburg.sharepoint.com/sites/swaxi-dispo',
+    siteUrl: "https://stadtwerke-augsburg.sharepoint.com/sites/swaxi-dispo",
     enabled: true,
-    fallbackToLocalStorage: true
+    fallbackToLocalStorage: true,
   },
   features: {
     realTimeUpdates: true,
     auditLogging: true,
-    conflictDetection: true
-  }
+    conflictDetection: true,
+  },
 };
 ```
 
 ## 📊 Benefits for Stadtwerke Augsburg
 
 ### Immediate Benefits:
+
 - ✅ No additional licensing costs
-- ✅ Uses existing IT infrastructure  
+- ✅ Uses existing IT infrastructure
 - ✅ Integrates with Active Directory
 - ✅ Follows municipal security standards
 - ✅ Mobile access for field workers
 - ✅ Automatic backups included
 
 ### Future Expansion:
+
 - 📈 Add Power BI dashboards for management
 - 🔄 Integrate with other municipal systems
 - 📱 Create Power Apps for different departments
@@ -213,6 +216,7 @@ export const config = {
 ## 🔧 Technical Notes
 
 ### SharePoint REST API Endpoints:
+
 ```
 Get Items: /_api/web/lists/getbytitle('ListName')/items
 Create Item: /_api/web/lists/getbytitle('ListName')/items (POST)
@@ -221,6 +225,7 @@ Delete Item: /_api/web/lists/getbytitle('ListName')/items(ID) (DELETE)
 ```
 
 ### Authentication:
+
 - Uses Windows Authentication when on Stadtwerke network
 - Falls back to localStorage for development
 - No additional login required for users

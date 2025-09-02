@@ -13,7 +13,7 @@ export const toast = {
    * @param {number} duration - Duration in ms (default: 4000)
    */
   success(message, duration = 4000) {
-    this._announce(message, 'success', duration)
+    this._announce(message, "success", duration);
   },
 
   /**
@@ -22,7 +22,7 @@ export const toast = {
    * @param {number} duration - Duration in ms (default: 6000)
    */
   error(message, duration = 6000) {
-    this._announce(message, 'error', duration)
+    this._announce(message, "error", duration);
   },
 
   /**
@@ -31,7 +31,7 @@ export const toast = {
    * @param {number} duration - Duration in ms (default: 4000)
    */
   info(message, duration = 4000) {
-    this._announce(message, 'info', duration)
+    this._announce(message, "info", duration);
   },
 
   /**
@@ -41,27 +41,27 @@ export const toast = {
    * @param {number} duration - Duration to show message
    */
   _announce(message, type, duration) {
-    const ariaLiveRegion = document.getElementById('aria-live-root')
-    if (!ariaLiveRegion) return
+    const ariaLiveRegion = document.getElementById("aria-live-root");
+    if (!ariaLiveRegion) return;
 
     // Create toast element for visual display
-    const toastContainer = this._getOrCreateToastContainer()
-    const toastElement = this._createToastElement(message, type)
-    toastContainer.appendChild(toastElement)
+    const toastContainer = this._getOrCreateToastContainer();
+    const toastElement = this._createToastElement(message, type);
+    toastContainer.appendChild(toastElement);
 
     // Announce to screen readers via aria-live region
-    ariaLiveRegion.textContent = message
+    ariaLiveRegion.textContent = message;
 
     // Auto-remove toast after duration
     setTimeout(() => {
       if (toastElement.parentNode) {
-        toastElement.remove()
+        toastElement.remove();
       }
       // Clear aria-live region if it still contains this message
       if (ariaLiveRegion.textContent === message) {
-        ariaLiveRegion.textContent = ''
+        ariaLiveRegion.textContent = "";
       }
-    }, duration)
+    }, duration);
   },
 
   /**
@@ -69,15 +69,15 @@ export const toast = {
    * @returns {HTMLElement} Toast container element
    */
   _getOrCreateToastContainer() {
-    let container = document.getElementById('toast-container')
+    let container = document.getElementById("toast-container");
     if (!container) {
-      container = document.createElement('div')
-      container.id = 'toast-container'
-      container.className = 'fixed top-4 right-4 z-50 space-y-2'
-      container.setAttribute('aria-hidden', 'true') // Visual only, aria-live handles announcements
-      document.body.appendChild(container)
+      container = document.createElement("div");
+      container.id = "toast-container";
+      container.className = "fixed top-4 right-4 z-50 space-y-2";
+      container.setAttribute("aria-hidden", "true"); // Visual only, aria-live handles announcements
+      document.body.appendChild(container);
     }
-    return container
+    return container;
   },
 
   /**
@@ -87,70 +87,74 @@ export const toast = {
    * @returns {HTMLElement} Toast element
    */
   _createToastElement(message, type) {
-    const toast = document.createElement('div')
-    
-    const baseClasses = 'px-4 py-3 rounded-md shadow-lg text-sm font-medium animate-slide-in-right'
+    const toast = document.createElement("div");
+
+    const baseClasses =
+      "px-4 py-3 rounded-md shadow-lg text-sm font-medium animate-slide-in-right";
     const typeClasses = {
-      success: 'bg-green-100 text-green-800 border border-green-200',
-      error: 'bg-red-100 text-red-800 border border-red-200',
-      info: 'bg-blue-100 text-blue-800 border border-blue-200'
-    }
-    
-    toast.className = `${baseClasses} ${typeClasses[type] || typeClasses.info}`
-    toast.textContent = message
-    
+      success: "bg-green-100 text-green-800 border border-green-200",
+      error: "bg-red-100 text-red-800 border border-red-200",
+      info: "bg-blue-100 text-blue-800 border border-blue-200",
+    };
+
+    toast.className = `${baseClasses} ${typeClasses[type] || typeClasses.info}`;
+    toast.textContent = message;
+
     // Add close button
-    const closeButton = document.createElement('button')
-    closeButton.innerHTML = '×'
-    closeButton.className = 'ml-2 text-lg leading-none hover:opacity-70 focus:outline-none'
-    closeButton.setAttribute('aria-label', 'Schließen')
-    closeButton.onclick = () => toast.remove()
-    
-    toast.appendChild(closeButton)
-    
-    return toast
-  }
-}
+    const closeButton = document.createElement("button");
+    closeButton.innerHTML = "×";
+    closeButton.className =
+      "ml-2 text-lg leading-none hover:opacity-70 focus:outline-none";
+    closeButton.setAttribute("aria-label", "Schließen");
+    closeButton.onclick = () => toast.remove();
+
+    toast.appendChild(closeButton);
+
+    return toast;
+  },
+};
 
 /**
  * Common validation rules
  */
 export const validationRules = {
-  required: (value, fieldName = 'Feld') => {
-    if (!value || (typeof value === 'string' && !value.trim())) {
-      return `${fieldName} ist erforderlich`
+  required: (value, fieldName = "Feld") => {
+    if (!value || (typeof value === "string" && !value.trim())) {
+      return `${fieldName} ist erforderlich`;
     }
-    return null
+    return null;
   },
-  
+
   email: (value) => {
     if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein'
+      return "Bitte geben Sie eine gültige E-Mail-Adresse ein";
     }
-    return null
+    return null;
   },
-  
-  minLength: (min) => (value, fieldName = 'Feld') => {
-    if (value && value.length < min) {
-      return `${fieldName} muss mindestens ${min} Zeichen lang sein`
-    }
-    return null
-  },
-  
+
+  minLength:
+    (min) =>
+    (value, fieldName = "Feld") => {
+      if (value && value.length < min) {
+        return `${fieldName} muss mindestens ${min} Zeichen lang sein`;
+      }
+      return null;
+    },
+
   time: (value) => {
     if (value && !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value)) {
-      return 'Bitte geben Sie eine gültige Uhrzeit ein (HH:MM)'
+      return "Bitte geben Sie eine gültige Uhrzeit ein (HH:MM)";
     }
-    return null
+    return null;
   },
-  
+
   date: (value) => {
     if (value && isNaN(Date.parse(value))) {
-      return 'Bitte geben Sie ein gültiges Datum ein'
+      return "Bitte geben Sie ein gültiges Datum ein";
     }
-    return null
-  }
-}
+    return null;
+  },
+};
 
 /**
  * Create a composite validator from multiple rules
@@ -159,23 +163,24 @@ export const validationRules = {
  */
 export function createValidator(fieldRules) {
   return (values) => {
-    const errors = {}
-    
+    const errors = {};
+
     Object.entries(fieldRules).forEach(([fieldName, rules]) => {
-      const fieldValue = values[fieldName]
-      const ruleArray = Array.isArray(rules) ? rules : [rules]
-      
+      const fieldValue = values[fieldName];
+      const ruleArray = Array.isArray(rules) ? rules : [rules];
+
       for (const rule of ruleArray) {
-        const error = typeof rule === 'function' ? rule(fieldValue, fieldName) : null
+        const error =
+          typeof rule === "function" ? rule(fieldValue, fieldName) : null;
         if (error) {
-          errors[fieldName] = error
-          break // Stop at first error for this field
+          errors[fieldName] = error;
+          break; // Stop at first error for this field
         }
       }
-    })
-    
-    return errors
-  }
+    });
+
+    return errors;
+  };
 }
 
 /**
@@ -189,57 +194,56 @@ export function createFormSubmitHandler(formState, submitFn, options = {}) {
   const {
     persistKey,
     showSuccessToast = true,
-    successMessage = 'Erfolgreich gespeichert!',
+    successMessage = "Erfolgreich gespeichert!",
     clearOnSuccess = false,
     onSuccess,
-    onError
-  } = options
+    onError,
+  } = options;
 
   return async (e) => {
-    if (e) e.preventDefault()
+    if (e) e.preventDefault();
 
     // Validate form first
-    const isValid = formState.validate()
+    const isValid = formState.validate();
     if (!isValid) {
-      toast.error('Bitte überprüfen Sie Ihre Eingaben')
-      return { success: false, error: 'Validation failed' }
+      toast.error("Bitte überprüfen Sie Ihre Eingaben");
+      return { success: false, error: "Validation failed" };
     }
 
     try {
-      const result = await submitFn(formState.values)
+      const result = await submitFn(formState.values);
 
       // Clear persisted form data on success
       if (persistKey && clearOnSuccess) {
-        localStorage.removeItem(`form-${persistKey}`)
+        localStorage.removeItem(`form-${persistKey}`);
       }
 
       // Show success feedback
       if (showSuccessToast) {
-        toast.success(successMessage)
+        toast.success(successMessage);
       }
 
       // Call success callback
-      onSuccess?.(result)
+      onSuccess?.(result);
 
       // Clear form if requested
       if (clearOnSuccess) {
-        formState.reset()
+        formState.reset();
       }
 
-      return { success: true, result }
-
+      return { success: true, result };
     } catch (error) {
-      const errorMessage = error.message || 'Ein Fehler ist aufgetreten'
+      const errorMessage = error.message || "Ein Fehler ist aufgetreten";
 
       // Show error toast with retry option
-      toast.error(`Fehler beim Speichern: ${errorMessage}`)
+      toast.error(`Fehler beim Speichern: ${errorMessage}`);
 
       // Call error callback
-      onError?.(error)
+      onError?.(error);
 
-      return { success: false, error: errorMessage }
+      return { success: false, error: errorMessage };
     }
-  }
+  };
 }
 
 /**
@@ -252,9 +256,9 @@ export const formPersistence = {
    * @param {Object} values - Form values to save
    */
   save(key, values) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(`form-${key}`, JSON.stringify(values))
+        localStorage.setItem(`form-${key}`, JSON.stringify(values));
       } catch {
         // Ignore persistence errors
       }
@@ -268,15 +272,17 @@ export const formPersistence = {
    * @returns {Object} Loaded or default values
    */
   load(key, defaultValues = {}) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem(`form-${key}`)
-        return saved ? { ...defaultValues, ...JSON.parse(saved) } : defaultValues
+        const saved = localStorage.getItem(`form-${key}`);
+        return saved
+          ? { ...defaultValues, ...JSON.parse(saved) }
+          : defaultValues;
       } catch {
-        return defaultValues
+        return defaultValues;
       }
     }
-    return defaultValues
+    return defaultValues;
   },
 
   /**
@@ -284,8 +290,8 @@ export const formPersistence = {
    * @param {string} key - Storage key
    */
   clear(key) {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(`form-${key}`)
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(`form-${key}`);
     }
-  }
-}
+  },
+};

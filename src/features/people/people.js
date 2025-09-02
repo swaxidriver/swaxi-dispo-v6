@@ -1,6 +1,6 @@
 /**
  * People Feature - User and person management utilities
- * 
+ *
  * This module contains utilities for managing users, their profiles,
  * preferences, and related functionality.
  */
@@ -11,14 +11,14 @@
  * @returns {Object} Created user object
  */
 export function createUserProfile(userData) {
-  const requiredFields = ['name', 'email', 'role']
-  
+  const requiredFields = ["name", "email", "role"];
+
   for (const field of requiredFields) {
     if (!userData[field]) {
-      throw new Error(`Missing required field: ${field}`)
+      throw new Error(`Missing required field: ${field}`);
     }
   }
-  
+
   return {
     id: generateUserId(userData.name, userData.email),
     name: userData.name,
@@ -28,8 +28,8 @@ export function createUserProfile(userData) {
     availability: userData.availability || {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    active: true
-  }
+    active: true,
+  };
 }
 
 /**
@@ -43,10 +43,10 @@ export function updateUserPreferences(user, newPreferences) {
     ...user,
     preferences: {
       ...user.preferences,
-      ...newPreferences
+      ...newPreferences,
     },
-    updatedAt: new Date().toISOString()
-  }
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 /**
@@ -56,22 +56,22 @@ export function updateUserPreferences(user, newPreferences) {
  * @returns {boolean} True if user is available
  */
 export function isUserAvailableOnDate(user, date) {
-  if (!user.availability) return true
-  
+  if (!user.availability) return true;
+
   // Check unavailable dates
   if (user.availability.unavailableDates?.includes(date)) {
-    return false
+    return false;
   }
-  
+
   // Check recurring unavailability (e.g., weekends)
   if (user.availability.unavailableWeekdays) {
-    const dayOfWeek = new Date(date).getDay()
+    const dayOfWeek = new Date(date).getDay();
     if (user.availability.unavailableWeekdays.includes(dayOfWeek)) {
-      return false
+      return false;
     }
   }
-  
-  return true
+
+  return true;
 }
 
 /**
@@ -82,10 +82,10 @@ export function isUserAvailableOnDate(user, date) {
 export function getUserShiftPreferences(user) {
   return {
     preferredShiftTypes: user.preferences?.preferredShiftTypes || [],
-    preferredWorkLocation: user.preferences?.preferredWorkLocation || 'office',
+    preferredWorkLocation: user.preferences?.preferredWorkLocation || "office",
     maxShiftsPerWeek: user.preferences?.maxShiftsPerWeek || 5,
-    minRestHours: user.preferences?.minRestHours || 8
-  }
+    minRestHours: user.preferences?.minRestHours || 8,
+  };
 }
 
 /**
@@ -95,11 +95,14 @@ export function getUserShiftPreferences(user) {
  * @returns {string} Generated user ID
  */
 function generateUserId(name, email) {
-  const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '')
-  const emailPrefix = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '')
-  const timestamp = Date.now().toString(36)
-  
-  return `user_${cleanName}_${emailPrefix}_${timestamp}`
+  const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const emailPrefix = email
+    .split("@")[0]
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+  const timestamp = Date.now().toString(36);
+
+  return `user_${cleanName}_${emailPrefix}_${timestamp}`;
 }
 
 /**
@@ -108,8 +111,8 @@ function generateUserId(name, email) {
  * @returns {boolean} True if role is valid
  */
 export function isValidRole(role) {
-  const validRoles = ['admin', 'chief', 'disponent', 'analyst']
-  return validRoles.includes(role)
+  const validRoles = ["admin", "chief", "disponent", "analyst"];
+  return validRoles.includes(role);
 }
 
 /**
@@ -119,7 +122,7 @@ export function isValidRole(role) {
  * @returns {Array} Users with the specified role
  */
 export function getUsersByRole(users, role) {
-  return users.filter(user => user.role === role && user.active)
+  return users.filter((user) => user.role === role && user.active);
 }
 
 /**
@@ -129,12 +132,13 @@ export function getUsersByRole(users, role) {
  * @returns {Array} Matching users
  */
 export function searchUsers(users, searchTerm) {
-  if (!searchTerm) return users
-  
-  const term = searchTerm.toLowerCase()
-  
-  return users.filter(user => 
-    user.name.toLowerCase().includes(term) ||
-    user.email.toLowerCase().includes(term)
-  )
+  if (!searchTerm) return users;
+
+  const term = searchTerm.toLowerCase();
+
+  return users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(term) ||
+      user.email.toLowerCase().includes(term),
+  );
 }

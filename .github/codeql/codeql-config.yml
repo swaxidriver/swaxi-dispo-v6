@@ -13,5 +13,4 @@ paths-ignore:
   - coverage
   - reports
   - public
-
 # Exclude generated test coverage reports & build artifacts to speed up scan.

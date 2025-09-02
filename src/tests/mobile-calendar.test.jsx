@@ -25,10 +25,10 @@ function seedMobileShifts(shifts = []) {
 describe("Mobile Calendar Responsive Layout", () => {
   beforeEach(() => {
     localStorage.clear();
-    
+
     // Reset window width
     window.innerWidth = 375;
-    
+
     // Trigger resize event to update any listeners
     window.dispatchEvent(new Event("resize"));
   });
@@ -43,7 +43,7 @@ describe("Mobile Calendar Responsive Layout", () => {
         type: "Frühdienst",
       }),
       buildShift({
-        id: "shift2", 
+        id: "shift2",
         date: "2024-01-16",
         start: "14:00",
         end: "22:00",
@@ -56,7 +56,9 @@ describe("Mobile Calendar Responsive Layout", () => {
     renderWithProviders(<Calendar />);
 
     // Should show mobile calendar application
-    expect(screen.getByRole("application", { name: /mobile wochenkalender/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("application", { name: /mobile wochenkalender/i }),
+    ).toBeInTheDocument();
 
     // Should not show desktop calendar grid
     expect(screen.queryByText("Zeit")).not.toBeInTheDocument(); // Desktop time column header
@@ -67,7 +69,7 @@ describe("Mobile Calendar Responsive Layout", () => {
       buildShift({
         id: "shift1",
         date: "2024-01-15",
-        start: "08:00", 
+        start: "08:00",
         end: "16:00",
         type: "Frühdienst",
       }),
@@ -92,7 +94,7 @@ describe("Mobile Calendar Responsive Layout", () => {
         id: "shift1",
         date: "2024-01-15", // Monday
         start: "08:00",
-        end: "16:00", 
+        end: "16:00",
         type: "Frühdienst",
         assignedTo: "Test User",
       }),
@@ -138,7 +140,9 @@ describe("Mobile Calendar Responsive Layout", () => {
     renderWithProviders(<Calendar />);
 
     // Mobile calendar container should exist
-    const mobileCalendar = screen.getByRole("application", { name: /mobile wochenkalender/i });
+    const mobileCalendar = screen.getByRole("application", {
+      name: /mobile wochenkalender/i,
+    });
     expect(mobileCalendar).toBeInTheDocument();
     expect(mobileCalendar).toHaveClass("calendar-mobile-vertical");
   });
@@ -160,8 +164,11 @@ describe("Mobile Calendar Responsive Layout", () => {
     renderWithProviders(<Calendar />);
 
     // Should have proper ARIA labels for screen readers
-    expect(screen.getByRole("application")).toHaveAttribute("aria-label", "Mobile Wochenkalender");
-    
+    expect(screen.getByRole("application")).toHaveAttribute(
+      "aria-label",
+      "Mobile Wochenkalender",
+    );
+
     // Day sections should have proper labels
     const dayRegions = screen.getAllByRole("region");
     expect(dayRegions[0]).toHaveAttribute("aria-labelledby");

@@ -7,27 +7,35 @@ This guide shows how to integrate the newly implemented RBAC (Role-Based Access 
 ### 1. Express.js Server Setup
 
 ```javascript
-const express = require('express');
-const { requirePermission, requireRole, guardResource } = require('./backend/rbac.js');
+const express = require("express");
+const {
+  requirePermission,
+  requireRole,
+  guardResource,
+} = require("./backend/rbac.js");
 
 const app = express();
 
 // Protect API endpoints
-app.get('/api/shifts', requirePermission('canViewAnalytics'), (req, res) => {
+app.get("/api/shifts", requirePermission("canViewAnalytics"), (req, res) => {
   // Only users with analytics permission can view shifts
 });
 
-app.post('/api/shifts', requirePermission('canManageShifts'), (req, res) => {
+app.post("/api/shifts", requirePermission("canManageShifts"), (req, res) => {
   // Only users who can manage shifts can create them
 });
 
-app.get('/api/audit', requireRole('admin'), (req, res) => {
+app.get("/api/audit", requireRole("admin"), (req, res) => {
   // Only admins can access audit logs
 });
 
-app.post('/api/shifts/:id/assign', guardResource('shifts', 'assign'), (req, res) => {
-  // Only users who can assign shifts (chiefs and admins) can assign
-});
+app.post(
+  "/api/shifts/:id/assign",
+  guardResource("shifts", "assign"),
+  (req, res) => {
+    // Only users who can assign shifts (chiefs and admins) can assign
+  },
+);
 ```
 
 ### 2. Available Middleware
@@ -50,62 +58,66 @@ app.post('/api/shifts/:id/assign', guardResource('shifts', 'assign'), (req, res)
 ### 1. Route Protection
 
 ```javascript
-import { PermissionGuard, RoleGuard } from '../components/RouteGuards';
+import { PermissionGuard, RoleGuard } from "../components/RouteGuards";
 
 // In your App.jsx routes:
 <Routes>
   {/* Protect admin page with role guard */}
-  <Route 
-    path="/admin" 
+  <Route
+    path="/admin"
     element={
       <RoleGuard allowedRoles="admin">
         <Administration />
       </RoleGuard>
-    } 
+    }
   />
-  
+
   {/* Protect audit page with permission guard */}
-  <Route 
-    path="/audit" 
+  <Route
+    path="/audit"
     element={
       <PermissionGuard permission="canViewAudit">
         <Audit />
       </PermissionGuard>
-    } 
+    }
   />
-  
+
   {/* Multiple roles allowed */}
-  <Route 
-    path="/management" 
+  <Route
+    path="/management"
     element={
-      <RoleGuard allowedRoles={['admin', 'chief']}>
+      <RoleGuard allowedRoles={["admin", "chief"]}>
         <Management />
       </RoleGuard>
-    } 
+    }
   />
-</Routes>
+</Routes>;
 ```
 
 ### 2. Conditional Rendering
 
 ```javascript
-import { PermissionCheck, RoleCheck, useUserCapabilities } from '../components/RouteGuards';
+import {
+  PermissionCheck,
+  RoleCheck,
+  useUserCapabilities,
+} from "../components/RouteGuards";
 
 function Navigation() {
   const capabilities = useUserCapabilities();
-  
+
   return (
     <nav>
       {/* Show only if user can manage shifts */}
       <PermissionCheck permission="canManageShifts">
         <button>Create Shift</button>
       </PermissionCheck>
-      
+
       {/* Show only for admins */}
       <RoleCheck allowedRoles="admin">
         <button>Admin Panel</button>
       </RoleCheck>
-      
+
       {/* Use capabilities object */}
       {capabilities.canViewAudit && <button>View Audit</button>}
     </nav>
@@ -116,14 +128,18 @@ function Navigation() {
 ### 3. Hooks
 
 ```javascript
-import { usePermission, useRole, useUserCapabilities } from '../components/RouteGuards';
+import {
+  usePermission,
+  useRole,
+  useUserCapabilities,
+} from "../components/RouteGuards";
 
 function MyComponent() {
-  const canManage = usePermission('canManageShifts');
-  const isAdmin = useRole('admin');
-  const isManager = useRole(['admin', 'chief']);
+  const canManage = usePermission("canManageShifts");
+  const isAdmin = useRole("admin");
+  const isManager = useRole(["admin", "chief"]);
   const capabilities = useUserCapabilities();
-  
+
   return (
     <div>
       {canManage && <button>Manage Shifts</button>}
@@ -143,22 +159,22 @@ To quickly add protection to existing routes in App.jsx:
 <Route path="/admin" element={<Administration />} />
 <Route path="/audit" element={<Audit />} />
 
-// After  
-<Route 
-  path="/admin" 
+// After
+<Route
+  path="/admin"
   element={
     <RoleGuard allowedRoles={['admin', 'chief']}>
       <Administration />
     </RoleGuard>
-  } 
+  }
 />
-<Route 
-  path="/audit" 
+<Route
+  path="/audit"
   element={
     <PermissionGuard permission="canViewAudit">
       <Audit />
     </PermissionGuard>
-  } 
+  }
 />
 ```
 
@@ -190,11 +206,12 @@ node backend/demo-server.js
 ```
 
 Test with different user tokens:
+
 ```bash
 # Admin (can access everything)
 curl -H "Authorization: Bearer admin-token" http://localhost:3001/api/audit
 
-# Chief (can manage but not audit)  
+# Chief (can manage but not audit)
 curl -H "Authorization: Bearer chief-token" http://localhost:3001/api/shifts -X POST
 
 # Analyst (read-only)

@@ -1,14 +1,18 @@
 ## Summary
-- 
+
+-
 
 ## Screenshots
-- **Desktop:** 
-- **Mobile:** 
+
+- **Desktop:**
+- **Mobile:**
 
 ## Risks / Rollback
-- 
+
+-
 
 ## Checklist
+
 - [ ] Manual smoke passed (see docs/swaxi_issue_plan.md Appendix B)
 - [ ] No console errors
 - [ ] State migration safe
@@ -19,7 +23,9 @@
 - [ ] Screenshots/GIFs attached (desktop + mobile)
 
 ## Related Issues
+
 - Closes #
 
 ## Notes for Reviewers
-- 
+
+-

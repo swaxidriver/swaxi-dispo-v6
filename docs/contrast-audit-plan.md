@@ -10,13 +10,13 @@ This document supports Issue: "Dark mode toggle unreliable, poor contrast, font 
 
 ## Pairs To Test
 
-| Token Role | Light | Dark | Against |
-|------------|-------|------|---------|
-| text vs bg | `--color-text` #0f172a vs `--color-bg` #f8fafc | #f1f5f9 vs #0f172a | backgrounds |
-| muted vs bg | #64748b vs #f8fafc | #94a3b8 vs #0f172a | backgrounds |
-| primary vs bg | #222F88 vs #f8fafc | #3b4da3 vs #0f172a | backgrounds |
-| primary vs surface | #222F88 vs #ffffff | #3b4da3 vs #1e293b | surfaces |
-| surface text vs surface | #0f172a vs #ffffff | #f1f5f9 vs #1e293b | cards |
+| Token Role              | Light                                          | Dark               | Against     |
+| ----------------------- | ---------------------------------------------- | ------------------ | ----------- |
+| text vs bg              | `--color-text` #0f172a vs `--color-bg` #f8fafc | #f1f5f9 vs #0f172a | backgrounds |
+| muted vs bg             | #64748b vs #f8fafc                             | #94a3b8 vs #0f172a | backgrounds |
+| primary vs bg           | #222F88 vs #f8fafc                             | #3b4da3 vs #0f172a | backgrounds |
+| primary vs surface      | #222F88 vs #ffffff                             | #3b4da3 vs #1e293b | surfaces    |
+| surface text vs surface | #0f172a vs #ffffff                             | #f1f5f9 vs #1e293b | cards       |
 
 ## Tooling
 
@@ -24,10 +24,10 @@ Add a small node script (`scripts/contrast-audit.mjs`) computing contrast ratios
 
 ## Adjustments (Proposed)
 
-| Role | Change | Rationale |
-|------|--------|-----------|
+| Role                     | Change                                    | Rationale                  |
+| ------------------------ | ----------------------------------------- | -------------------------- |
 | `--color-primary` (dark) | lighten slightly if contrast insufficient | Ensure >= 4.5:1 on dark bg |
-| `--color-muted` (dark) | reduce lightness a bit | Avoid <4.5:1 vs bg |
+| `--color-muted` (dark)   | reduce lightness a bit                    | Avoid <4.5:1 vs bg         |
 
 ## Tasks
 
@@ -37,4 +37,5 @@ Add a small node script (`scripts/contrast-audit.mjs`) computing contrast ratios
 4. Add Jest a11y test ensuring `[data-theme="dark"]` root has expected tokens set.
 
 ---
+
 Generated support doc; see Issue for live tracking.

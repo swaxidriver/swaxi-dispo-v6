@@ -19,18 +19,17 @@
 
 ## P0 – Muss (Stabilität / Demo-sicher)
 
-| Nr | Thema | Kurzbeschreibung | Akzeptanzkriterien | Artefakte / Notizen |
-|----|-------|------------------|--------------------|---------------------|
-| 1 | Deterministische Seeds & Mock-Persistenz | Gleiche Demo-Daten bei erstem Start, stabile IDs für Tests | (Erfüllt) Snapshot Test grün, stabile Seed-Datei | `seed/initialData.js`, `seedSnapshot.test.js` |
-| 2 | ID-Vergabe & Duplikat-Schutz | Zentrale ID-Generierung, Kollisionen verhindert | (Erfüllt) `generateId` persistent + Duplicate Guard in `createShift` | `utils/id.js`, Tests |
-| 3 | Zeitraster & Über-Mitternacht-Logik | Shifts dürfen Mitternacht überlappen; Darstellung sauber | (Basis erledigt) Dauerberechnung & Overlap-Tests; UI zeigt Dauer (h) | `utils/shifts.js`, `timeAndConflict.test.js` |
-| 4 | Konfliktmatrix (ruhige UI) | Einheitliche Konfliktprüfung statt mehrfacher Flicker | (Basis erledigt) Konfliktcodes + Legend, deterministische Berechnung | `computeShiftConflicts`, `conflicts.js` |
-| 5 | Statusmodell & Nebenwirkungen | Definierte Status + Transition Rules | (Erfüllt) Guards + deaktivierte Buttons + Doku | `STATUS.md`, Tests |
-| 6 | Arbeitsort-Pflichtfeld | Standort für jede Schicht erforderlich | Shift ohne `location` wird nicht erstellt (val. Fehler); UI Pflichtkennzeichnung; Screenreader Text | Form + Validation Tests |
-| 7 | Autosave & Snapshots | Draft-Zwischenspeicher beim Erstellen/Bearbeiten | Abbruch / Reload -> Wiederherstellung möglich; Manuelles "Verwerfen" löscht Draft; Test simuliert Reload | `AutosaveManager` Erweiterung, Tests |
-| 8 | UI-Rollen (sichtbare Steuerung) | Sichtbare Anzeige aktiver Rolle + Rollenspezifische Actions | Rolle sichtbar (Badge / Ecke); Aktionen nur für berechtigte Rollen gerendert; Tests per role matrix | UI Badge + Role-based conditional rendering |
-| 9 | CD-Theme (Basis) | Farben & Typografie konsistent | Tailwind Config Tokens; Lato Font eingebunden; Visuell 3 Kern-Elemente (Header, Buttons, Tabelle) konform | `tailwind.config.js`, Theming README |
-
+| Nr  | Thema                                    | Kurzbeschreibung                                            | Akzeptanzkriterien                                                                                        | Artefakte / Notizen                           |
+| --- | ---------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| 1   | Deterministische Seeds & Mock-Persistenz | Gleiche Demo-Daten bei erstem Start, stabile IDs für Tests  | (Erfüllt) Snapshot Test grün, stabile Seed-Datei                                                          | `seed/initialData.js`, `seedSnapshot.test.js` |
+| 2   | ID-Vergabe & Duplikat-Schutz             | Zentrale ID-Generierung, Kollisionen verhindert             | (Erfüllt) `generateId` persistent + Duplicate Guard in `createShift`                                      | `utils/id.js`, Tests                          |
+| 3   | Zeitraster & Über-Mitternacht-Logik      | Shifts dürfen Mitternacht überlappen; Darstellung sauber    | (Basis erledigt) Dauerberechnung & Overlap-Tests; UI zeigt Dauer (h)                                      | `utils/shifts.js`, `timeAndConflict.test.js`  |
+| 4   | Konfliktmatrix (ruhige UI)               | Einheitliche Konfliktprüfung statt mehrfacher Flicker       | (Basis erledigt) Konfliktcodes + Legend, deterministische Berechnung                                      | `computeShiftConflicts`, `conflicts.js`       |
+| 5   | Statusmodell & Nebenwirkungen            | Definierte Status + Transition Rules                        | (Erfüllt) Guards + deaktivierte Buttons + Doku                                                            | `STATUS.md`, Tests                            |
+| 6   | Arbeitsort-Pflichtfeld                   | Standort für jede Schicht erforderlich                      | Shift ohne `location` wird nicht erstellt (val. Fehler); UI Pflichtkennzeichnung; Screenreader Text       | Form + Validation Tests                       |
+| 7   | Autosave & Snapshots                     | Draft-Zwischenspeicher beim Erstellen/Bearbeiten            | Abbruch / Reload -> Wiederherstellung möglich; Manuelles "Verwerfen" löscht Draft; Test simuliert Reload  | `AutosaveManager` Erweiterung, Tests          |
+| 8   | UI-Rollen (sichtbare Steuerung)          | Sichtbare Anzeige aktiver Rolle + Rollenspezifische Actions | Rolle sichtbar (Badge / Ecke); Aktionen nur für berechtigte Rollen gerendert; Tests per role matrix       | UI Badge + Role-based conditional rendering   |
+| 9   | CD-Theme (Basis)                         | Farben & Typografie konsistent                              | Tailwind Config Tokens; Lato Font eingebunden; Visuell 3 Kern-Elemente (Header, Buttons, Tabelle) konform | `tailwind.config.js`, Theming README          |
 
 ### P0 Fortschritt & Rest
 
@@ -47,24 +46,24 @@ Erweiterungen in Arbeit / geplant:
 
 ## P1 – Sollte (Add-ons mit geringem Risiko)
 
-| Nr | Thema | Kurzbeschreibung | Akzeptanzkriterien |
-|----|-------|------------------|--------------------|
-| 1 | Changelog-Sheet | Einfacher Markdown-Verlauf für Demo-Inkremente | Neuer Eintrag pro Iteration automatisiert / Skript |
-| 2 | Tooltips (dezent) | Non-intrusive Hilfetexte | Keyboard-Fokus & Hover erreichbar; ARIA konform |
-| 3 | Mini-Analytics | Kleine Kennzahlen (Anzahl Schichten, Bewerbungen) | Rendering performant < 5ms rechnerisch (Test Mock) |
-| 4 | Kalender-Übersicht Read-only | Monats-/Wochenansicht passiv | Navigation mit Pfeiltasten; Keine Mutation |
-| 5 | Serienbewerbung | Mehrfachbewerbung mit Validierung | Konflikte blockieren fehlerfrei; Batch Result Summary |
+| Nr  | Thema                        | Kurzbeschreibung                                  | Akzeptanzkriterien                                    |
+| --- | ---------------------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| 1   | Changelog-Sheet              | Einfacher Markdown-Verlauf für Demo-Inkremente    | Neuer Eintrag pro Iteration automatisiert / Skript    |
+| 2   | Tooltips (dezent)            | Non-intrusive Hilfetexte                          | Keyboard-Fokus & Hover erreichbar; ARIA konform       |
+| 3   | Mini-Analytics               | Kleine Kennzahlen (Anzahl Schichten, Bewerbungen) | Rendering performant < 5ms rechnerisch (Test Mock)    |
+| 4   | Kalender-Übersicht Read-only | Monats-/Wochenansicht passiv                      | Navigation mit Pfeiltasten; Keine Mutation            |
+| 5   | Serienbewerbung              | Mehrfachbewerbung mit Validierung                 | Konflikte blockieren fehlerfrei; Batch Result Summary |
 
 ---
 
 ## P2 – Kann (Feature-Flag)
 
-| Nr | Thema | Flag | Kurzbeschreibung |
-|----|-------|------|------------------|
-| 1 | Live-Update-Banner | `flag_live_banner` | Zeigt Hinweis auf neue Version |
-| 2 | Audit-Log (Admin) | `flag_audit_log` | Einsehbare Liste Statusänderungen |
-| 3 | Dark-Mode | `flag_dark_mode` | Umschaltbares Farbschema (CD-konform) |
-| 4 | Schnellaktionen | `flag_quick_actions` | Tastatur-/Shortcut-Actions |
+| Nr  | Thema              | Flag                 | Kurzbeschreibung                      |
+| --- | ------------------ | -------------------- | ------------------------------------- |
+| 1   | Live-Update-Banner | `flag_live_banner`   | Zeigt Hinweis auf neue Version        |
+| 2   | Audit-Log (Admin)  | `flag_audit_log`     | Einsehbare Liste Statusänderungen     |
+| 3   | Dark-Mode          | `flag_dark_mode`     | Umschaltbares Farbschema (CD-konform) |
+| 4   | Schnellaktionen    | `flag_quick_actions` | Tastatur-/Shortcut-Actions            |
 
 Feature Flag Mechanismus (einfach): Objekt `window.__FLAGS__` aus `import.meta.env` + Fallback localStorage Override.
 
@@ -112,6 +111,7 @@ Feature Flag Mechanismus (einfach): Objekt `window.__FLAGS__` aus `import.meta.e
 - Kein komplexes Konflikt-Merging (nur präventive Matrix)
 
 ---
+
 **Stand:** 2025-08-26
 
 ---

@@ -8,11 +8,25 @@
 // }
 
 export class ShiftRepository {
-  /** @returns {Promise<Array>} */ async list(_filter = {}) { throw new Error('not implemented') }
-  /** @returns {Promise<object>} */ async create(_shift) { throw new Error('not implemented') }
-  /** @returns {Promise<object>} */ async update(_id, _patch) { throw new Error('not implemented') }
-  /** @returns {Promise<object>} */ async applyToShift(_id, _userId) { throw new Error('not implemented') }
-  /** @returns {Promise<object>} */ async assignShift(_id, _userName) { throw new Error('not implemented') }
-  /** @returns {Promise<object>} */ async cancelShift(_id) { throw new Error('not implemented') }
-  /** @returns {Promise<boolean>} */ async ping() { return true }
+  /** @returns {Promise<Array>} */ async list(_filter = {}) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<object>} */ async create(_shift) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<object>} */ async update(_id, _patch) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<object>} */ async applyToShift(_id, _userId) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<object>} */ async assignShift(_id, _userName) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<object>} */ async cancelShift(_id) {
+    throw new Error("not implemented");
+  }
+  /** @returns {Promise<boolean>} */ async ping() {
+    return true;
+  }
 }

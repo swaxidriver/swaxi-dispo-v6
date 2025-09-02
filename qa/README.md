@@ -5,7 +5,9 @@ This directory contains quality assurance documentation and testing guidelines f
 ## 📁 Contents
 
 ### 📋 [manual-checklist.md](manual-checklist.md)
+
 **Comprehensive manual testing checklist covering:**
+
 - Login & Authentication Flow (all user roles)
 - Shift Designer workflow (templates & generation)
 - Shift Assignment & Application processes
@@ -18,7 +20,9 @@ This directory contains quality assurance documentation and testing guidelines f
 **Usage:** Follow this checklist before each release to ensure all critical functionality works correctly.
 
 ### 🐛 [bug-bash-guide.md](bug-bash-guide.md)
+
 **Complete guide for organizing effective bug bash sessions:**
+
 - Pre-session planning and participant recruitment
 - Environment setup and test data preparation
 - Session execution with structured testing phases
@@ -30,12 +34,14 @@ This directory contains quality assurance documentation and testing guidelines f
 ## 🎯 Quick Start
 
 ### For Manual Testing
+
 1. Set up test environment (local or staging)
 2. Create test user accounts for all roles (ADMIN, CHIEF, DISPONENT, ANALYST)
 3. Follow the manual checklist systematically
 4. Document any issues found using the provided templates
 
 ### For Bug Bash Sessions
+
 1. Schedule session 2 weeks in advance
 2. Follow the bug-bash-guide for preparation
 3. Execute 2-hour structured testing session
@@ -44,23 +50,26 @@ This directory contains quality assurance documentation and testing guidelines f
 ## 🔗 Integration with Development
 
 ### Test Environment URLs
+
 - **Local Development:** `http://localhost:5173/swaxi-dispo-v6/`
 - **Live Demo:** `https://swaxidriver.github.io/swaxi-dispo-v6/`
 - **Test Page:** `http://localhost:5173/swaxi-dispo-v6/test`
 
 ### Test User Roles
+
 The system supports four distinct user roles with different permissions:
 
-| Role | Permissions | Test Focus |
-|------|-------------|------------|
-| **ADMIN** | Full system access | All functionality, security boundaries |
-| **CHIEF** | Shift management, no audit access | Management workflows, assignment |
-| **DISPONENT** | Apply for shifts, limited view | User workflows, applications |
-| **ANALYST** | Read-only analytics | Reporting, data display |
+| Role          | Permissions                       | Test Focus                             |
+| ------------- | --------------------------------- | -------------------------------------- |
+| **ADMIN**     | Full system access                | All functionality, security boundaries |
+| **CHIEF**     | Shift management, no audit access | Management workflows, assignment       |
+| **DISPONENT** | Apply for shifts, limited view    | User workflows, applications           |
+| **ANALYST**   | Read-only analytics               | Reporting, data display                |
 
 ### Key Test Scenarios
 
 #### Critical Path Testing
+
 1. **Login** → Role selection and authentication
 2. **Shift Designer** → Template creation and management
 3. **Generate** → Bulk shift creation from templates
@@ -68,6 +77,7 @@ The system supports four distinct user roles with different permissions:
 5. **Export** → Data export and analytics
 
 #### Edge Case Focus Areas
+
 - **Cross-midnight shifts** (22:00-06:00 scenarios)
 - **RBAC boundaries** (unauthorized access attempts)
 - **Conflict detection** (overlapping shifts, location mismatches)
@@ -77,6 +87,7 @@ The system supports four distinct user roles with different permissions:
 ## 📊 Quality Gates
 
 ### Before Release
+
 - [ ] 100% of manual checklist completed
 - [ ] Zero P0 (critical) bugs
 - [ ] Less than 3 P1 (high priority) bugs
@@ -85,6 +96,7 @@ The system supports four distinct user roles with different permissions:
 - [ ] Cross-browser compatibility verified
 
 ### Continuous Monitoring
+
 - Regular bug bash sessions (quarterly)
 - Automated test coverage >80%
 - Performance benchmarks maintained
@@ -93,13 +105,16 @@ The system supports four distinct user roles with different permissions:
 ## 🤝 Contributing
 
 ### Updating QA Documentation
+
 - Keep checklists current with new features
 - Update test scenarios based on bug findings
 - Improve templates based on team feedback
 - Document lessons learned from testing sessions
 
 ### Reporting Issues
+
 Use the bug report templates provided in the documentation. Include:
+
 - Clear reproduction steps
 - Expected vs actual behavior
 - Environment details (browser, device, user role)
@@ -107,4 +122,4 @@ Use the bug report templates provided in the documentation. Include:
 
 ---
 
-*For questions about QA processes or to suggest improvements, please create an issue in the GitHub repository.*
+_For questions about QA processes or to suggest improvements, please create an issue in the GitHub repository._

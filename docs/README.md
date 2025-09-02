@@ -4,34 +4,34 @@ This directory contains comprehensive documentation for the Swaxi Dispo v6 proje
 
 ## 📋 Project Management
 
-| Document | Description | Use Case |
-|----------|-------------|----------|
-| **[CSV_IMPORT_GUIDE.md](CSV_IMPORT_GUIDE.md)** | Complete guide for importing CSV files to create GitHub issues | Bulk issue creation, project setup |
-| **[swaxi_issue_plan.md](swaxi_issue_plan.md)** | Master implementation and issue planning document | Project structure, epic planning |
-| **[github-issues.md](github-issues.md)** | Structured GitHub issues with templates | Issue examples, copy-paste templates |
-| **[github-milestones.md](github-milestones.md)** | Milestone definitions and planning | Release planning, sprint organization |
+| Document                                         | Description                                                    | Use Case                              |
+| ------------------------------------------------ | -------------------------------------------------------------- | ------------------------------------- |
+| **[CSV_IMPORT_GUIDE.md](CSV_IMPORT_GUIDE.md)**   | Complete guide for importing CSV files to create GitHub issues | Bulk issue creation, project setup    |
+| **[swaxi_issue_plan.md](swaxi_issue_plan.md)**   | Master implementation and issue planning document              | Project structure, epic planning      |
+| **[github-issues.md](github-issues.md)**         | Structured GitHub issues with templates                        | Issue examples, copy-paste templates  |
+| **[github-milestones.md](github-milestones.md)** | Milestone definitions and planning                             | Release planning, sprint organization |
 
 ## 🔧 Development & Setup
 
-| Document | Description | Use Case |
-|----------|-------------|----------|
-| **[RBAC_INTEGRATION.md](RBAC_INTEGRATION.md)** | Role-based access control documentation | Security implementation, user permissions |
-| **[github-setup-guide.md](github-setup-guide.md)** | Repository configuration and workflow setup | Initial project setup, CI/CD configuration |
-| **[contrast-audit-plan.md](contrast-audit-plan.md)** | Accessibility compliance and contrast guidelines | WCAG compliance, visual design standards |
+| Document                                             | Description                                      | Use Case                                   |
+| ---------------------------------------------------- | ------------------------------------------------ | ------------------------------------------ |
+| **[RBAC_INTEGRATION.md](RBAC_INTEGRATION.md)**       | Role-based access control documentation          | Security implementation, user permissions  |
+| **[github-setup-guide.md](github-setup-guide.md)**   | Repository configuration and workflow setup      | Initial project setup, CI/CD configuration |
+| **[contrast-audit-plan.md](contrast-audit-plan.md)** | Accessibility compliance and contrast guidelines | WCAG compliance, visual design standards   |
 
 ## 📁 Templates & Examples
 
-| Path | Description | Use Case |
-|------|-------------|----------|
-| **[templates/](templates/)** | CSV templates and examples | Issue import, data structure templates |
-| **[templates/issue-import-template.csv](templates/issue-import-template.csv)** | Ready-to-use CSV template for issue import | Quick start for bulk issue creation |
+| Path                                                                           | Description                                | Use Case                               |
+| ------------------------------------------------------------------------------ | ------------------------------------------ | -------------------------------------- |
+| **[templates/](templates/)**                                                   | CSV templates and examples                 | Issue import, data structure templates |
+| **[templates/issue-import-template.csv](templates/issue-import-template.csv)** | Ready-to-use CSV template for issue import | Quick start for bulk issue creation    |
 
 ## 🛠 Scripts & Automation
 
-| Path | Description | Use Case |
-|------|-------------|----------|
-| **[../scripts/import-issues.sh](../scripts/import-issues.sh)** | Automated CSV to GitHub issues import script | Bulk issue creation automation |
-| **[../scripts/validate-csv.sh](../scripts/validate-csv.sh)** | CSV format and data validation tool | Pre-import validation and error checking |
+| Path                                                           | Description                                  | Use Case                                 |
+| -------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------- |
+| **[../scripts/import-issues.sh](../scripts/import-issues.sh)** | Automated CSV to GitHub issues import script | Bulk issue creation automation           |
+| **[../scripts/validate-csv.sh](../scripts/validate-csv.sh)**   | CSV format and data validation tool          | Pre-import validation and error checking |
 
 ## 📚 Quick Reference
 
