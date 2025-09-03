@@ -13,6 +13,11 @@ export default function Settings() {
   const { setThemeMode } = useTheme();
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
+  // Get current role for role-based visibility
+  const currentRole = settings.role;
+  const isAdmin = currentRole === "admin";
+  const isChief = currentRole === "chief" || isAdmin;
+
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage);
   };
@@ -81,23 +86,53 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* Role Settings */}
+        {/* Role Settings - Admin only for demo purposes */}
+        {isAdmin && (
+          <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-text">
+              {t("role")}
+            </h2>
+            <p className="text-sm text-muted mb-4">
+              Demo: Changes role for testing role-gated UI features
+            </p>
+            <select
+              value={settings.role}
+              onChange={(e) => handleRoleChange(e.target.value)}
+              className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm bg-surface text-text"
+            >
+              {Object.values(ROLES).map((role) => (
+                <option key={role} value={role}>
+                  {t(role)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Notifications Settings */}
         <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4 text-text">{t("role")}</h2>
-          <p className="text-sm text-muted mb-4">
-            Demo: Changes role for testing role-gated UI features
-          </p>
-          <select
-            value={settings.role}
-            onChange={(e) => handleRoleChange(e.target.value)}
-            className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm bg-surface text-text"
-          >
-            {Object.values(ROLES).map((role) => (
-              <option key={role} value={role}>
-                {t(role)}
-              </option>
-            ))}
-          </select>
+          <h2 className="text-lg font-semibold mb-4 text-text">
+            {t("notifications")}
+          </h2>
+          <div className="space-y-2">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={settings.notificationsEnabled ?? true}
+                onChange={(e) =>
+                  updateSetting("notificationsEnabled", e.target.checked)
+                }
+                className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+              />
+              <span className="text-sm font-medium text-text">
+                {t("enableNotifications")}
+              </span>
+            </label>
+            <p className="text-sm text-muted">
+              Enable or disable desktop notifications for shift updates and
+              reminders
+            </p>
+          </div>
         </div>
 
         {/* Time Format Settings */}
@@ -129,23 +164,28 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* Conflict Rules Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">{t("conflictRules")}</h2>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={settings.conflictRulesEnabled}
-              onChange={(e) =>
-                updateSetting("conflictRulesEnabled", e.target.checked)
-              }
-              className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
-            />
-            <span className="text-sm font-medium">
-              Enable conflict detection
-            </span>
-          </label>
-        </div>
+        {/* Conflict Rules Settings - Chief/Admin only */}
+        {isChief && (
+          <div className="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4">{t("conflictRules")}</h2>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={settings.conflictRulesEnabled}
+                onChange={(e) =>
+                  updateSetting("conflictRulesEnabled", e.target.checked)
+                }
+                className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+              />
+              <span className="text-sm font-medium">
+                Enable conflict detection
+              </span>
+            </label>
+            <p className="text-sm text-muted mt-2">
+              Advanced feature for shift conflict detection and validation
+            </p>
+          </div>
+        )}
 
         {/* Autosave Interval Settings */}
         <div className="bg-white shadow rounded-lg p-6 mb-6">
