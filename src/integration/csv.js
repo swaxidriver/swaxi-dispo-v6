@@ -555,3 +555,111 @@ export async function exportPerdisWebComm(repository, weekStart, weekEnd) {
     throw new Error(`Failed to export Perdis/WebComm format: ${error.message}`);
   }
 }
+
+/**
+ * Export filtered calendar shifts to CSV format
+ * @param {Object[]} filteredShifts - Pre-filtered shifts from calendar view
+ * @param {Object[]} templates - Array of shift template objects
+ * @param {Object[]} assignments - Array of assignment objects
+ * @param {Object[]} people - Array of person objects
+ * @param {Object} options - Export options
+ * @returns {string} CSV formatted string
+ */
+export function exportCalendarShiftsToCSV(
+  filteredShifts,
+  templates,
+  assignments,
+  people,
+  options = {},
+) {
+  const { includeUnassigned = true } = options;
+
+  if (!Array.isArray(filteredShifts)) {
+    throw new Error("Filtered shifts must be an array");
+  }
+
+  const headers = [
+    "date",
+    "shift_id",
+    "shift_name",
+    "start_time",
+    "end_time",
+    "cross_midnight",
+    "assigned_to",
+    "assigned_email",
+    "assigned_role",
+    "status",
+    "weekday",
+    "template_days",
+  ];
+
+  const csvData = [];
+
+  for (const shift of filteredShifts) {
+    const template = templates.find((t) => t.id === shift.template_id);
+    const assignment = assignments.find(
+      (a) => a.shift_instance_id === shift.id,
+    );
+    const person = assignment
+      ? people.find((p) => p.id === assignment.person_id)
+      : null;
+
+    // Skip unassigned shifts if not requested
+    if (!includeUnassigned && !assignment) {
+      continue;
+    }
+
+    const shiftDate =
+      shift.date instanceof Date ? shift.date : new Date(shift.date);
+
+    csvData.push({
+      date: shiftDate.toISOString().split("T")[0],
+      shift_id: shift.id,
+      shift_name: template?.name || "Unknown",
+      start_time: template?.start_time || "",
+      end_time: template?.end_time || "",
+      cross_midnight: template?.cross_midnight ? "Yes" : "No",
+      assigned_to: person?.name || "",
+      assigned_email: person?.email || "",
+      assigned_role: person?.role || "",
+      status: assignment?.status || "unassigned",
+      weekday: shiftDate.toLocaleDateString("en-US", { weekday: "long" }),
+      template_days: template
+        ? maskToDayNames(template.weekday_mask).join(", ")
+        : "",
+    });
+  }
+
+  return arrayToCSV(csvData, headers);
+}
+
+/**
+ * Export filtered calendar shifts to CSV using repository data
+ * @param {Object} repository - Repository instance
+ * @param {Object[]} filteredShifts - Pre-filtered shifts from calendar view
+ * @param {Object} options - Export options
+ * @returns {Promise<string>} CSV formatted string
+ */
+export async function exportCalendarShiftsToCSVWithRepository(
+  repository,
+  filteredShifts,
+  options = {},
+) {
+  try {
+    const [assignments, people, templates] = await Promise.all([
+      repository.getAssignments(),
+      repository.getPersons(),
+      repository.getShiftTemplates(),
+    ]);
+
+    return exportCalendarShiftsToCSV(
+      filteredShifts,
+      templates,
+      assignments,
+      people,
+      options,
+    );
+  } catch (error) {
+    throw new Error(`Failed to export calendar to CSV: ${error.message}`);
+  }
+}

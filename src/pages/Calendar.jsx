@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useContext, useCallback } from "react";
+import { ArrowDownTrayIcon, CalendarIcon } from "@heroicons/react/24/outline";
 
 import { useShifts } from "../contexts/useShifts";
 import { useShiftTemplates } from "../contexts/useShiftTemplates";
@@ -16,6 +17,8 @@ import {
 } from "../ui/calendar-views.jsx";
 import { keyboardNav, skipLinks } from "../ui/accessibility";
 import ConflictBadge from "../components/ConflictBadge";
+import { exportShiftsToICal } from "../integration/ical";
+import { exportCalendarShiftsToCSV } from "../integration/csv";
 
 const DAYS = [
   "Montag",
@@ -237,8 +240,14 @@ MobileCalendarDay.displayName = "MobileCalendarDay";
 
 export default function Calendar() {
   // Named export for clearer stack traces
-  const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } =
-    useShifts();
+  const {
+    state,
+    applyToShift,
+    assignShift,
+    updateShift,
+    undoLastShiftUpdate,
+    repository,
+  } = useShifts();
   const { templates } = useShiftTemplates();
   // Initialize to earliest shift date (improves default relevance & fixes test expectations)
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -415,6 +424,87 @@ export default function Calendar() {
   const handleCreateShift = () => {
     if (canManageShifts(userRole)) {
       setIsCreateOpen(true);
+    }
+  };
+
+  const handleExportToICal = async () => {
+    try {
+      const currentShifts =
+        viewMode === "month"
+          ? monthDays.flatMap((day) => day.shifts)
+          : weekShifts;
+
+      // Use data already available in context instead of repository calls
+      const assignments = []; // For now, export shifts without assignments
+      const people = [];
+
+      const iCalContent = exportShiftsToICal(
+        currentShifts,
+        templates,
+        assignments,
+        people,
+        auth.user,
+        {
+          title: `Swaxi Dienste - ${viewMode === "month" ? "Monat" : "Woche"}`,
+          description: `Exportierte Dienste für ${auth.user?.name || "Benutzer"} - ${selectedDate.toLocaleDateString("de-DE")}`,
+          userOnly: false, // Since we don't have assignment data, export all shifts
+        },
+      );
+
+      // Create and trigger download
+      const blob = new Blob([iCalContent], {
+        type: "text/calendar;charset=utf-8;",
+      });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const dateStr = selectedDate.toISOString().split("T")[0];
+      link.setAttribute("download", `swaxi-dienste-${viewMode}-${dateStr}.ics`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error exporting to iCal:", error);
+      alert(
+        "Fehler beim Exportieren der iCal-Datei. Siehe Konsole für Details.",
+      );
+    }
+  };
+
+  const handleExportToCSV = async () => {
+    try {
+      const currentShifts =
+        viewMode === "month"
+          ? monthDays.flatMap((day) => day.shifts)
+          : weekShifts;
+
+      // Use data already available in context
+      const assignments = [];
+      const people = [];
+
+      const csvContent = exportCalendarShiftsToCSV(
+        currentShifts,
+        templates,
+        assignments,
+        people,
+        { includeUnassigned: true },
+      );
+
+      // Create and trigger download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const dateStr = selectedDate.toISOString().split("T")[0];
+      link.setAttribute("download", `swaxi-dienste-${viewMode}-${dateStr}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error exporting to CSV:", error);
+      alert(
+        "Fehler beim Exportieren der CSV-Datei. Siehe Konsole für Details.",
+      );
     }
   };
 
@@ -768,6 +858,31 @@ export default function Calendar() {
             >
               {viewMode === "month" ? "Nächster Monat" : "Nächste Woche"}
             </button>
+          )}
+          {/* Export buttons - only show in non-assignment view */}
+          {viewMode !== "assignment" && (
+            <div className="flex space-x-2">
+              <button
+                type="button"
+                onClick={handleExportToICal}
+                aria-label="Als iCal exportieren"
+                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                title="Gefilterte Dienste als iCal-Datei (.ics) exportieren"
+              >
+                <CalendarIcon className="h-4 w-4 mr-1" />
+                iCal
+              </button>
+              <button
+                type="button"
+                onClick={handleExportToCSV}
+                aria-label="Als CSV exportieren"
+                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                title="Gefilterte Dienste als CSV-Datei exportieren"
+              >
+                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
+                CSV
+              </button>
+            </div>
           )}
           {canManageShifts(userRole) && (
             <button
