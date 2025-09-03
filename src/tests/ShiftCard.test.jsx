@@ -48,7 +48,7 @@ describe("ShiftCard", () => {
   it("renders shift card with basic information", () => {
     render(<ShiftCard {...defaultProps} />);
 
-    expect(screen.getByText(/Fr 25\.01\./)).toBeInTheDocument();
+    expect(screen.getByText(/Sa\., 25\.01\./)).toBeInTheDocument();
     expect(screen.getByText(/09:00-17:00/)).toBeInTheDocument();
     expect(screen.getByText("open")).toBeInTheDocument();
   });
@@ -59,20 +59,20 @@ describe("ShiftCard", () => {
     const header = screen.getByRole("button");
     expect(header).toHaveAttribute("aria-expanded", "false");
 
-    // Initially collapsed - find details by aria-hidden
-    const details = document.querySelector('[aria-hidden="true"]');
+    // Initially collapsed - find details by ID
+    const details = document.getElementById("shift-details-1");
     expect(details).toHaveClass("collapsed");
 
     // Click to expand
     fireEvent.click(header);
     expect(header).toHaveAttribute("aria-expanded", "true");
-    const expandedDetails = document.querySelector('[aria-hidden="false"]');
+    const expandedDetails = document.getElementById("shift-details-1");
     expect(expandedDetails).toHaveClass("expanded");
 
     // Click to collapse
     fireEvent.click(header);
     expect(header).toHaveAttribute("aria-expanded", "false");
-    const collapsedDetails = document.querySelector('[aria-hidden="true"]');
+    const collapsedDetails = document.getElementById("shift-details-1");
     expect(collapsedDetails).toHaveClass("collapsed");
   });
 

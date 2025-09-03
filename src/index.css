@@ -171,6 +171,11 @@
   opacity: 1;
 }
 
+/* Enhanced card styling for expanded state */
+.shift-card:has(.shift-card-details.expanded) {
+  box-shadow: var(--shadow-md);
+}
+
 .mobile-shift-container {
   max-width: 100%;
   overflow-x: hidden;
