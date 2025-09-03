@@ -10,6 +10,7 @@ const initialState = {
   timeFormat: "24h", // 24h or ampm
   conflictRulesEnabled: true,
   autosaveInterval: 30, // seconds: 15, 30, or 60
+  notificationsEnabled: true, // Enable/disable notifications
 };
 
 function settingsReducer(state, action) {
@@ -24,6 +25,8 @@ function settingsReducer(state, action) {
       return { ...state, conflictRulesEnabled: action.payload };
     case "SET_AUTOSAVE_INTERVAL":
       return { ...state, autosaveInterval: action.payload };
+    case "SET_NOTIFICATIONS":
+      return { ...state, notificationsEnabled: action.payload };
     case "RESET_SETTINGS":
       return { ...initialState };
     case "LOAD_SETTINGS":
@@ -64,6 +67,9 @@ export function SettingsProvider({ children }) {
         break;
       case "autosaveInterval":
         dispatch({ type: "SET_AUTOSAVE_INTERVAL", payload: value });
+        break;
+      case "notificationsEnabled":
+        dispatch({ type: "SET_NOTIFICATIONS", payload: value });
         break;
       default:
         console.warn(`Unknown setting key: ${key}`);

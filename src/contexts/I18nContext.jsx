@@ -19,9 +19,13 @@ const I18N_DICT = {
     theme: "Design",
     role: "Rolle",
     timeFormat: "Zeitformat",
+    notifications: "Benachrichtigungen",
     conflictRules: "Konfliktregeln",
     autosaveInterval: "Autospeichern-Intervall",
     dangerZone: "Gefahrenbereich",
+
+    // Notification options
+    enableNotifications: "Benachrichtigungen aktivieren",
 
     // Theme options
     light: "Hell",
@@ -148,9 +152,13 @@ const I18N_DICT = {
     theme: "Theme",
     role: "Role",
     timeFormat: "Time Format",
+    notifications: "Notifications",
     conflictRules: "Conflict Rules",
     autosaveInterval: "Autosave Interval",
     dangerZone: "Danger Zone",
+
+    // Notification options
+    enableNotifications: "Enable notifications",
 
     // Theme options
     light: "Light",
