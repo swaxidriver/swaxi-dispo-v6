@@ -78,7 +78,7 @@ export default function BatchAssignmentModal({
       .filter(Boolean);
   }, [selectedShifts, state.shifts]);
 
-  // Compute conflicts for selected shifts
+  // Compute conflicts for selected shifts with detailed information
   const conflictData = useMemo(() => {
     if (!shifts.length) {
       return {
@@ -86,16 +86,17 @@ export default function BatchAssignmentModal({
         conflictsByShift: {},
         allConflictReasons: [],
         conflictSummary: { warnings: [], blocking: [] },
+        detailedConflicts: [],
       };
     }
 
     const conflictsByShift = {};
     const allConflictReasons = new Set();
+    const detailedConflicts = [];
 
     shifts.forEach((shift) => {
       // Check conflicts against other selected shifts and existing assignments
       const otherShifts = shifts.filter((s) => s.id !== shift.id);
-      const existingShifts = state.shifts.filter((s) => s.id !== shift.id);
 
       if (otherShifts.length > 0) {
         const conflicts = computeShiftConflicts(
@@ -107,6 +108,40 @@ export default function BatchAssignmentModal({
         if (conflicts.length > 0) {
           conflictsByShift[shift.id] = conflicts;
           conflicts.forEach((c) => allConflictReasons.add(c));
+
+          // Generate detailed conflict information
+          otherShifts.forEach((otherShift) => {
+            const shiftConflicts = computeShiftConflicts(
+              shift,
+              [otherShift],
+              state.applications || [],
+            );
+
+            if (shiftConflicts.length > 0) {
+              detailedConflicts.push({
+                shift1: {
+                  id: shift.id,
+                  date: shift.date,
+                  time: `${shift.start}-${shift.end}`,
+                  type: shift.type,
+                  workLocation: shift.workLocation,
+                },
+                shift2: {
+                  id: otherShift.id,
+                  date: otherShift.date,
+                  time: `${otherShift.start}-${otherShift.end}`,
+                  type: otherShift.type,
+                  workLocation: otherShift.workLocation,
+                },
+                conflictTypes: shiftConflicts,
+                severity: shiftConflicts.some(
+                  (c) => categorizeConflicts([c]).blocking.length > 0,
+                )
+                  ? "blocking"
+                  : "warning",
+              });
+            }
+          });
         }
       }
     });
@@ -119,6 +154,7 @@ export default function BatchAssignmentModal({
       conflictsByShift,
       allConflictReasons: allConflictCodes,
       conflictSummary,
+      detailedConflicts,
     };
   }, [shifts, state.shifts, state.applications]);
 
@@ -262,12 +298,41 @@ export default function BatchAssignmentModal({
               </div>
             )}
             {conflictData.hasConflicts && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4">
-                <p className="text-sm text-yellow-800 font-medium">
-                  ⚠️ Konflikte erkannt
+              <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
+                <p className="text-sm text-red-800 font-medium">
+                  ⚠️{" "}
+                  {conflictData.conflictSummary.blocking.length > 0
+                    ? "Blockierende Konflikte erkannt"
+                    : "Konflikte mit Warnungen"}
                 </p>
-                <p className="text-xs text-yellow-700 mt-1">
-                  Die Zuweisung wird trotz erkannter Konflikte durchgeführt.
+                <div className="text-xs text-red-700 mt-2 space-y-1">
+                  {conflictData.conflictSummary.blocking.length > 0 && (
+                    <div>
+                      <strong>Blockierend:</strong>{" "}
+                      {describeConflicts(
+                        conflictData.conflictSummary.blocking,
+                      ).join(", ")}
+                    </div>
+                  )}
+                  {conflictData.conflictSummary.warnings.length > 0 && (
+                    <div>
+                      <strong>Warnungen:</strong>{" "}
+                      {describeConflicts(
+                        conflictData.conflictSummary.warnings,
+                      ).join(", ")}
+                    </div>
+                  )}
+                  <div className="mt-2 text-xs">
+                    <strong>
+                      {conflictData.detailedConflicts.length} Schichtenkonflikte
+                    </strong>{" "}
+                    zwischen ausgewählten Schichten erkannt.
+                  </div>
+                </div>
+                <p className="text-xs text-red-600 mt-2 font-medium">
+                  {conflictData.conflictSummary.blocking.length > 0
+                    ? "Die Zuweisung wird trotz blockierender Konflikte durchgeführt."
+                    : "Die Zuweisung wird mit Warnungen durchgeführt."}
                 </p>
               </div>
             )}
@@ -364,19 +429,22 @@ export default function BatchAssignmentModal({
               />
             </div>
 
-            {/* Conflict Summary */}
+            {/* Enhanced Conflict Summary Panel */}
             {conflictData.hasConflicts && (
               <div className="mb-6 border border-red-200 bg-red-50 rounded-md p-4">
-                <div className="text-sm font-medium text-red-600 mb-2">
-                  ⚠️ Konflikte erkannt
+                <div className="text-sm font-medium text-red-600 mb-3">
+                  ⚠️ Konflikte bei Sammelzuweisung erkannt
                 </div>
-                <div className="space-y-2">
+
+                {/* Summary of conflict types */}
+                <div className="space-y-2 mb-4">
                   {conflictData.conflictSummary.blocking.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-red-600">
-                        Blockierende Konflikte:
+                    <div className="bg-red-100 border border-red-300 rounded p-2">
+                      <p className="text-xs font-medium text-red-700 mb-1">
+                        🚫 Blockierende Konflikte (
+                        {conflictData.conflictSummary.blocking.length}):
                       </p>
-                      <ul className="text-xs text-red-500 ml-2">
+                      <ul className="text-xs text-red-600 ml-2">
                         {describeConflicts(
                           conflictData.conflictSummary.blocking,
                         ).map((desc, i) => (
@@ -386,11 +454,12 @@ export default function BatchAssignmentModal({
                     </div>
                   )}
                   {conflictData.conflictSummary.warnings.length > 0 && (
-                    <div>
-                      <p className="text-xs font-medium text-yellow-600">
-                        Warnungen:
+                    <div className="bg-yellow-100 border border-yellow-300 rounded p-2">
+                      <p className="text-xs font-medium text-yellow-700 mb-1">
+                        ⚠️ Warnungen (
+                        {conflictData.conflictSummary.warnings.length}):
                       </p>
-                      <ul className="text-xs text-yellow-500 ml-2">
+                      <ul className="text-xs text-yellow-600 ml-2">
                         {describeConflicts(
                           conflictData.conflictSummary.warnings,
                         ).map((desc, i) => (
@@ -399,6 +468,66 @@ export default function BatchAssignmentModal({
                       </ul>
                     </div>
                   )}
+                </div>
+
+                {/* Detailed conflict breakdown */}
+                {conflictData.detailedConflicts.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-medium text-gray-700 mb-2">
+                      Betroffene Schichten:
+                    </h4>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {conflictData.detailedConflicts.map((conflict, i) => (
+                        <div
+                          key={i}
+                          className={`text-xs p-2 rounded border ${
+                            conflict.severity === "blocking"
+                              ? "bg-red-50 border-red-200"
+                              : "bg-yellow-50 border-yellow-200"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span
+                              className={`font-medium ${
+                                conflict.severity === "blocking"
+                                  ? "text-red-700"
+                                  : "text-yellow-700"
+                              }`}
+                            >
+                              {conflict.severity === "blocking" ? "🚫" : "⚠️"}
+                              {describeConflicts(conflict.conflictTypes).join(
+                                ", ",
+                              )}
+                            </span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-gray-600">
+                              <strong>Schicht 1:</strong> {conflict.shift1.date}{" "}
+                              • {conflict.shift1.time} • {conflict.shift1.type}
+                              {conflict.shift1.workLocation &&
+                                ` • ${conflict.shift1.workLocation}`}
+                            </div>
+                            <div className="text-gray-600">
+                              <strong>Schicht 2:</strong> {conflict.shift2.date}{" "}
+                              • {conflict.shift2.time} • {conflict.shift2.type}
+                              {conflict.shift2.workLocation &&
+                                ` • ${conflict.shift2.workLocation}`}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Warning about assignment */}
+                <div className="mt-3 p-2 bg-gray-100 border border-gray-300 rounded">
+                  <p className="text-xs text-gray-700">
+                    <strong>Hinweis:</strong>{" "}
+                    {conflictData.conflictSummary.blocking.length > 0
+                      ? "Blockierende Konflikte sollten vor der Zuweisung gelöst werden."
+                      : "Diese Warnungen können überschrieben werden, sollten aber überprüft werden."}
+                  </p>
                 </div>
               </div>
             )}
@@ -427,8 +556,40 @@ export default function BatchAssignmentModal({
                         </div>
                       </div>
                       {conflictData.conflictsByShift[shift.id] && (
-                        <div className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded">
-                          Konflikt
+                        <div className="text-xs bg-red-50 border border-red-200 rounded p-2">
+                          <div className="flex items-center space-x-1 mb-1">
+                            <span className="text-red-600 font-medium">
+                              ⚠️ Konflikt
+                            </span>
+                          </div>
+                          <div className="text-red-600">
+                            {describeConflicts(
+                              conflictData.conflictsByShift[shift.id],
+                            ).join(", ")}
+                          </div>
+                          {/* Show which other shifts this conflicts with */}
+                          {conflictData.detailedConflicts
+                            .filter(
+                              (c) =>
+                                c.shift1.id === shift.id ||
+                                c.shift2.id === shift.id,
+                            )
+                            .slice(0, 2) // Show max 2 conflicts to avoid clutter
+                            .map((conflict, i) => {
+                              const otherShift =
+                                conflict.shift1.id === shift.id
+                                  ? conflict.shift2
+                                  : conflict.shift1;
+                              return (
+                                <div
+                                  key={i}
+                                  className="text-xs text-red-500 mt-1"
+                                >
+                                  → Konflikt mit: {otherShift.date}{" "}
+                                  {otherShift.time}
+                                </div>
+                              );
+                            })}
                         </div>
                       )}
                     </div>
