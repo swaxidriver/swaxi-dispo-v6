@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Testing Infrastructure)
+
+- **Comprehensive Unit Tests for Conflict Detection** - Added `conflictDetectionUtils.test.js` with edge case testing for:
+  - `computeShiftConflicts` with null inputs, invalid formats, and boundary conditions
+  - `overlaps` function with cross-midnight scenarios and exact time matches
+  - `detectShiftOverlap` with mixed datetime/legacy shift handling
+  - `isShortTurnaround` with custom rest periods and boundary values
+  - Conflict categorization utilities (`categorizeConflicts`, `getConflictSeverity`, `describeConflicts`)
+- **Assignment Utilities Unit Tests** - Added `assignmentUtils.test.js` with comprehensive edge case coverage for:
+  - Assignment application workflows (apply, reject, approve, withdraw)
+  - `canAssignUserToShift` conflict detection with null inputs and edge cases
+  - Auto-assignment planning with no users/shifts scenarios
+  - Assignment statistics with missing data fields
+- **Core Scheduling Library Tests** - Added `schedulingUtils.test.js` with edge case testing for:
+  - `calculateTimeOverlap` with invalid inputs and overnight overlaps
+  - `calculateShiftDuration` with zero duration and invalid formats
+  - `findSchedulingConflicts` with large datasets and missing fields
+  - Template generation and validation edge cases
+- **Enhanced Test Coverage Documentation** - Updated README with detailed test coverage information and usage instructions
+
+### Improved (Code Quality)
+
+- **Conflict Detection Coverage** - Achieved 100% test coverage for `conflicts.js` utility functions
+- **Shift Utilities Coverage** - Improved coverage for `shifts.js` to 79% with comprehensive edge case testing
+- **Edge Case Handling** - Systematic testing of null inputs, invalid formats, and boundary conditions
+- **Error Scenario Testing** - Added tests for graceful handling of invalid data and edge cases
+
 ### Added (Project Hygiene)
 
 - **LICENSE file** - MIT License for open source project

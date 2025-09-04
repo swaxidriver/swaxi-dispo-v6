@@ -239,6 +239,31 @@ Layered Strategy (v2):
 
 Custom Matcher: `expect(container).toHaveNoA11yViolations()` (siehe `jest.setup.js`).
 
+#### **🎯 Conflict Detection & Assignment Testing**
+
+Comprehensive unit tests for pure scheduling utilities focusing on edge cases:
+
+- **`conflictDetectionUtils.test.js`** - Edge case testing for:
+  - `computeShiftConflicts` - Null inputs, invalid formats, boundary conditions
+  - `overlaps` - Cross-midnight scenarios, exact matches, invalid times
+  - `detectShiftOverlap` - Mixed datetime/legacy shift handling
+  - `isShortTurnaround` - Boundary values, custom rest periods
+  - Conflict categorization utilities with invalid/unknown inputs
+
+- **`assignmentUtils.test.js`** - Edge case testing for:
+  - Assignment application workflows (apply, reject, approve, withdraw)
+  - `canAssignUserToShift` - Conflict detection, null inputs, edge cases
+  - Auto-assignment planning with no users/shifts, conflict detection
+  - Assignment statistics with missing data fields
+
+- **`schedulingUtils.test.js`** - Core scheduling library edge cases:
+  - `calculateTimeOverlap` - Invalid inputs, overnight overlaps, boundaries
+  - `calculateShiftDuration` - Zero duration, overnight shifts, invalid formats
+  - `findSchedulingConflicts` - Large datasets, missing fields, complex scenarios
+  - Template generation with edge cases and validation
+
+**Coverage Status:** Focus on pure utility functions with comprehensive edge case coverage for conflict detection (100% coverage of conflicts.js) and shift utilities (79% coverage of shifts.js).
+
 Skripte:
 
 ```bash
@@ -246,6 +271,11 @@ npm run test:unit
 npm run test:integration
 npm run test:a11y
 npm run test:coverage
+
+# Run specific unit tests
+npm test -- src/tests/unit/conflictDetectionUtils.test.js
+npm test -- src/tests/unit/assignmentUtils.test.js
+npm test -- src/tests/unit/schedulingUtils.test.js
 ```
 
 Coverage Gates (aktuell – werden weiter angezogen):
