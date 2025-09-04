@@ -19,10 +19,18 @@ export const de = {
   notifications: "Benachrichtigungen",
   conflictRules: "Konfliktregeln",
   autosaveInterval: "Autospeichern-Intervall",
+  experimentalFeatures: "Experimentelle Funktionen",
   dangerZone: "Gefahrenbereich",
 
   // Notification options
   enableNotifications: "Benachrichtigungen aktivieren",
+
+  // Experimental features
+  enableDragDrop: "Drag-and-Drop aktivieren",
+  enableAutoAssign: "Automatische Zuweisung aktivieren",
+  dragDropDescription:
+    "Ziehen von Schichten zwischen Terminen und Benutzern ermöglichen",
+  autoAssignDescription: "Automatische Schichtzuweisungsfunktionen aktivieren",
 
   // Theme options
   light: "Hell",

@@ -11,6 +11,9 @@ const initialState = {
   conflictRulesEnabled: true,
   autosaveInterval: 30, // seconds: 15, 30, or 60
   notificationsEnabled: true, // Enable/disable notifications
+  // Experimental features
+  dragDropEnabled: true, // Enable drag-and-drop functionality
+  autoAssignEnabled: false, // Enable automatic assignment features
 };
 
 function settingsReducer(state, action) {
@@ -27,6 +30,10 @@ function settingsReducer(state, action) {
       return { ...state, autosaveInterval: action.payload };
     case "SET_NOTIFICATIONS":
       return { ...state, notificationsEnabled: action.payload };
+    case "SET_DRAG_DROP":
+      return { ...state, dragDropEnabled: action.payload };
+    case "SET_AUTO_ASSIGN":
+      return { ...state, autoAssignEnabled: action.payload };
     case "RESET_SETTINGS":
       return { ...initialState };
     case "LOAD_SETTINGS":
@@ -70,6 +77,12 @@ export function SettingsProvider({ children }) {
         break;
       case "notificationsEnabled":
         dispatch({ type: "SET_NOTIFICATIONS", payload: value });
+        break;
+      case "dragDropEnabled":
+        dispatch({ type: "SET_DRAG_DROP", payload: value });
+        break;
+      case "autoAssignEnabled":
+        dispatch({ type: "SET_AUTO_ASSIGN", payload: value });
         break;
       default:
         console.warn(`Unknown setting key: ${key}`);

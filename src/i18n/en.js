@@ -19,10 +19,17 @@ export const en = {
   notifications: "Notifications",
   conflictRules: "Conflict Rules",
   autosaveInterval: "Autosave Interval",
+  experimentalFeatures: "Experimental Features",
   dangerZone: "Danger Zone",
 
   // Notification options
   enableNotifications: "Enable notifications",
+
+  // Experimental features
+  enableDragDrop: "Enable drag-and-drop",
+  enableAutoAssign: "Enable automatic assignment",
+  dragDropDescription: "Allow dragging shifts between dates and users",
+  autoAssignDescription: "Enable automatic shift assignment features",
 
   // Theme options
   light: "Light",
