@@ -7,8 +7,11 @@ const env = getEnv();
 export const ENABLE_SHAREPOINT =
   String(env.VITE_ENABLE_SHAREPOINT).toLowerCase() === "true";
 
+export const ENABLE_DRAG_DROP =
+  String(env.VITE_ENABLE_DRAG_DROP || "true").toLowerCase() === "true";
+
 export function describeFlags() {
-  return { ENABLE_SHAREPOINT };
+  return { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP };
 }
 
-export default { ENABLE_SHAREPOINT };
+export default { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP };

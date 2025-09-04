@@ -19,6 +19,8 @@ import { keyboardNav, skipLinks } from "../ui/accessibility";
 import ConflictBadge from "../components/ConflictBadge";
 import { exportShiftsToICal } from "../integration/ical";
 import { exportCalendarShiftsToCSV } from "../integration/csv";
+import { ENABLE_DRAG_DROP } from "../config/featureFlags";
+import { checkShiftConflicts } from "../utils/shifts";
 
 const DAYS = [
   "Montag",
@@ -313,6 +315,8 @@ export default function Calendar() {
   const [draggedShift, setDraggedShift] = useState(null);
   const [dragOverDay, setDragOverDay] = useState(null);
   const [dragOverTime, setDragOverTime] = useState(null);
+  const [dragValid, setDragValid] = useState(true);
+  const [shakeElement, setShakeElement] = useState(null);
 
   // Keyboard navigation state
   const [focusedDay, setFocusedDay] = useState(null);
@@ -547,27 +551,91 @@ export default function Calendar() {
     }
   };
 
+  // Check if a drag operation would cause conflicts
+  const checkDragConflicts = useCallback(
+    (shift, newDate, newStartTime) => {
+      if (!shift || !newDate || !newStartTime)
+        return { valid: true, conflicts: [] };
+
+      // Calculate end time based on original duration
+      const originalStart = shift.start;
+      const originalEnd = shift.end;
+      const startMinutes =
+        parseInt(originalStart.split(":")[0]) * 60 +
+        parseInt(originalStart.split(":")[1]);
+      const endMinutes =
+        parseInt(originalEnd.split(":")[0]) * 60 +
+        parseInt(originalEnd.split(":")[1]);
+      let duration = endMinutes - startMinutes;
+
+      // Handle overnight shifts
+      if (duration < 0) {
+        duration += 24 * 60; // Add 24 hours worth of minutes
+      }
+
+      const newStartMinutes =
+        parseInt(newStartTime.split(":")[0]) * 60 +
+        parseInt(newStartTime.split(":")[1]);
+      let newEndMinutes = newStartMinutes + duration;
+
+      // Handle end time going past midnight
+      let endTime;
+      if (newEndMinutes >= 24 * 60) {
+        newEndMinutes -= 24 * 60;
+        endTime = `${String(Math.floor(newEndMinutes / 60)).padStart(2, "0")}:${String(newEndMinutes % 60).padStart(2, "0")}`;
+      } else {
+        endTime = `${String(Math.floor(newEndMinutes / 60)).padStart(2, "0")}:${String(newEndMinutes % 60).padStart(2, "0")}`;
+      }
+
+      // Create hypothetical shift
+      const hypotheticalShift = {
+        ...shift,
+        date: newDate,
+        start: newStartTime,
+        end: endTime,
+      };
+
+      // Check for conflicts with other shifts
+      const otherShifts = state.shifts.filter((s) => s.id !== shift.id);
+      const conflicts = checkShiftConflicts(
+        hypotheticalShift,
+        otherShifts,
+        state.applications || [],
+      );
+
+      return {
+        valid: !conflicts || conflicts.length === 0,
+        conflicts: conflicts || [],
+      };
+    },
+    [state.shifts, state.applications],
+  );
+
   // Drag & Drop handlers
   const handleShiftDragStart = (e, shift) => {
+    if (!ENABLE_DRAG_DROP) return;
     setDraggedShift(shift);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", shift.id);
     // Add visual feedback
     e.target.style.opacity = "0.5";
+    // Add drag preview class for better visual feedback
+    e.target.classList.add("drag-preview");
   };
 
   const handleShiftDragEnd = (e) => {
     e.target.style.opacity = "1";
+    e.target.classList.remove("drag-preview");
     setDraggedShift(null);
     setDragOverDay(null);
     setDragOverTime(null);
+    setDragValid(true);
+    setShakeElement(null);
   };
 
   const handleDayDragOver = (e, dayDate) => {
-    if (!draggedShift) return;
+    if (!draggedShift || !ENABLE_DRAG_DROP) return;
     e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    setDragOverDay(dayDate);
 
     // Calculate time from mouse position
     const rect = e.currentTarget.getBoundingClientRect();
@@ -576,9 +644,18 @@ export default function Calendar() {
     const minutesFromMidnight = timePercent * DAY_MINUTES;
     const hours = Math.floor(minutesFromMidnight / 60);
     const minutes = Math.floor((minutesFromMidnight % 60) / 15) * 15; // Snap to 15-minute intervals
-    setDragOverTime(
-      `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`,
-    );
+    const newTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+
+    // Check for conflicts
+    const newDate = new Date(dayDate).toISOString().slice(0, 10);
+    const { valid } = checkDragConflicts(draggedShift, newDate, newTime);
+
+    setDragOverDay(dayDate);
+    setDragOverTime(newTime);
+    setDragValid(valid);
+
+    // Set appropriate drop effect
+    e.dataTransfer.dropEffect = valid ? "move" : "none";
   };
 
   const handleDayDragLeave = (e) => {
@@ -593,16 +670,44 @@ export default function Calendar() {
     ) {
       setDragOverDay(null);
       setDragOverTime(null);
+      setDragValid(true);
     }
   };
 
   const handleDayDrop = (e, dayDate) => {
     e.preventDefault();
 
-    if (!draggedShift || !dragOverTime) return;
+    if (!draggedShift || !dragOverTime || !ENABLE_DRAG_DROP) return;
 
     const newDate = new Date(dayDate).toISOString().slice(0, 10);
     const startTime = dragOverTime;
+
+    // Check for conflicts before attempting update
+    const { valid, conflicts } = checkDragConflicts(
+      draggedShift,
+      newDate,
+      startTime,
+    );
+
+    if (!valid) {
+      // Show shake animation for invalid drop
+      setShakeElement(dayDate);
+      setTimeout(() => setShakeElement(null), 500);
+
+      // Reset drag state
+      setDraggedShift(null);
+      setDragOverDay(null);
+      setDragOverTime(null);
+      setDragValid(true);
+
+      // Show user-friendly conflict message
+      const conflictMsg =
+        conflicts.length === 1
+          ? "Zeitkonflikt mit anderer Schicht"
+          : `Zeitkonflikte mit ${conflicts.length} anderen Schichten`;
+      console.warn("Drop blocked due to conflicts:", conflictMsg);
+      return;
+    }
 
     // Calculate end time based on original duration
     const originalStart = draggedShift.start;
@@ -650,6 +755,7 @@ export default function Calendar() {
     setDraggedShift(null);
     setDragOverDay(null);
     setDragOverTime(null);
+    setDragValid(true);
   };
 
   // Keyboard shortcut for undo
@@ -1055,7 +1161,15 @@ export default function Calendar() {
                       className={`relative border-r border-gray-100 ${
                         dragOverDay &&
                         dragOverDay.getTime() === dayDate.getTime()
-                          ? "bg-blue-50"
+                          ? dragValid
+                            ? "drag-valid-zone"
+                            : "drag-invalid-zone"
+                          : ""
+                      } ${
+                        shakeElement &&
+                        shakeElement.getTime &&
+                        shakeElement.getTime() === dayDate.getTime()
+                          ? "drag-shake"
                           : ""
                       }`}
                       style={{ height: DAY_HEIGHT }}
@@ -1115,7 +1229,9 @@ export default function Calendar() {
                             onQuickAction={handleQuickAction}
                             onDragStart={(e) => handleShiftDragStart(e, shift)}
                             onDragEnd={handleShiftDragEnd}
-                            isDraggable={canManageShifts(userRole)}
+                            isDraggable={
+                              ENABLE_DRAG_DROP && canManageShifts(userRole)
+                            }
                             isDragged={draggedShift?.id === shift.id}
                             conflicts={shift.conflicts || []}
                           />

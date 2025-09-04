@@ -163,10 +163,81 @@
   }
 }
 
+/* Drag and Drop animations */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes pulse-valid {
+  0%,
+  100% {
+    border-color: rgba(34, 197, 94, 0.5);
+    background-color: rgba(34, 197, 94, 0.05);
+  }
+  50% {
+    border-color: rgba(34, 197, 94, 0.8);
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+}
+
+@keyframes pulse-invalid {
+  0%,
+  100% {
+    border-color: rgba(239, 68, 68, 0.5);
+    background-color: rgba(239, 68, 68, 0.05);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.8);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+}
+
+.drag-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.drag-valid-zone {
+  animation: pulse-valid 2s ease-in-out infinite;
+  border: 2px dashed rgba(34, 197, 94, 0.5);
+}
+
+.drag-invalid-zone {
+  animation: pulse-invalid 2s ease-in-out infinite;
+  border: 2px dashed rgba(239, 68, 68, 0.5);
+}
+
+.drag-preview {
+  transition: all 0.2s ease-in-out;
+  transform: rotate(2deg);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu-panel,
   .mobile-menu-overlay {
+    animation: none !important;
+  }
+
+  .drag-shake,
+  .drag-valid-zone,
+  .drag-invalid-zone {
     animation: none !important;
   }
 

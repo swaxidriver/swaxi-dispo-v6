@@ -22,6 +22,12 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 ### 🚗 **Schichtplanung**
 
 - Umfassende Schichtplanung und -verwaltung
+- 🎯 **Drag-and-Drop Scheduling** - Intuitive Schichtverschiebung mit Echtzeit-Konflikterkening
+  - Visuelle Feedback-Systeme (grün = gültig, rot = ungültig)
+  - Shake-Animation bei Konflikten
+  - Feature-Flag Steuerung (`ENABLE_DRAG_DROP`)
+  - Vollständige Keyboard-Barrierefreiheit
+  - Mobile Touch-Unterstützung
 - 👥 Rollenbasierte Zugriffskontrolle (Admin, Chief, Disponent, Analyst)
 - 📊 Echtzeit-Analytics und Statistiken
 - 📅 Erweiterte Kalenderansicht mit Filtern

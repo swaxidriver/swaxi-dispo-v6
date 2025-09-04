@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Drag-and-Drop Scheduling)
+
+- **Enhanced Drag-and-Drop Scheduling** - Implemented intuitive drag-and-drop shift scheduling in the main board/grid view with:
+  - Real-time conflict detection during drag operations with visual feedback
+  - Valid/invalid drop zone indicators using CSS animations (green pulse for valid, red pulse for invalid)
+  - Shake animation for conflict-blocked drop attempts
+  - Feature flag control (`ENABLE_DRAG_DROP`) for hiding functionality until stable
+  - Enhanced keyboard accessibility with Space/Enter for pick up/drop and Arrow keys for navigation
+  - Mobile-friendly touch support with visual drag preview effects
+  - Conflict warnings with user-friendly messages before allowing drop operations
+  - Integration with existing `updateShift` and conflict detection systems
+
 ### Added (Testing Infrastructure)
 
 - **Comprehensive Unit Tests for Conflict Detection** - Added `conflictDetectionUtils.test.js` with edge case testing for:
