@@ -70,6 +70,14 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 - **Custom Hooks** - Wiederverwendbare Logik
 - **Real-time Updates** - Live data synchronization
 
+### **Build & Tooling**
+
+- **npm** - Package manager and dependency management
+- **PostCSS** - CSS processing with TailwindCSS and Autoprefixer
+- **TypeScript** - Type checking and development tooling
+- **Jest** - Testing framework with comprehensive test coverage
+- **ESLint** - Code linting and style enforcement
+
 ## 📚 Documentation
 
 ### **📋 Project Planning & Issue Management**
