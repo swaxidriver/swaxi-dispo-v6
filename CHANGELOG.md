@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added (Multi-Language Support)
+
+- **🌍 Multi-Language Support (German/English)** - Complete internationalization implementation with:
+  - Dictionary-based translation system (`src/i18n/de.js`, `src/i18n/en.js`)
+  - Working language switcher in Settings page with real-time UI updates
+  - Persistent language preference in localStorage (`swaxi.settings.language`)
+  - Translation helper function `t(key)` with intelligent fallback system (current language → German → key)
+  - Comprehensive translation coverage for all UI strings including:
+    - Navigation menus, page titles, form labels
+    - Settings page sections and options
+    - Dashboard filters and analytics
+    - Personal Applications page
+    - Shift Designer page
+    - Validation error messages
+  - Translation utility for validation errors (`translateValidationErrors`)
+  - Full test coverage for i18n functionality and fallback behavior
+  - Documentation in README with usage examples and conventions
+
 ### Added (Drag-and-Drop Scheduling)
 
 - **Enhanced Drag-and-Drop Scheduling** - Implemented intuitive drag-and-drop shift scheduling in the main board/grid view with:

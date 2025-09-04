@@ -9,6 +9,41 @@ import { toMinutes, computeDuration } from "./shifts.js";
 // Default timezone for the application
 const DEFAULT_TIMEZONE = "Europe/Berlin";
 
+// Error codes for translation
+export const VALIDATION_ERROR_CODES = {
+  TEMPLATE_NAME_REQUIRED: "templateNameRequired",
+  START_TIME_REQUIRED: "startTimeRequired",
+  END_TIME_REQUIRED: "endTimeRequired",
+  AT_LEAST_ONE_DAY_REQUIRED: "atLeastOneDayRequired",
+  START_TIME_INVALID_FORMAT: "startTimeInvalidFormat",
+  END_TIME_INVALID_FORMAT: "endTimeInvalidFormat",
+};
+
+/**
+ * Translate validation error messages using provided translation function
+ * @param {string[]} errors - Array of error messages or error codes
+ * @param {Function} t - Translation function
+ * @returns {string[]} Array of translated error messages
+ */
+export function translateValidationErrors(errors, t) {
+  const errorCodeMap = {
+    "Template name is required": VALIDATION_ERROR_CODES.TEMPLATE_NAME_REQUIRED,
+    "Start time is required": VALIDATION_ERROR_CODES.START_TIME_REQUIRED,
+    "End time is required": VALIDATION_ERROR_CODES.END_TIME_REQUIRED,
+    "At least one day must be selected":
+      VALIDATION_ERROR_CODES.AT_LEAST_ONE_DAY_REQUIRED,
+    "Start time must be in HH:MM format (24-hour)":
+      VALIDATION_ERROR_CODES.START_TIME_INVALID_FORMAT,
+    "End time must be in HH:MM format (24-hour)":
+      VALIDATION_ERROR_CODES.END_TIME_INVALID_FORMAT,
+  };
+
+  return errors.map((error) => {
+    const errorCode = errorCodeMap[error];
+    return errorCode ? t(errorCode) : error;
+  });
+}
+
 /**
  * Validate a shift template
  * @param {Object} template - Template to validate

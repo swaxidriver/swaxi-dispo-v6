@@ -35,9 +35,14 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 ### 🎨 **User Experience**
 
 - 🌓 Light/Dark Mode mit Persistence
+- 🌍 **Multi-Language Support** (German/English)
+  - Umschaltung über Settings-Page
+  - Persistierung in localStorage (`swaxi.settings.language`)
+  - Dictionary-basierte Übersetzungsarchitektur
+  - Fallback-System (Deutsch → Englisch → Key)
 - 📱 Vollständig responsive Design
 - 🔔 Echtzeit-Benachrichtigungssystem
-- � Umfassende Audit-Protokollierung
+- 🔍 Umfassende Audit-Protokollierung
 
 ### 🧪 **Testing & Diagnostics**
 
@@ -240,6 +245,136 @@ npm run test:coverage
 
 # 🔍 Linting
 npm run lint
+```
+
+## 🌍 Internationalization (i18n)
+
+The application supports multiple languages with a dictionary-based translation system.
+
+### **Supported Languages**
+
+- **German (de)** - Default language
+- **English (en)** - Full translation available
+
+### **Language Switching**
+
+Users can switch languages via the Settings page:
+
+1. Navigate to **Settings** → **Language** section
+2. Select **Deutsch (de)** or **English (en)**
+3. Language preference is automatically saved to localStorage
+
+### **Translation Architecture**
+
+#### **Dictionary Files**
+
+```bash
+src/i18n/
+├── index.js           # Exports all dictionaries
+├── de.js             # German translations
+└── en.js             # English translations
+```
+
+#### **Translation Helper**
+
+```javascript
+import { useI18n } from "../hooks/useI18n";
+
+function MyComponent() {
+  const { t, language, setLanguage } = useI18n();
+
+  return (
+    <div>
+      <h1>{t("welcome")}</h1> {/* Returns "Willkommen" or "Welcome" */}
+      <p>Current: {language}</p> {/* Returns "de" or "en" */}
+      <button onClick={() => setLanguage("en")}>Switch to English</button>
+    </div>
+  );
+}
+```
+
+#### **Fallback System**
+
+The translation system provides intelligent fallbacks:
+
+1. **Primary**: Current language translation
+2. **Fallback**: German translation (if not already German)
+3. **Final**: Translation key itself
+
+### **Adding New Translations**
+
+#### **1. Add Translation Keys**
+
+```javascript
+// src/i18n/de.js
+export const de = {
+  // ... existing translations
+  newFeature: "Neue Funktion",
+  buttonLabel: "Klicken Sie hier",
+};
+
+// src/i18n/en.js
+export const en = {
+  // ... existing translations
+  newFeature: "New Feature",
+  buttonLabel: "Click here",
+};
+```
+
+#### **2. Use in Components**
+
+```javascript
+function NewComponent() {
+  const { t } = useI18n();
+
+  return (
+    <div>
+      <h2>{t("newFeature")}</h2>
+      <button>{t("buttonLabel")}</button>
+    </div>
+  );
+}
+```
+
+#### **3. Error Message Translation**
+
+For validation errors, use the translation helper:
+
+```javascript
+import { translateValidationErrors } from "../utils/templateValidation";
+
+function MyForm() {
+  const { t } = useI18n();
+  const [errors, setErrors] = useState([]);
+
+  // Translate validation errors
+  const translatedErrors = translateValidationErrors(errors, t);
+
+  return (
+    <div>
+      {translatedErrors.map((error) => (
+        <p key={error}>{error}</p>
+      ))}
+    </div>
+  );
+}
+```
+
+### **Translation Key Conventions**
+
+- **Camel case**: `settingsTitle`, `personalApplications`
+- **Semantic grouping**: Group related keys by feature/component
+- **Consistent naming**: Use clear, descriptive names
+- **Error codes**: Validation errors use specific error code keys
+
+### **Testing Translations**
+
+```bash
+# Run i18n-specific tests
+npm test -- --testPathPatterns=i18n
+
+# Test key consistency between languages
+npm test -- src/tests/i18n.test.js
 ```
 
 ### **🔄 Development Workflow**
