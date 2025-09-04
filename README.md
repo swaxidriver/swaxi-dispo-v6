@@ -104,6 +104,7 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 
 - **Project Structure**: Modular React architecture with context-based state management
 - **Issue Workflow**: CSV → GitHub Issues → Epics → Milestones → Implementation
+- **Development Workflow**: Branch naming, PR process, release workflow (see [Development Workflow](#-development-workflow))
 - **Test Coverage**: Comprehensive test suite accessible at `/test` route
 
 ## 🚀 Quick Start
@@ -233,6 +234,205 @@ npm run test:coverage
 
 # 🔍 Linting
 npm run lint
+```
+
+### **🔄 Development Workflow**
+
+This section documents the complete branch/release workflow for contributors and maintainers.
+
+#### **🌿 Branch Strategy**
+
+We follow a **short-lived branch model** with clear naming conventions:
+
+| Branch Type | Pattern                         | Purpose                          | Example                          |
+| ----------- | ------------------------------- | -------------------------------- | -------------------------------- |
+| **Main**    | `main`                          | Stable, deployed to GitHub Pages | Production releases              |
+| **Develop** | `develop`                       | Integration/testing branch       | Pre-release integration          |
+| **Feature** | `feature/<scope>-<short-title>` | New functionality                | `feature/add-live-update-banner` |
+| **Fix**     | `fix/<short-title>`             | Bug fixes                        | `fix/duplicate-id-generation`    |
+| **Chore**   | `chore/<short-title>`           | Maintenance tasks                | `chore/update-dependencies`      |
+| **Release** | `release/vX.Y.Z`                | Release hardening (optional)     | `release/v6.3.0`                 |
+| **Hotfix**  | `hotfix/vX.Y.Z+1`               | Urgent production fixes          | `hotfix/v6.3.1`                  |
+
+#### **📝 Branch Naming Guidelines**
+
+- **Feature branches**: `feature/<id>-<slug>` or `feature/<epic-or-scope>-<short-title>`
+- **Bug fixes**: `fix/<id>-<slug>` or `fix/<short-description>`
+- **Chores**: `chore/<description>` (documentation, refactoring, tooling)
+- Use **kebab-case** for all branch names
+- Keep names **descriptive but concise**
+- Include issue ID when applicable: `feature/176-document-workflow`
+
+#### **🔄 Pull Request Workflow**
+
+1. **Create branch** from `develop` (or `main` for hotfixes)
+2. **Implement changes** following coding standards
+3. **Run pre-merge checklist** (see below)
+4. **Open PR** to `develop` with:
+   - Clear title and description
+   - Screenshots/GIFs for UI changes
+   - Link to related issues
+5. **Request review** from maintainers
+6. **Address feedback** and update PR
+7. **Merge** after approval and checks pass
+
+#### **✅ Pre-Merge Testing Checklist**
+
+Before merging any PR, ensure all of the following pass:
+
+**🔧 Code Quality**
+
+- [ ] `npm run lint` passes without errors
+- [ ] `npm run type-check` passes (TypeScript validation)
+- [ ] No console errors in browser
+- [ ] Code follows existing patterns and style
+
+**🧪 Testing**
+
+- [ ] `npm run test` passes all tests
+- [ ] New functionality has appropriate tests
+- [ ] No regressions in existing functionality
+
+**🎨 UI/UX (for frontend changes)**
+
+- [ ] Responsive design works (mobile + desktop)
+- [ ] Dark/light mode compatibility
+- [ ] Accessibility standards maintained
+- [ ] Screenshots attached for visual changes
+
+**🔄 State & Data Safety**
+
+- [ ] `localStorage` migration safe (no data loss on refresh)
+- [ ] State updates work correctly
+- [ ] No memory leaks or performance regressions
+
+**📚 Documentation**
+
+- [ ] `CHANGELOG.md` updated for user-facing changes
+- [ ] README updated if new features added
+- [ ] Code comments added for complex logic
+
+#### **🚀 Release Process**
+
+We use **semantic versioning** (`v6.M.m`) for all releases:
+
+**1. Prepare Release**
+
+```bash
+# Ensure develop is up to date
+git checkout develop
+git pull origin develop
+
+# Create release branch (optional for larger releases)
+git checkout -b release/v6.3.0
+```
+
+**2. Update Version & Changelog**
+
+- Bump version in `package.json`
+- Update version string in HTML title/footer
+- Add release notes to `CHANGELOG.md`
+- Commit changes: `git commit -m "chore: prepare v6.3.0 release"`
+
+**3. Merge to Main**
+
+```bash
+# Merge to main
+git checkout main
+git merge develop  # or release/v6.3.0
+
+# Tag the release
+git tag v6.3.0
+git push origin main --tags
+```
+
+**4. Create GitHub Release**
+
+- Go to [GitHub Releases](https://github.com/swaxidriver/swaxi-dispo-v6/releases)
+- Click "Create a new release"
+- Select tag `v6.3.0`
+- Copy release notes from `CHANGELOG.md`
+- Publish release
+
+**5. Post-Release Cleanup**
+
+```bash
+# Merge back to develop
+git checkout develop
+git merge main
+git push origin develop
+
+# Create next milestone
+# Move remaining issues to next version
+```
+
+#### **🌐 Demo Publishing**
+
+The demo is automatically deployed via **GitHub Pages** using GitHub Actions:
+
+**Automatic Deployment**
+
+- Every push to `main` triggers automatic deployment
+- Build artifacts are deployed to `gh-pages` branch
+- Live at: [https://swaxidriver.github.io/swaxi-dispo-v6/](https://swaxidriver.github.io/swaxi-dispo-v6/)
+
+**Manual Deployment** (if needed)
+
+```bash
+# Build for production
+npm run build
+
+# Deploy using deploy script
+./deploy.sh
+
+# Or manually deploy dist/ folder to any static hosting
+```
+
+**Demo Environment Setup**
+
+- **URL Structure**: `https://swaxidriver.github.io/swaxi-dispo-v6/`
+- **Test Suite**: Available at `/test` route
+- **Data Storage**: Uses localStorage (no backend required)
+- **Feature Flags**: SharePoint integration disabled by default
+
+#### **🏷️ Issue Labels & Milestones**
+
+Use these standardized labels for issues and PRs:
+
+**Type Labels**
+
+- `type:feature` - New functionality
+- `type:bug` - Bug fixes
+- `type:chore` - Maintenance tasks
+- `type:doc` - Documentation updates
+
+**Priority Labels**
+
+- `prio:P0` - Critical for stability
+- `prio:P1` - Important features
+- `prio:P2` - Nice to have
+
+**Area Labels**
+
+- `area:UI` - User interface changes
+- `area:logic` - Business logic
+- `area:state` - State management
+- `area:perf` - Performance improvements
+
+**Role Labels**
+
+- `role:admin`, `role:chief`, `role:disponent`, `role:analyst`
+
+#### **💡 Commit Message Convention**
+
+We follow **conventional commits** (optional but recommended):
+
+```bash
+feat: add live update banner component
+fix: resolve duplicate ID generation issue
+chore: update development dependencies
+docs: document branch workflow in README
+refactor: improve shift conflict detection logic
 ```
 
 ### **🧪 Testing**
