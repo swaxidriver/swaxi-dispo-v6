@@ -139,4 +139,26 @@ export const en = {
   filterOpen: "Open",
   filterAssigned: "Assigned",
   filterCancelled: "Cancelled",
+
+  // Pages
+  personalApplications: "My Applications",
+  shiftDesigner: "Shift Designer",
+  howToUseShiftDesigner: "💡 How to use the Shift Designer",
+
+  // Validation errors
+  templateNameRequired: "Template name is required",
+  startTimeRequired: "Start time is required",
+  endTimeRequired: "End time is required",
+  atLeastOneDayRequired: "At least one day must be selected",
+  startTimeInvalidFormat: "Start time must be in HH:MM format (24-hour)",
+  endTimeInvalidFormat: "End time must be in HH:MM format (24-hour)",
+
+  // Personal Applications page
+  pleaseLoginToSeeApplications: "Please log in to see your applications.",
+  personalApplicationsDescription:
+    "Overview of your shift applications. You can withdraw pending applications up to 24 hours before the shift.",
+  noApplicationsAvailable: "No applications available",
+  noApplicationsText:
+    "You haven't submitted any applications yet. Apply for shifts in the calendar or overview.",
+  showAvailableShifts: "Show available shifts",
 };

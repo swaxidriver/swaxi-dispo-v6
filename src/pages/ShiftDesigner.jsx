@@ -1,10 +1,12 @@
 import { useState } from "react";
 
+import { useI18n } from "../hooks/useI18n";
 import { ShiftTemplateProvider } from "../contexts/ShiftTemplateContext";
 import ShiftTemplateManager from "../components/ShiftTemplateManager";
 import ShiftWeeklyGenerator from "../components/ShiftWeeklyGenerator";
 
 function ShiftDesigner() {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState("templates");
 
   const tabs = [
@@ -15,7 +17,7 @@ function ShiftDesigner() {
   return (
     <div className="container mx-auto p-4" data-testid="shift-designer">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Shift Designer</h1>
+        <h1 className="text-3xl font-bold mb-2">{t("shiftDesigner")}</h1>
         <p className="text-gray-600">
           Create and manage shift templates, then generate shifts for multiple
           weeks.
@@ -63,7 +65,7 @@ function ShiftDesigner() {
       {/* Help Section */}
       <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h3 className="font-semibold text-blue-800 mb-2">
-          💡 How to use the Shift Designer
+          {t("howToUseShiftDesigner")}
         </h3>
         <div className="text-sm text-blue-700 space-y-1">
           <p>

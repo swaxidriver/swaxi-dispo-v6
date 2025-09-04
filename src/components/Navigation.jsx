@@ -36,8 +36,8 @@ export default function Navigation() {
   const navigation = [
     { name: t("overview"), href: "/" },
     { name: t("calendar"), href: "/calendar" },
-    isDisponent && { name: "Meine Bewerbungen", href: "/applications" },
-    isChief && { name: "Shift Designer", href: "/shift-designer" },
+    isDisponent && { name: t("personalApplications"), href: "/applications" },
+    isChief && { name: t("shiftDesigner"), href: "/shift-designer" },
     isAdmin && { name: t("administration"), href: "/admin" },
     canViewAudit(role) && { name: t("audit"), href: "/audit" },
     { name: t("settings"), href: "/settings" },

@@ -140,4 +140,27 @@ export const de = {
   filterOpen: "Offen",
   filterAssigned: "Zugewiesen",
   filterCancelled: "Abgesagt",
+
+  // Pages
+  personalApplications: "Meine Bewerbungen",
+  shiftDesigner: "Shift Designer",
+  howToUseShiftDesigner: "💡 So verwendest du den Shift Designer",
+
+  // Validation errors
+  templateNameRequired: "Template-Name ist erforderlich",
+  startTimeRequired: "Startzeit ist erforderlich",
+  endTimeRequired: "Endzeit ist erforderlich",
+  atLeastOneDayRequired: "Mindestens ein Tag muss ausgewählt werden",
+  startTimeInvalidFormat: "Startzeit muss im HH:MM-Format (24-Stunden) sein",
+  endTimeInvalidFormat: "Endzeit muss im HH:MM-Format (24-Stunden) sein",
+
+  // Personal Applications page
+  pleaseLoginToSeeApplications:
+    "Bitte melden Sie sich an, um Ihre Bewerbungen zu sehen.",
+  personalApplicationsDescription:
+    "Übersicht Ihrer Dienstbewerbungen. Sie können ausstehende Bewerbungen bis 24 Stunden vor dem Dienst zurückziehen.",
+  noApplicationsAvailable: "Keine Bewerbungen vorhanden",
+  noApplicationsText:
+    "Sie haben noch keine Bewerbungen eingereicht. Bewerben Sie sich auf Dienste im Kalender oder in der Übersicht.",
+  showAvailableShifts: "Verfügbare Dienste anzeigen",
 };
