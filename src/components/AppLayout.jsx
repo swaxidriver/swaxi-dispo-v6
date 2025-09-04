@@ -24,7 +24,7 @@ const APP_COMMIT =
 function Footer({ onOpenChangelog }) {
   return (
     <footer
-      className="mt-auto py-4 text-center text-sm text-gray-500 safe-bottom safe-x"
+      className="mt-auto py-4 text-center text-sm text-gray-500 mobile-safe-bottom"
       role="contentinfo"
       aria-label="Seiteninformationen"
     >
@@ -58,7 +58,7 @@ function AppLayout({ ready }) {
 
   return (
     <Router basename="/swaxi-dispo-v6">
-      <div className="min-h-screen bg-bg text-text flex flex-col">
+      <div className="min-h-screen-dynamic bg-bg text-text flex flex-col mobile-safe-container">
         {/* Global live region for application-wide announcements */}
         <div
           id="global-live-region"

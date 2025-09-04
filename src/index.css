@@ -324,4 +324,54 @@
     min-height: 44px;
     padding: var(--space-3) var(--space-4);
   }
+
+  /* Ensure all interactive elements meet touch target requirements */
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"],
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation; /* Eliminate 300ms tap delay */
+  }
+
+  /* Form inputs for better mobile experience */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    min-height: 44px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: var(--space-3);
+    touch-action: manipulation;
+  }
+
+  /* Enhanced mobile navigation */
+  .navigation-item {
+    min-height: 48px;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  /* Mobile-specific card interactions */
+  .shift-card,
+  .mobile-card {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Improved tap targets for list items */
+  [role="listitem"],
+  .list-item {
+    min-height: 44px;
+  }
 }
