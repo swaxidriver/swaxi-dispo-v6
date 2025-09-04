@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import { useI18n } from "../hooks/useI18n";
 import { useSettings } from "../hooks/useSettings";
 import { useTheme } from "../contexts/useTheme";
+import AuthContext from "../contexts/AuthContext";
 import { ROLES } from "../utils/constants";
 import ThemeSelector from "../components/ThemeSelector";
 
@@ -11,10 +12,11 @@ export default function Settings() {
   const { settings, updateSetting, resetSettings, exportSettings } =
     useSettings();
   const { setThemeMode } = useTheme();
+  const auth = useContext(AuthContext);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  // Get current role for role-based visibility
-  const currentRole = settings.role;
+  // Get current authenticated user role for role-based visibility
+  const currentRole = auth?.user?.role || settings.role;
   const isAdmin = currentRole === "admin";
   const isChief = currentRole === "chief" || isAdmin;
 
@@ -136,8 +138,10 @@ export default function Settings() {
         </div>
 
         {/* Time Format Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">{t("timeFormat")}</h2>
+        <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-text">
+            {t("timeFormat")}
+          </h2>
           <div className="space-y-2">
             <label className="flex items-center">
               <input
@@ -148,7 +152,9 @@ export default function Settings() {
                 onChange={(e) => updateSetting("timeFormat", e.target.value)}
                 className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
               />
-              <span className="text-sm font-medium">{t("format24h")}</span>
+              <span className="text-sm font-medium text-text">
+                {t("format24h")}
+              </span>
             </label>
             <label className="flex items-center">
               <input
@@ -159,15 +165,19 @@ export default function Settings() {
                 onChange={(e) => updateSetting("timeFormat", e.target.value)}
                 className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
               />
-              <span className="text-sm font-medium">{t("formatAmPm")}</span>
+              <span className="text-sm font-medium text-text">
+                {t("formatAmPm")}
+              </span>
             </label>
           </div>
         </div>
 
         {/* Conflict Rules Settings - Chief/Admin only */}
         {isChief && (
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <h2 className="text-lg font-semibold mb-4">{t("conflictRules")}</h2>
+          <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-text">
+              {t("conflictRules")}
+            </h2>
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -177,7 +187,7 @@ export default function Settings() {
                 }
                 className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
               />
-              <span className="text-sm font-medium">
+              <span className="text-sm font-medium text-text">
                 Enable conflict detection
               </span>
             </label>
@@ -188,8 +198,8 @@ export default function Settings() {
         )}
 
         {/* Autosave Interval Settings */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">
+        <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4 text-text">
             {t("autosaveInterval")}
           </h2>
           <select
@@ -197,13 +207,63 @@ export default function Settings() {
             onChange={(e) =>
               updateSetting("autosaveInterval", parseInt(e.target.value))
             }
-            className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
+            className="block w-full rounded-md border-border py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary sm:text-sm bg-surface text-text"
           >
             <option value={15}>{t("interval15s")}</option>
             <option value={30}>{t("interval30s")}</option>
             <option value={60}>{t("interval60s")}</option>
           </select>
         </div>
+
+        {/* Experimental Features Settings - Admin/Chief only */}
+        {isChief && (
+          <div className="bg-surface border border-border shadow rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-text">
+              {t("experimentalFeatures")}
+            </h2>
+            <p className="text-sm text-muted mb-4">
+              Enable experimental features that are currently in development
+            </p>
+            <div className="space-y-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={settings.dragDropEnabled ?? true}
+                  onChange={(e) =>
+                    updateSetting("dragDropEnabled", e.target.checked)
+                  }
+                  className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                />
+                <div>
+                  <span className="text-sm font-medium text-text">
+                    {t("enableDragDrop")}
+                  </span>
+                  <p className="text-sm text-muted">
+                    {t("dragDropDescription")}
+                  </p>
+                </div>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={settings.autoAssignEnabled ?? false}
+                  onChange={(e) =>
+                    updateSetting("autoAssignEnabled", e.target.checked)
+                  }
+                  className="mr-3 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                />
+                <div>
+                  <span className="text-sm font-medium text-text">
+                    {t("enableAutoAssign")}
+                  </span>
+                  <p className="text-sm text-muted">
+                    {t("autoAssignDescription")}
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+        )}
 
         {/* Danger Zone */}
         <div className="bg-red-50 border border-red-200 shadow rounded-lg p-6">
