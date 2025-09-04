@@ -8,7 +8,11 @@ import AuditService from "../../../services/auditService";
 const getDefaultTemplateColor = () => {
   if (typeof window !== "undefined") {
     const style = getComputedStyle(document.documentElement);
-    return style.getPropertyValue("--swa-blue").trim() || "#222f88";
+    return (
+      style.getPropertyValue("--swa-blue").trim() ||
+      style.getPropertyValue("--color-primary").trim() ||
+      "#222f88"
+    );
   }
   return "#222f88"; // SWA Primary Blue fallback
 };

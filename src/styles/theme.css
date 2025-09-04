@@ -38,7 +38,7 @@
   --swa-green: var(--color-ok); /* Replaces old green values */
   --swa-gray: var(--color-muted); /* Replaces old gray values */
   --swa-yellow: var(--color-warn); /* Replaces old yellow values */
-  --swa-purple: #8b5cf6; /* Specialty color for specific needs */
+  --swa-purple: var(--color-purple); /* Specialty color for specific needs */
 }
 
 /* SWA Corporate Design Utility Classes */

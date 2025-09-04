@@ -16,6 +16,9 @@
   --color-warn: #f59e0b;
   --color-err: #dc2626;
 
+  /* Specialty Colors */
+  --color-purple: #8b5cf6; /* For specific UI elements requiring purple */
+
   /* Typography Scale */
   /* Primary brand font (modern): Manrope with Inter fallback */
   --font-sans:

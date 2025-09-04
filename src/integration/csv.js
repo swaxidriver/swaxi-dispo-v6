@@ -282,7 +282,7 @@ export async function importShiftTemplates(csvContent, repository) {
         start_time: row.start_time,
         end_time: row.end_time,
         cross_midnight: crossMidnight,
-        color: row.color || "#222f88", // SWA Primary Blue
+        color: row.color || "#222f88", // Default: SWA Primary Blue (--color-primary)
         active: row.active !== "false" && row.active !== "0",
       };
 

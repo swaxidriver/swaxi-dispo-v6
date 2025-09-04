@@ -20,8 +20,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    },
-    "types": ["jest", "@types/jest"]
+    }
   },
   "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
@@ -31,6 +30,7 @@
     "backend",
     "e2e",
     "playwright-report",
-    "test-results"
+    "test-results",
+    "src/tests/**/*"
   ]
 }

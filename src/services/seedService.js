@@ -25,7 +25,7 @@ export class SeedService {
         start_time: "06:00",
         end_time: "14:00",
         cross_midnight: false,
-        color: "#222f88", // SWA Primary Blue
+        color: "#222f88", // SWA Primary Blue (--color-primary)
         active: true,
       },
       {
@@ -35,7 +35,7 @@ export class SeedService {
         start_time: "14:00",
         end_time: "22:00",
         cross_midnight: false,
-        color: "#f59e0b", // SWA Warning
+        color: "#f59e0b", // SWA Warning (--color-warn)
         active: true,
       },
       {
@@ -53,7 +53,7 @@ export class SeedService {
         start_time: "22:00",
         end_time: "06:00",
         cross_midnight: true,
-        color: "#8B5CF6", // Purple (keeping as is - specialty color)
+        color: "#8B5CF6", // Purple (--swa-purple from theme.css)
         active: true,
       },
       {
@@ -63,7 +63,7 @@ export class SeedService {
         start_time: "11:45",
         end_time: "21:00",
         cross_midnight: false,
-        color: "#16a34a", // SWA Success Green
+        color: "#16a34a", // SWA Success Green (--color-ok)
         active: true,
       },
       {
@@ -73,7 +73,7 @@ export class SeedService {
         start_time: "21:00",
         end_time: "05:30",
         cross_midnight: true,
-        color: "#dc2626", // SWA Error Red
+        color: "#dc2626", // SWA Error Red (--color-err)
         active: true,
       },
     ];

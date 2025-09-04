@@ -7,8 +7,8 @@ import React from "react";
 
 import ConflictBadge from "../components/ConflictBadge";
 
-// SWA Corporate Design default colors
-const SWA_DEFAULT_GRAY = "#64748b"; // SWA muted color from tokens
+// SWA Corporate Design default colors (CSS variable values)
+const SWA_DEFAULT_GRAY = "#64748b"; // SWA muted color (--color-muted)
 
 /**
  * Get template color for a shift

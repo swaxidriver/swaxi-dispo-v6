@@ -439,11 +439,22 @@ Hybrid SharePoint/localStorage Architektur für maximale Flexibilität.
 
 Dieses Projekt verwendet zentrale Design Tokens in `src/styles/tokens.css` (Farben, Typografie, Radii, Schatten). Dark Mode erfolgt über `data-theme="dark"` auf `<html>` und überschreibt nur die Variablen – keine doppelte CSS-Pflege.
 
+### SWA Corporate Design Compliance
+
+Das Design System entspricht vollständig dem SWA Corporate Design Handbuch:
+
+- **Farbpalette**: Primary `#222f88`, Accent `#27ade7`, Status-Farben (Success, Warning, Error)
+- **Typography**: Manrope als Primärschrift mit Inter/System Fallbacks
+- **Konsistenz**: Alle UI-Komponenten nutzen einheitliche Token
+- **Zugänglichkeit**: WCAG 2.1 AA konforme Kontraste für beide Themes
+- **Dark Mode**: Vollständige Unterstützung mit optimierten Farbwerten
+
 ### Vorteile
 
 - Einheitliche Farblogik (Surface vs. Background vs. Border)
 - Leichtes Corporate-Branding Update (nur Tokens tauschen)
 - Tests & Snapshots stabiler (keine zufälligen Inline-Farben)
+- Corporate Design konform und WCAG-compliant
 
 ### Nutzung
 
@@ -515,6 +526,15 @@ Diese Klassen verweisen auf CSS-Variablen und funktionieren automatisch mit Ligh
 
 Legacy Klassen `bg-brand-primary`, `text-brand-primary`, `focus:ring-brand-primary`, `bg-brand-secondary` wurden weitestgehend ersetzt durch Token-Verwendung (Stand v0.3.x). Ehemalige Sass Datei `styles/main.scss` wurde in v0.3.x entfernt – alle Werte sind nun als CSS Tokens oder Utility-Klassen verfügbar.
 
+**SWA Corporate Design Migration (v0.3.1):**
+Das System wurde vollständig auf das SWA Corporate Design Handbuch ausgerichtet:
+
+- **Farbpalette**: Alle Farben entsprechen den Corporate Design Vorgaben
+- **Semantische Token**: `--color-primary`, `--color-accent`, `--color-ok`, `--color-warn`, `--color-err`
+- **Hard-coded Farben eliminiert**: Keine Hex-Werte mehr in Komponenten (außer Seed-Daten)
+- **Dark Mode bereit**: `[data-theme="dark"]` Überschreibungen für alle Tokens
+- **Kontrastprüfung**: WCAG 2.1 AA konforme Farbkombinationen
+
 Neue Komponenten sollten semantische Klassen oder direkte Tokens nutzen:
 
 ```jsx
@@ -531,10 +551,13 @@ Suche nach Migrationskandidaten: `grep -R "brand-primary" src/`.
 
 ### Best Practices
 
-1. Neue Farben erst in `tokens.css` definieren
-2. Keine Hex-Werte direkt in JSX
-3. Semantische Benennung: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen
-4. Unterschied `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
+1. **Farben definieren**: Neue Farben erst in `tokens.css` definieren, dann in `theme.css` als SWA-Variable referenzieren
+2. **Keine Hard-coded Farben**: Keine Hex-Werte direkt in JSX/CSS - nutze CSS-Variablen oder Tailwind-Utilities
+3. **Semantische Benennung**: `--color-ok`, `--color-warn`, statt spezifischer Farbnamen (`--color-blue`)
+4. **Ebenen unterscheiden**: `--color-bg` (Seitenhintergrund) vs. `--color-surface` (Cards, Panels) beachten
+5. **Corporate Design**: Alle Farben müssen der SWA Corporate Design Palette entsprechen
+6. **Dark Mode**: Immer `[data-theme="dark"]` Varianten für neue Farben definieren
+7. **Token-Linting**: `npm run lint:tokens` prüft auf Hard-coded Farben
 
 ### Programmatic Token Consumption
 
