@@ -114,7 +114,7 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
   };
 
   const getFieldClasses = (fieldName) => {
-    const baseClasses = "w-full border rounded px-2 py-1";
+    const baseClasses = "w-full border rounded px-3 py-3 text-base"; // Increased padding and font size for mobile
     const hasError = getFieldError(fieldName);
     return hasError
       ? `${baseClasses} border-red-500 focus:border-red-500 focus:ring-red-200`
@@ -122,10 +122,14 @@ export default function CreateShiftModal({ isOpen, onClose, defaultDate }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-start justify-center pt-24 z-50">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-start justify-center pt-24 z-50 mobile-safe-container">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-md shadow p-6 w-full max-w-md space-y-4"
+        className="bg-white rounded-md shadow p-6 w-full max-w-md space-y-4 mobile-safe-bottom"
+        style={{
+          maxHeight: "calc(var(--vh-dynamic, 1vh) * 80)", // Use dynamic viewport height
+          overflowY: "auto",
+        }}
       >
         <h2 className="text-lg font-semibold">
           {t("createNewShift") || "Neuen Dienst erstellen"}

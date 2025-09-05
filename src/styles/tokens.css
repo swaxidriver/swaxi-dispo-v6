@@ -97,6 +97,11 @@
     --vh-small: 1svh; /* Small viewport height (keyboard visible) */
     --vh-large: 1lvh; /* Large viewport height (keyboard hidden) */
     --vh-dynamic: 1dvh; /* Dynamic viewport height (adapts to UI changes) */
+
+    /* Additional viewport unit variables for consistency */
+    --vw-small: 1svw;
+    --vw-large: 1lvw;
+    --vw-dynamic: 1dvw;
   }
 }
 
@@ -147,4 +152,47 @@
 .safe-all {
   padding: var(--safe-area-inset-top) var(--safe-area-inset-right)
     var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+}
+
+/* Enhanced viewport unit utility classes */
+.h-screen-dynamic {
+  height: calc(var(--vh-dynamic, 1vh) * 100);
+}
+.min-h-screen-dynamic {
+  min-height: calc(var(--vh-dynamic, 1vh) * 100);
+}
+.max-h-screen-dynamic {
+  max-height: calc(var(--vh-dynamic, 1vh) * 100);
+}
+.h-screen-small {
+  height: calc(var(--vh-small, 1vh) * 100);
+}
+.min-h-screen-small {
+  min-height: calc(var(--vh-small, 1vh) * 100);
+}
+.h-screen-large {
+  height: calc(var(--vh-large, 1vh) * 100);
+}
+.min-h-screen-large {
+  min-height: calc(var(--vh-large, 1vh) * 100);
+}
+
+/* Mobile-specific safe area classes */
+@media (max-width: 420px) {
+  .mobile-safe-container {
+    padding-left: max(var(--safe-area-inset-left), var(--space-4));
+    padding-right: max(var(--safe-area-inset-right), var(--space-4));
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: max(var(--safe-area-inset-bottom), var(--space-4));
+  }
+
+  .mobile-safe-nav {
+    padding-top: max(var(--safe-area-inset-top), var(--space-3));
+    padding-left: max(var(--safe-area-inset-left), var(--space-4));
+    padding-right: max(var(--safe-area-inset-right), var(--space-4));
+  }
+
+  .mobile-safe-bottom {
+    padding-bottom: max(var(--safe-area-inset-bottom), var(--space-6));
+  }
 }

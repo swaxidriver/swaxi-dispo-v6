@@ -110,7 +110,7 @@ export default function Navigation() {
       </a>
 
       <nav
-        className="bg-[var(--color-primary)] safe-top safe-x"
+        className="bg-[var(--color-primary)] mobile-safe-nav"
         aria-label="Hauptnavigation"
         data-testid="main-nav"
       >
@@ -253,11 +253,9 @@ export default function Navigation() {
             <div
               ref={mobileMenuRef}
               id="mobile-menu"
-              className="fixed inset-y-0 left-0 z-50 w-64 bg-[var(--color-primary)] shadow-lg mobile-menu-panel"
+              className="fixed inset-y-0 left-0 z-50 w-64 bg-[var(--color-primary)] shadow-lg mobile-menu-panel mobile-safe-container h-screen-dynamic"
               style={{
                 animation: "slideInLeft 0.3s ease-out",
-                paddingTop: "var(--space-4)",
-                paddingBottom: "var(--space-4)",
               }}
               role="navigation"
               aria-label="Mobile Hauptnavigation"
