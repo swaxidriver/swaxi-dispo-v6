@@ -240,6 +240,12 @@ export function useLocalStorage(key, defaultValue = null) {
 
 export { useMobileDevice, useTimeInputStep } from "./useMobileDevice";
 
+// New refactored shift hooks
+export { useShiftState } from "./useShiftState.js";
+export { useShiftOperations } from "./useShiftOperations.js";
+export { useShiftSync } from "./useShiftSync.js";
+export { useShiftNotifications } from "./useShiftNotifications.js";
+
 export default {
   useAsyncOperation,
   useFormState,
