@@ -4,6 +4,7 @@ import AuthContext from "../contexts/AuthContext";
 import { ShiftProvider } from "../contexts/ShiftContext";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { I18nProvider } from "../contexts/I18nContext";
+import { SettingsProvider } from "../contexts/SettingsContext";
 
 /**
  * Unified test render with common providers.
@@ -22,9 +23,11 @@ export function renderWithProviders(
   return render(
     <AuthContext.Provider value={{ user: authUser }}>
       <I18nProvider>
-        <ThemeProvider>
-          <ShiftProvider {...providerProps}>{ui}</ShiftProvider>
-        </ThemeProvider>
+        <SettingsProvider>
+          <ThemeProvider>
+            <ShiftProvider {...providerProps}>{ui}</ShiftProvider>
+          </ThemeProvider>
+        </SettingsProvider>
       </I18nProvider>
     </AuthContext.Provider>,
     renderOptions,

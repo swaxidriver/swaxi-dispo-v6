@@ -5,6 +5,7 @@ import { canViewAudit } from "../lib/rbac";
 import AuditService from "../services/auditService";
 import { useI18n } from "../hooks/useI18n";
 import { useTimeFormat } from "../hooks/useTimeFormat";
+import MiniAnalytics from "../components/MiniAnalytics";
 
 export default function Audit() {
   const auth = useContext(AuthContext);
@@ -12,15 +13,57 @@ export default function Audit() {
   const { formatDateTime } = useTimeFormat();
   const [logs, setLogs] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [userFilter, setUserFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
 
   // Always run hooks first; gate content afterward to satisfy hooks rules
   useEffect(() => {
     if (!auth?.user || !canViewAudit(auth.user.role)) return;
-    const auditLogs = AuditService.getFilteredLogs(filter).sort(
-      (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
-    );
+
+    let auditLogs = AuditService.getFilteredLogs(filter);
+
+    // Additional filtering by user
+    if (userFilter !== "all") {
+      auditLogs = auditLogs.filter((log) => log.actor === userFilter);
+    }
+
+    // Additional filtering by date
+    if (dateFilter !== "all") {
+      const now = new Date();
+      const filterDate = new Date();
+
+      switch (dateFilter) {
+        case "today":
+          filterDate.setHours(0, 0, 0, 0);
+          auditLogs = auditLogs.filter(
+            (log) => new Date(log.timestamp) >= filterDate,
+          );
+          break;
+        case "week":
+          filterDate.setDate(now.getDate() - 7);
+          auditLogs = auditLogs.filter(
+            (log) => new Date(log.timestamp) >= filterDate,
+          );
+          break;
+        case "month":
+          filterDate.setMonth(now.getMonth() - 1);
+          auditLogs = auditLogs.filter(
+            (log) => new Date(log.timestamp) >= filterDate,
+          );
+          break;
+      }
+    }
+
+    // Sort by timestamp (newest first)
+    auditLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
     setLogs(auditLogs);
-  }, [filter, auth]);
+  }, [filter, userFilter, dateFilter, auth]);
+
+  // Get unique users for filter dropdown
+  const uniqueUsers = [
+    ...new Set(AuditService.getLogs().map((log) => log.actor)),
+  ].sort();
 
   if (!auth?.user || !canViewAudit(auth.user.role)) {
     return (
@@ -46,7 +89,7 @@ export default function Audit() {
     <div className="container mx-auto px-4 py-8">
       <div className="md:flex md:items-center md:justify-between mb-8">
         <h1 className="text-3xl font-bold">{t("audit")}</h1>
-        <div className="mt-4 flex space-x-3 md:ml-4 md:mt-0">
+        <div className="mt-4 flex flex-wrap gap-3 md:ml-4 md:mt-0">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -60,6 +103,31 @@ export default function Audit() {
             <option value="delete">Löschungen</option>
             <option value="apply">Anfragen</option>
           </select>
+
+          <select
+            value={userFilter}
+            onChange={(e) => setUserFilter(e.target.value)}
+            className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
+          >
+            <option value="all">Alle Benutzer</option>
+            {uniqueUsers.map((user) => (
+              <option key={user} value={user}>
+                {user}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="block rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-[var(--color-primary)] focus:outline-none focus:ring-[var(--color-primary)] sm:text-sm"
+          >
+            <option value="all">Alle Zeit</option>
+            <option value="today">Heute</option>
+            <option value="week">Letzte Woche</option>
+            <option value="month">Letzter Monat</option>
+          </select>
+
           <button
             onClick={handleExport}
             data-testid="export-btn"
@@ -68,6 +136,12 @@ export default function Audit() {
             JSON Export
           </button>
         </div>
+      </div>
+
+      {/* Analytics Summary */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">Übersicht Analytics</h2>
+        <MiniAnalytics />
       </div>
 
       {logs.length === 0 ? (

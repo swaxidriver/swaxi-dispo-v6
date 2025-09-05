@@ -31,7 +31,7 @@ describe("Audit page", () => {
 
   it("renders heading and seeded logs initially", () => {
     renderWithProviders(<Audit />);
-    expect(screen.getByText("Audit-Log")).toBeInTheDocument();
+    expect(screen.getByText("Audit")).toBeInTheDocument();
     expect(screen.getByText("Schicht erstellt")).toBeInTheDocument();
     expect(screen.getByText("Fahrzeugstatus geändert")).toBeInTheDocument();
     expect(screen.getByText("Urlaubsantrag eingereicht")).toBeInTheDocument();
