@@ -214,6 +214,76 @@ UI zeigt Konflikte als Liste unter der jeweiligen Schicht. Erweiterung: Mapping 
 - **`TestPage.jsx`** - Comprehensive test suite für alle Funktionen
 - **Audit-System** - Vollständige Protokollierung aller Aktionen
 
+### **🔍 Audit Log System**
+
+Das Audit-System protokolliert alle wichtigen Aktionen automatisch und bietet eine benutzerfreundliche Admin-Oberfläche zur Überwachung und Analyse.
+
+#### **Funktionen**
+
+- **Admin-only Zugriff** - Nur Benutzer mit Admin-Rolle können Audit-Logs einsehen
+- **Automatische Protokollierung** - Erfasst Schichtoperationen, Zuweisungen, Einstellungsänderungen
+- **Intelligente Kategorisierung** - Automatische Gruppierung: Create, Update, Delete, Apply, Other
+- **Ring Buffer Storage** - Hält die letzten 1000 Einträge in localStorage (`swaxi.audit.v1`)
+- **Erweiterte Filter** - Nach Typ, Benutzer und Zeitraum (heute, Woche, Monat)
+- **Analytics Integration** - Live-Dashboard mit Shift-Metriken und Konflikten
+- **JSON Export** - Vollständiger Export aller Audit-Daten mit Metadata
+
+#### **Audit Entry Structure**
+
+```javascript
+{
+  id: "1757073253116_6nqcva0fj",              // Unique identifier
+  timestamp: "2025-09-05T11:54:13.116Z",      // ISO timestamp
+  action: "shift_created",                     // Action performed
+  actor: "admin@example.com",                 // User who performed action
+  role: "admin",                              // User role at time of action
+  details: "Frühschicht 06:00-14:00",        // Additional context
+  count: 1,                                   // Number of items affected
+  type: "create"                              // Categorized type
+}
+```
+
+#### **Action Types**
+
+- **`create`** - Neue Schichten, Benutzer, Templates erstellt
+- **`update`** - Schichtzeiten, Zuweisungen, Einstellungen geändert
+- **`delete`** - Schichten, Benutzer entfernt oder storniert
+- **`apply`** - Bewerbungen, Urlaubsanträge eingereicht
+- **`other`** - Sonstige protokollierte Aktionen
+
+#### **Usage**
+
+```javascript
+// Manual logging
+AuditService.logAction(
+  "shift_assigned", // action
+  "admin@example.com", // actor
+  "admin", // role
+  { shiftId: 123, driver: "John" }, // details
+  1, // count
+);
+
+// Automatic user context
+AuditService.logCurrentUserAction("settings_changed", {
+  setting: "theme",
+  value: "dark",
+});
+
+// Retrieve logs
+const allLogs = AuditService.getLogs();
+const filteredLogs = AuditService.getFilteredLogs("create");
+
+// Export functionality
+AuditService.exportLogs(); // Downloads JSON file
+```
+
+#### **Access & Routes**
+
+- **Route:** `/audit` (Admin-only)
+- **Navigation:** Visible nur für Admin-Benutzer
+- **Storage:** `localStorage['swaxi.audit.v1']`
+- **Ring Buffer:** Automatische Limitierung auf 1000 Einträge
+
 ### **👥 User Management**
 
 - **`RoleManagement.jsx`** - Erweiterte Benutzerverwaltung mit Rollensystem
