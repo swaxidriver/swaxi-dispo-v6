@@ -10,8 +10,11 @@ export const ENABLE_SHAREPOINT =
 export const ENABLE_DRAG_DROP =
   String(env.VITE_ENABLE_DRAG_DROP || "true").toLowerCase() === "true";
 
+export const ENABLE_AUTO_ASSIGN =
+  String(env.VITE_ENABLE_AUTO_ASSIGN || "true").toLowerCase() === "true";
+
 export function describeFlags() {
-  return { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP };
+  return { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP, ENABLE_AUTO_ASSIGN };
 }
 
-export default { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP };
+export default { ENABLE_SHAREPOINT, ENABLE_DRAG_DROP, ENABLE_AUTO_ASSIGN };

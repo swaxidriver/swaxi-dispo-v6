@@ -14,6 +14,12 @@ import {
   canAssignShifts,
 } from "../utils/constants";
 import { BatchAssignmentModal } from "../features/assignments";
+import AutoAssignModal from "../components/AutoAssignModal";
+import {
+  generateAutoAssignmentPlan,
+  executeAutoAssignmentPlan,
+} from "../utils/autoAssignment";
+import { ENABLE_AUTO_ASSIGN } from "../config/featureFlags";
 
 import { dragDropAria, keyboardNav, LiveRegion } from "./accessibility";
 
@@ -71,6 +77,9 @@ export default function AssignmentDragDrop() {
   const [focusedDisponent] = useState(null);
   const [assignmentMode, setAssignmentMode] = useState(false); // Keyboard assignment mode
   const [showBatchModal, setShowBatchModal] = useState(false);
+  const [showAutoAssignModal, setShowAutoAssignModal] = useState(false);
+  const [plannedAssignments, setPlannedAssignments] = useState([]);
+  const [isProcessingAutoAssign, setIsProcessingAutoAssign] = useState(false);
 
   const shiftsRef = useRef(null);
   const disponentiRef = useRef(null);
@@ -363,6 +372,63 @@ export default function AssignmentDragDrop() {
     [selectedShifts, assignShift],
   );
 
+  const handleAutoAssign = useCallback(() => {
+    setIsProcessingAutoAssign(true);
+
+    try {
+      const assignments = generateAutoAssignmentPlan(
+        state.shifts,
+        SAMPLE_DISPONENTEN,
+      );
+      setPlannedAssignments(assignments);
+      setShowAutoAssignModal(true);
+
+      if (liveRegionRef.current) {
+        liveRegionRef.current.announce(
+          `Automatische Zuteilung generiert: ${assignments.length} Vorschläge bereit.`,
+        );
+      }
+    } catch (error) {
+      console.error("Auto-assignment failed:", error);
+      if (liveRegionRef.current) {
+        liveRegionRef.current.announce(
+          "Fehler bei der automatischen Zuteilung. Bitte versuchen Sie es erneut.",
+        );
+      }
+    } finally {
+      setIsProcessingAutoAssign(false);
+    }
+  }, [state.shifts]);
+
+  const handleAutoAssignConfirm = useCallback(async () => {
+    setIsProcessingAutoAssign(true);
+
+    try {
+      const results = await executeAutoAssignmentPlan(
+        plannedAssignments.filter((assignment) => !assignment.hasConflicts),
+        assignShift,
+      );
+
+      if (liveRegionRef.current) {
+        liveRegionRef.current.announce(
+          `Automatische Zuteilung abgeschlossen: ${results.successCount} Zuweisungen erfolgreich, ${results.errorCount} Fehler.`,
+        );
+      }
+
+      setShowAutoAssignModal(false);
+      setPlannedAssignments([]);
+    } catch (error) {
+      console.error("Auto-assignment execution failed:", error);
+      if (liveRegionRef.current) {
+        liveRegionRef.current.announce(
+          "Fehler bei der Ausführung der automatischen Zuteilung.",
+        );
+      }
+    } finally {
+      setIsProcessingAutoAssign(false);
+    }
+  }, [plannedAssignments, assignShift]);
+
   // Update drag states for disponenten
   useEffect(() => {
     if (disponentiRef.current) {
@@ -480,6 +546,45 @@ export default function AssignmentDragDrop() {
               >
                 ❌ Alle abwählen
               </button>
+
+              {/* Auto Assignment Button */}
+              {ENABLE_AUTO_ASSIGN && canAssign && (
+                <button
+                  onClick={handleAutoAssign}
+                  disabled={
+                    unassignedShifts.length === 0 || isProcessingAutoAssign
+                  }
+                  className="inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed rounded focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+                  aria-label={`Automatische Zuteilung für ${unassignedShifts.length} offene Schichten`}
+                >
+                  {isProcessingAutoAssign ? (
+                    <>
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-3 w-3 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Generiert...
+                    </>
+                  ) : (
+                    <>🤖 Automatisch zuteilen</>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Selection status and batch actions */}
@@ -827,6 +932,20 @@ export default function AssignmentDragDrop() {
         selectedShifts={Array.from(selectedShifts)}
         disponenten={SAMPLE_DISPONENTEN}
       />
+
+      {/* Auto Assignment Modal */}
+      {ENABLE_AUTO_ASSIGN && (
+        <AutoAssignModal
+          isOpen={showAutoAssignModal}
+          onClose={() => {
+            setShowAutoAssignModal(false);
+            setPlannedAssignments([]);
+          }}
+          onConfirm={handleAutoAssignConfirm}
+          plannedAssignments={plannedAssignments}
+          isProcessing={isProcessingAutoAssign}
+        />
+      )}
     </div>
   );
 }
