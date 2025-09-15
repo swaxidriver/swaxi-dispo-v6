@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 
 import ShiftTable from "../components/ShiftTable"; // used in JSX
 import { ShiftContext } from "../contexts/ShiftContext"; // used in provider
+import { AuthProvider } from "../contexts/AuthContext";
 
 describe("ShiftTable", () => {
   // reference to avoid unused warnings in strict lint setup
@@ -21,11 +22,17 @@ describe("ShiftTable", () => {
 
   const renderShiftTable = (shifts = mockShifts) =>
     render(
-      <ShiftContext.Provider
-        value={{ dispatch: mockDispatch, applyToShift: jest.fn() }}
-      >
-        <ShiftTable shifts={shifts} />
-      </ShiftContext.Provider>,
+      <AuthProvider>
+        <ShiftContext.Provider
+          value={{ 
+            dispatch: mockDispatch, 
+            applyToShift: jest.fn(),
+            state: { shifts: [] } 
+          }}
+        >
+          <ShiftTable shifts={shifts} />
+        </ShiftContext.Provider>
+      </AuthProvider>,
     );
 
   it("renders shifts correctly", () => {
