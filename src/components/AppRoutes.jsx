@@ -9,6 +9,7 @@ import TestPage from "../pages/TestPage";
 import ShiftDesigner from "../pages/ShiftDesigner";
 import PersonalApplications from "../pages/PersonalApplications";
 import { Login } from "../features/people";
+import PrivateRoute from "./PrivateRoute";
 
 /**
  * AppRoutes component that defines all application routes.
@@ -29,14 +30,14 @@ function AppRoutes({ ready }) {
 
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/calendar" element={<Calendar />} />
-      <Route path="/applications" element={<PersonalApplications />} />
-      <Route path="/admin" element={<Administration />} />
-      <Route path="/shift-designer" element={<ShiftDesigner />} />
-      <Route path="/audit" element={<Audit />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/test" element={<TestPage />} />
+      <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/calendar" element={<PrivateRoute><Calendar /></PrivateRoute>} />
+      <Route path="/applications" element={<PrivateRoute><PersonalApplications /></PrivateRoute>} />
+      <Route path="/admin" element={<PrivateRoute><Administration /></PrivateRoute>} />
+      <Route path="/shift-designer" element={<PrivateRoute><ShiftDesigner /></PrivateRoute>} />
+      <Route path="/audit" element={<PrivateRoute><Audit /></PrivateRoute>} />
+      <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+      <Route path="/test" element={<PrivateRoute><TestPage /></PrivateRoute>} />
       <Route path="/login" element={<Login />} />
     </Routes>
   );
