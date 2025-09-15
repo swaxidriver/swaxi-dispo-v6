@@ -46,11 +46,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem("user", JSON.stringify(userToLogin));
       localStorage.setItem("swaxi.role", userToLogin.role);
       
-      // Redirect to app root after login (skip in test environment)
-      if (typeof window !== "undefined" && !window.location.pathname.includes("/test")) {
-        const base = getBaseUrl();
-        window.location.assign(base);
-      }
+      // Note: Navigation is now handled by Login component with useNavigate
     }
   };
 

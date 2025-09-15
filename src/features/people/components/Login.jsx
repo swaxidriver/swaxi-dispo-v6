@@ -1,7 +1,17 @@
 import { useAuth } from "../../../contexts/useAuth";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
   const { login, logout, user, mockUsers } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogin = (role) => {
+    login(role);
+    // Navigate to the originally requested route or home
+    const from = location.state?.from?.pathname || "/";
+    navigate(from, { replace: true });
+  };
 
   if (user) {
     return (
@@ -31,7 +41,7 @@ function Login() {
         {Object.keys(mockUsers).map((role) => (
           <button
             key={role}
-            onClick={() => login(role)}
+            onClick={() => handleLogin(role)}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Anmelden als {mockUsers[role].role}

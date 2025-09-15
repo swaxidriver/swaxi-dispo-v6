@@ -190,7 +190,7 @@ export default function Navigation() {
                       isActive ? "page" : undefined
                     }
                   >
-                    Anmelden
+                    {t("login")}
                   </NavLink>
                 )}
                 {auth?.user && (
@@ -198,14 +198,14 @@ export default function Navigation() {
                     onClick={auth.logout}
                     data-testid="nav-logout"
                     className="inline-flex items-center border-b-2 border-transparent text-sm font-medium text-gray-300 hover:text-white hover:border-gray-300 focus-ring-primary transition-colors"
-                    aria-label={`Abmelden (${auth.user.role})`}
+                    aria-label={`${t("logout")} (${auth.user.role})`}
                     title="Aktuelle Sitzung beenden"
                     style={{
                       paddingLeft: "var(--space-1)",
                       paddingTop: "var(--space-1)",
                     }}
                   >
-                    Abmelden ({auth.user.role})
+                    {t("logout")} ({auth.user.role})
                   </button>
                 )}
               </div>
@@ -349,7 +349,7 @@ export default function Navigation() {
                       isActive ? "page" : undefined
                     }
                   >
-                    Anmelden
+                    {t("login")}
                   </NavLink>
                 )}
 
@@ -367,10 +367,10 @@ export default function Navigation() {
                       alignItems: "center",
                       borderRadius: "0.375rem",
                     }}
-                    aria-label={`Abmelden (${auth.user.role})`}
+                    aria-label={`${t("logout")} (${auth.user.role})`}
                     title="Aktuelle Sitzung beenden"
                   >
-                    Abmelden ({auth.user.role})
+                    {t("logout")} ({auth.user.role})
                   </button>
                 )}
               </div>
