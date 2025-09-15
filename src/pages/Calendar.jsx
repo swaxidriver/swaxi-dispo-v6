@@ -9,19 +9,18 @@ import { useMobileDevice } from "../hooks/useMobileDevice";
 import _ShiftTable from "../components/ShiftTable";
 import { CreateShiftModal, ShiftDetailsModal } from "../features/shifts";
 import AssignmentDragDrop from "../ui/assignment-dnd";
-import {
-  ShiftCell,
-  TimelineShiftCell,
-  QUICK_ACTIONS,
-  getShiftTemplateColor,
-} from "../ui/calendar-views.jsx";
-import { keyboardNav, skipLinks } from "../ui/accessibility";
-import ConflictBadge from "../components/ConflictBadge";
-import { exportShiftsToICal } from "../integration/ical";
-import { exportCalendarShiftsToCSV } from "../integration/csv";
 import { ENABLE_DRAG_DROP } from "../config/featureFlags";
 import { checkShiftConflicts } from "../utils/shifts";
-
+import ConflictBadge from "../components/ConflictBadge";
+import {
+  getShiftTemplateColor,
+  ShiftCell,
+  TimelineShiftCell,
+} from "../ui/calendar-views";
+import { keyboardNav } from "../ui/accessibility";
+import { exportShiftsToICal } from "../integration/ical";
+import { exportCalendarShiftsToCSV } from "../integration/csv";
+import { QUICK_ACTIONS } from "../ui/calendar-views";
 const DAYS = [
   "Montag",
   "Dienstag",
@@ -36,7 +35,7 @@ const HOURS = Array.from(
   (_, i) => `${String(i).padStart(2, "0")}:00`,
 );
 const DAY_MINUTES = 24 * 60;
-const PX_PER_HOUR = 48; // calendar row height baseline
+const PX_PER_HOUR = 48; // pixel height per hour for the timeline grid
 const DAY_HEIGHT = 24 * PX_PER_HOUR;
 
 function buildDate(dateLike) {
@@ -80,10 +79,23 @@ function getShiftSpanForDay(shift, dayDate) {
 const CalendarCell = React.memo(
   ({ day, onDayClick, onShiftClick, onQuickAction, templates = [] }) => (
     <div
+      role="gridcell"
+      tabIndex={0}
+      aria-label={`${day.date.toLocaleDateString("de-DE")}${
+        day.shifts.length > 0
+          ? `, ${day.shifts.length} Dienst${day.shifts.length > 1 ? "e" : ""}`
+          : ", keine Schichten"
+      }`}
       className={`min-h-[100px] p-2 border-r border-b border-gray-200 last:border-r-0 cursor-pointer hover:bg-gray-50 ${
         !day.isCurrentMonth ? "bg-gray-50 text-gray-400" : ""
       } ${day.isToday ? "bg-blue-50 ring-2 ring-blue-500 ring-inset" : ""}`}
       onClick={() => onDayClick(day)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onDayClick(day);
+        }
+      }}
     >
       <div className="text-sm font-medium mb-1">{day.date.getDate()}</div>
 
@@ -114,7 +126,14 @@ CalendarCell.displayName = "CalendarCell";
 
 // Mobile Calendar Day Card Component
 const MobileCalendarDay = React.memo(
-  ({ day, shifts, onShiftClick, onQuickAction, templates, isToday }) => {
+  ({
+    day,
+    shifts,
+    onShiftClick,
+    onQuickAction: _onQuickAction,
+    templates,
+    isToday,
+  }) => {
     // Calculate compressed time range for mobile display
     const getTimeRange = () => {
       if (shifts.length === 0) return null;
@@ -242,14 +261,8 @@ MobileCalendarDay.displayName = "MobileCalendarDay";
 
 export default function Calendar() {
   // Named export for clearer stack traces
-  const {
-    state,
-    applyToShift,
-    assignShift,
-    updateShift,
-    undoLastShiftUpdate,
-    repository,
-  } = useShifts();
+  const { state, applyToShift, assignShift, updateShift, undoLastShiftUpdate } =
+    useShifts();
   const { templates } = useShiftTemplates();
   // Initialize to earliest shift date (improves default relevance & fixes test expectations)
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -319,8 +332,7 @@ export default function Calendar() {
   const [shakeElement, setShakeElement] = useState(null);
 
   // Keyboard navigation state
-  const [focusedDay, setFocusedDay] = useState(null);
-  const [focusedTimeSlot, setFocusedTimeSlot] = useState(null);
+  const [_focusedDay, setFocusedDay] = useState(null);
 
   const auth = useContext(AuthContext);
   const userRole = auth?.user?.role || "analyst";
@@ -889,6 +901,7 @@ export default function Calendar() {
               onClick={() => setViewMode("week")}
               aria-pressed={viewMode === "week"}
               aria-label="Wochenansicht"
+              tabIndex={0}
               className={`px-3 py-2 xs:px-4 xs:py-3 text-sm font-medium rounded-l-md border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 xs:min-h-[44px] ${
                 viewMode === "week"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
@@ -902,6 +915,7 @@ export default function Calendar() {
               onClick={() => setViewMode("month")}
               aria-pressed={viewMode === "month"}
               aria-label="Monatsansicht"
+              tabIndex={0}
               className={`px-3 py-2 xs:px-4 xs:py-3 text-sm font-medium border-l-0 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 xs:min-h-[44px] ${
                 viewMode === "month"
                   ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)]"
@@ -931,11 +945,6 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              aria-label={
-                viewMode === "month"
-                  ? "Zum vorherigen Monat navigieren"
-                  : "Zur vorherigen Woche navigieren"
-              }
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               {viewMode === "month" ? "Vorheriger Monat" : "Vorherige Woche"}
@@ -945,7 +954,6 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => setSelectedDate(new Date())}
-              aria-label="Zu heute navigieren"
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               Heute
@@ -955,11 +963,6 @@ export default function Calendar() {
             <button
               type="button"
               onClick={() => navigate(1)}
-              aria-label={
-                viewMode === "month"
-                  ? "Zum nächsten Monat navigieren"
-                  : "Zur nächsten Woche navigieren"
-              }
               className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               {viewMode === "month" ? "Nächster Monat" : "Nächste Woche"}
@@ -994,7 +997,6 @@ export default function Calendar() {
             <button
               type="button"
               onClick={handleCreateShift}
-              aria-label="Neuen Dienst erstellen"
               className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm bg-[var(--color-primary)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
             >
               Dienst erstellen
@@ -1081,165 +1083,190 @@ export default function Calendar() {
               className="min-w-[960px] calendar-week-grid"
               onKeyDown={handleCalendarKeyDown}
             >
-              {/* Header */}
               <div
-                className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
-                role="rowgroup"
-              >
-                <div
-                  className="p-2 text-xs font-medium text-gray-500"
-                  role="columnheader"
-                >
-                  Zeit
-                </div>
-                {DAYS.map((label, idx) => {
-                  const d = new Date(weekStart);
-                  d.setDate(weekStart.getDate() + idx);
-                  return (
-                    <div
-                      key={label}
-                      className="p-2 text-center text-xs font-medium text-gray-600"
-                      role="columnheader"
-                      aria-label={`${label}, ${d.toLocaleDateString("de-DE", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}`}
-                    >
-                      <div>{label}</div>
-                      <div className="text-[10px] text-gray-400">
-                        {d.toLocaleDateString("de-DE", {
-                          day: "2-digit",
-                          month: "2-digit",
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div
-                className="grid grid-cols-8"
                 role="grid"
                 aria-label={`Kalenderwoche vom ${weekStart.toLocaleDateString("de-DE")}`}
               >
-                {/* Time column */}
-                <div
-                  className="relative border-r border-gray-200"
-                  style={{ height: DAY_HEIGHT }}
-                >
-                  {HOURS.map((h, i) => (
+                {/* Header inside grid */}
+                <div role="rowgroup">
+                  <div
+                    className="grid grid-cols-8 bg-gray-100 border-b border-gray-200"
+                    role="row"
+                  >
                     <div
-                      key={h}
-                      className="absolute left-0 w-full flex items-start"
-                      style={{ top: i * PX_PER_HOUR }}
+                      className="p-2 text-xs font-medium text-gray-500"
+                      role="columnheader"
                     >
-                      <div className="text-[10px] text-gray-400 pl-1 -mt-2">
-                        {h}
-                      </div>
-                      <div className="w-full h-px bg-gray-100 translate-y-4" />
+                      Zeit
                     </div>
-                  ))}
+                    {DAYS.map((label, idx) => {
+                      const d = new Date(weekStart);
+                      d.setDate(weekStart.getDate() + idx);
+                      return (
+                        <div
+                          key={label}
+                          className="p-2 text-center text-xs font-medium text-gray-600"
+                          role="columnheader"
+                          aria-label={`${label}, ${d.toLocaleDateString(
+                            "de-DE",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            },
+                          )}`}
+                        >
+                          <div>{label}</div>
+                          <div className="text-[10px] text-gray-400">
+                            {d.toLocaleDateString("de-DE", {
+                              day: "2-digit",
+                              month: "2-digit",
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                {/* Day columns */}
-                {DAYS.map((_, dayIdx) => {
-                  const dayDate = new Date(weekStart);
-                  dayDate.setDate(weekStart.getDate() + dayIdx);
-                  const dayStart = new Date(dayDate);
-                  dayStart.setHours(0, 0, 0, 0);
-                  const dayEnd = new Date(dayStart);
-                  dayEnd.setDate(dayEnd.getDate() + 1);
-                  const dayShifts = weekShifts.filter((shift) => {
-                    const base = buildDate(shift.date);
-                    const s = combine(base, shift.start);
-                    let e = combine(base, shift.end);
-                    if (e <= s) e.setDate(e.getDate() + 1);
-                    return s < dayEnd && e > dayStart;
-                  });
-                  return (
+
+                {/* Body inside grid */}
+                <div role="rowgroup">
+                  <div className="grid grid-cols-8" role="row">
+                    {/* Time column (gridcell) */}
                     <div
-                      key={dayIdx}
-                      className={`relative border-r border-gray-100 ${
-                        dragOverDay &&
-                        dragOverDay.getTime() === dayDate.getTime()
-                          ? dragValid
-                            ? "drag-valid-zone"
-                            : "drag-invalid-zone"
-                          : ""
-                      } ${
-                        shakeElement &&
-                        shakeElement.getTime &&
-                        shakeElement.getTime() === dayDate.getTime()
-                          ? "drag-shake"
-                          : ""
-                      }`}
+                      className="relative border-r border-gray-200"
                       style={{ height: DAY_HEIGHT }}
                       role="gridcell"
                       tabIndex={0}
-                      aria-label={`${DAYS[dayIdx]}, ${dayDate.toLocaleDateString("de-DE")}${dayShifts.length > 0 ? `, ${dayShifts.length} Dienst${dayShifts.length > 1 ? "e" : ""}` : ", keine Dienste"}`}
-                      onDragOver={(e) => handleDayDragOver(e, dayDate)}
-                      onDragLeave={handleDayDragLeave}
-                      onDrop={(e) => handleDayDrop(e, dayDate)}
-                      onFocus={() => setFocusedDay(dayDate)}
-                      onBlur={() => setFocusedDay(null)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          // Open create shift modal for this day
-                          setSelectedDate(dayDate);
-                          setIsCreateOpen(true);
-                        }
-                      }}
+                      aria-label="Zeitachse"
                     >
-                      {/* Hour grid lines */}
-                      {HOURS.map((_, i) => (
+                      {HOURS.map((h, i) => (
                         <div
-                          key={i}
-                          className="absolute left-0 w-full h-px bg-gray-100"
+                          key={h}
+                          className="absolute left-0 w-full flex items-start"
                           style={{ top: i * PX_PER_HOUR }}
-                        />
+                        >
+                          <div className="text-[10px] text-gray-400 pl-1 -mt-2">
+                            {h}
+                          </div>
+                          <div className="w-full h-px bg-gray-100 translate-y-4" />
+                        </div>
                       ))}
-
-                      {/* Drag preview indicator */}
-                      {dragOverDay &&
-                        dragOverDay.getTime() === dayDate.getTime() &&
-                        dragOverTime && (
-                          <div
-                            className="absolute left-0 right-0 h-1 bg-blue-400 opacity-75 z-10"
-                            style={{
-                              top:
-                                ((parseInt(dragOverTime.split(":")[0]) * 60 +
-                                  parseInt(dragOverTime.split(":")[1])) /
-                                  DAY_MINUTES) *
-                                DAY_HEIGHT,
-                            }}
-                          />
-                        )}
-
-                      {dayShifts.map((shift) => {
-                        const span = getShiftSpanForDay(shift, dayDate);
-                        if (!span) return null;
-                        return (
-                          <TimelineShiftCell
-                            key={`${shift.id}_${dayIdx}`}
-                            shift={shift}
-                            templates={templates}
-                            span={span}
-                            dayIdx={dayIdx}
-                            onShiftClick={handleShiftClick}
-                            onQuickAction={handleQuickAction}
-                            onDragStart={(e) => handleShiftDragStart(e, shift)}
-                            onDragEnd={handleShiftDragEnd}
-                            isDraggable={
-                              ENABLE_DRAG_DROP && canManageShifts(userRole)
-                            }
-                            isDragged={draggedShift?.id === shift.id}
-                            conflicts={shift.conflicts || []}
-                          />
-                        );
-                      })}
                     </div>
-                  );
-                })}
+
+                    {/* Day columns */}
+                    {DAYS.map((_, dayIdx) => {
+                      const dayDate = new Date(weekStart);
+                      dayDate.setDate(weekStart.getDate() + dayIdx);
+                      const dayStart = new Date(dayDate);
+                      dayStart.setHours(0, 0, 0, 0);
+                      const dayEnd = new Date(dayStart);
+                      dayEnd.setDate(dayEnd.getDate() + 1);
+                      const dayShifts = weekShifts.filter((shift) => {
+                        const base = buildDate(shift.date);
+                        const s = combine(base, shift.start);
+                        let e = combine(base, shift.end);
+                        if (e <= s) e.setDate(e.getDate() + 1);
+                        return s < dayEnd && e > dayStart;
+                      });
+                      return (
+                        <div
+                          key={dayIdx}
+                          className={`relative border-r border-gray-100 ${
+                            dragOverDay &&
+                            dragOverDay.getTime() === dayDate.getTime()
+                              ? dragValid
+                                ? "drag-valid-zone"
+                                : "drag-invalid-zone"
+                              : ""
+                          } ${
+                            shakeElement &&
+                            shakeElement.getTime &&
+                            shakeElement.getTime() === dayDate.getTime()
+                              ? "drag-shake"
+                              : ""
+                          }`}
+                          style={{ height: DAY_HEIGHT }}
+                          role="gridcell"
+                          tabIndex={0}
+                          aria-label={`${
+                            dayShifts.length > 0 ? `${DAYS[dayIdx]}, ` : ""
+                          }${dayDate.toLocaleDateString("de-DE")}${
+                            dayShifts.length > 0
+                              ? `, ${dayShifts.length} Dienst${
+                                  dayShifts.length > 1 ? "e" : ""
+                                }`
+                              : ", keine Schichten"
+                          }`}
+                          onDragOver={(e) => handleDayDragOver(e, dayDate)}
+                          onDragLeave={handleDayDragLeave}
+                          onDrop={(e) => handleDayDrop(e, dayDate)}
+                          onFocus={() => setFocusedDay(dayDate)}
+                          onBlur={() => setFocusedDay(null)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              // Open create shift modal for this day
+                              setSelectedDate(dayDate);
+                              setIsCreateOpen(true);
+                            }
+                          }}
+                        >
+                          {/* Hour grid lines */}
+                          {HOURS.map((_, i) => (
+                            <div
+                              key={i}
+                              className="absolute left-0 w-full h-px bg-gray-100"
+                              style={{ top: i * PX_PER_HOUR }}
+                            />
+                          ))}
+
+                          {/* Drag preview indicator */}
+                          {dragOverDay &&
+                            dragOverDay.getTime() === dayDate.getTime() &&
+                            dragOverTime && (
+                              <div
+                                className="absolute left-0 right-0 h-1 bg-blue-400 opacity-75 z-10"
+                                style={{
+                                  top:
+                                    ((parseInt(dragOverTime.split(":")[0]) *
+                                      60 +
+                                      parseInt(dragOverTime.split(":")[1])) /
+                                      DAY_MINUTES) *
+                                    DAY_HEIGHT,
+                                }}
+                              />
+                            )}
+
+                          {dayShifts.map((shift) => {
+                            const span = getShiftSpanForDay(shift, dayDate);
+                            if (!span) return null;
+                            return (
+                              <TimelineShiftCell
+                                key={`${shift.id}_${dayIdx}`}
+                                shift={shift}
+                                templates={templates}
+                                span={span}
+                                dayIdx={dayIdx}
+                                onShiftClick={handleShiftClick}
+                                onQuickAction={handleQuickAction}
+                                onDragStart={(e) =>
+                                  handleShiftDragStart(e, shift)
+                                }
+                                onDragEnd={handleShiftDragEnd}
+                                isDraggable={
+                                  ENABLE_DRAG_DROP && canManageShifts(userRole)
+                                }
+                                isDragged={draggedShift?.id === shift.id}
+                                conflicts={shift.conflicts || []}
+                              />
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1265,40 +1292,52 @@ export default function Calendar() {
             </h2>
           </div>
 
-          {/* Day headers */}
+          {/* Month Grid with proper ARIA semantics */}
           <div
-            className="grid grid-cols-7 bg-gray-50 border-b border-gray-200"
-            role="rowgroup"
-          >
-            {DAYS.map((day) => (
-              <div
-                key={day}
-                className="p-2 text-center text-xs font-medium text-gray-600 border-r border-gray-200 last:border-r-0"
-                role="columnheader"
-                aria-label={day}
-              >
-                {day.slice(0, 2)}
-              </div>
-            ))}
-          </div>
-
-          {/* Month Grid */}
-          <div
-            className="grid grid-cols-7"
             role="grid"
             aria-labelledby="month-heading"
             onKeyDown={handleCalendarKeyDown}
           >
-            {monthDays.map((day, index) => (
-              <CalendarCell
-                key={index}
-                day={day}
-                onDayClick={handleDayClick}
-                onShiftClick={handleShiftClick}
-                onQuickAction={handleQuickAction}
-                templates={templates}
-              />
-            ))}
+            {/* Day headers inside grid */}
+            <div role="rowgroup">
+              <div
+                className="grid grid-cols-7 bg-gray-50 border-b border-gray-200"
+                role="row"
+              >
+                {DAYS.map((day) => (
+                  <div
+                    key={day}
+                    className="p-2 text-center text-xs font-medium text-gray-600 border-r border-gray-200 last:border-r-0"
+                    role="columnheader"
+                    aria-label={day}
+                  >
+                    {day.slice(0, 2)}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Month days split into rows (weeks) */}
+            <div role="rowgroup">
+              {Array.from({ length: Math.ceil(monthDays.length / 7) }).map(
+                (_, rowIdx) => (
+                  <div key={rowIdx} className="grid grid-cols-7" role="row">
+                    {monthDays
+                      .slice(rowIdx * 7, rowIdx * 7 + 7)
+                      .map((day, colIdx) => (
+                        <CalendarCell
+                          key={`${rowIdx}-${colIdx}`}
+                          day={day}
+                          onDayClick={handleDayClick}
+                          onShiftClick={handleShiftClick}
+                          onQuickAction={handleQuickAction}
+                          templates={templates}
+                        />
+                      ))}
+                  </div>
+                ),
+              )}
+            </div>
           </div>
         </div>
       )}

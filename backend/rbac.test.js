@@ -1,7 +1,6 @@
 // Import for ES modules environment that needs to be tested in CommonJS Jest
 import {
   ROLES,
-  ROLE_HIERARCHY,
   hasPermission,
   Permissions,
   extractUserRole,

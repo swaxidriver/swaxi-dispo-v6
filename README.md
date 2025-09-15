@@ -103,6 +103,7 @@ Ein modernes Schichtplanungssystem für Swaxi-Fahrer mit **Hybrid SharePoint/loc
 - **[RBAC Integration](docs/RBAC_INTEGRATION.md)** - Role-based access control documentation
 - **[GitHub Setup Guide](docs/github-setup-guide.md)** - Repository configuration and workflow
 - **[Contrast Audit Plan](docs/contrast-audit-plan.md)** - Accessibility compliance guidelines
+- **[Development quick guide](docs/DEVELOPMENT.md)** - VS Code tasks, Windows tips, testing, and automation
 
 ### **🛠 Scripts & Automation**
 

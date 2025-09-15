@@ -88,7 +88,7 @@ function extractUserRole(req) {
       const token = authHeader.substring(7);
       const decoded = JSON.parse(Buffer.from(token, "base64").toString());
       return decoded.role;
-    } catch (error) {
+    } catch (_error) {
       // Invalid token format
     }
   }

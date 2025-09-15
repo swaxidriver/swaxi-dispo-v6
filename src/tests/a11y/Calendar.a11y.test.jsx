@@ -151,15 +151,13 @@ describe("Calendar Accessibility", () => {
       </TestWrapper>,
     );
 
-    // Week view navigation
+    // Week view navigation (visible text as accessible names)
     expect(
-      screen.getByRole("button", { name: /zur vorherigen woche navigieren/i }),
+      screen.getByRole("button", { name: /vorherige woche/i }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /heute/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /zu heute navigieren/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /zur nächsten woche navigieren/i }),
+      screen.getByRole("button", { name: /nächste woche/i }),
     ).toBeInTheDocument();
 
     // Switch to month view
@@ -168,10 +166,10 @@ describe("Calendar Accessibility", () => {
 
     // Month view navigation
     expect(
-      screen.getByRole("button", { name: /zum vorherigen monat navigieren/i }),
+      screen.getByRole("button", { name: /vorheriger monat/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /zum nächsten monat navigieren/i }),
+      screen.getByRole("button", { name: /nächster monat/i }),
     ).toBeInTheDocument();
   });
 

@@ -1,3 +1,7 @@
+/* eslint-disable import/order */
+import { TextEncoder, TextDecoder } from "util";
+
+import { jest as jestGlobal } from "@jest/globals";
 import "@testing-library/jest-dom";
 
 // Mock Vite build globals for components that depend on them
@@ -37,20 +41,19 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia for mobile device detection
 Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: jestGlobal.fn().mockImplementation((query) => ({
     matches: false, // Default to desktop
     media: query,
     onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: jestGlobal.fn(), // Deprecated
+    removeListener: jestGlobal.fn(), // Deprecated
+    addEventListener: jestGlobal.fn(),
+    removeEventListener: jestGlobal.fn(),
+    dispatchEvent: jestGlobal.fn(),
   })),
 });
 
 // Polyfill TextEncoder/TextDecoder for react-router (Node 20 jsdom environment)
-import { TextEncoder, TextDecoder } from "util";
 if (!global.TextEncoder) global.TextEncoder = TextEncoder;
 if (!global.TextDecoder) global.TextDecoder = TextDecoder;
 

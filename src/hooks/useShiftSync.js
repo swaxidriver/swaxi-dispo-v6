@@ -1,14 +1,15 @@
 /**
  * useShiftSync - Synchronization and Persistence Hook
- * 
+ *
  * Handles online/offline synchronization, localStorage persistence,
  * and repository management. Manages the offline action queue and
  * automatic syncing when connectivity is restored.
- * 
+ *
  * @module useShiftSync
  */
 
 import { useEffect, useRef, useCallback } from "react";
+
 import { getShiftRepository } from "../repository/repositoryFactory";
 import { checkShiftConflicts } from "../utils/shifts";
 import { validateShiftArray } from "../utils/validation";
@@ -38,7 +39,7 @@ export function useShiftSync(state, actions, refs, config = {}) {
 
   const repoRef = useRef(null);
   const actionsRef = useRef(actions);
-  
+
   // Keep actions ref updated
   useEffect(() => {
     actionsRef.current = actions;
@@ -71,7 +72,10 @@ export function useShiftSync(state, actions, refs, config = {}) {
     try {
       localStorage.setItem("shifts", JSON.stringify(state.shifts));
       localStorage.setItem("applications", JSON.stringify(state.applications));
-      localStorage.setItem("notifications", JSON.stringify(state.notifications));
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(state.notifications),
+      );
     } catch (error) {
       console.warn("Failed to save to localStorage:", error);
     }
@@ -85,7 +89,11 @@ export function useShiftSync(state, actions, refs, config = {}) {
       const lsShifts = localStorage.getItem("shifts");
       if (lsShifts) {
         const parsed = JSON.parse(lsShifts);
-        if (Array.isArray(parsed) && parsed.length && !refs.bootstrapped.current) {
+        if (
+          Array.isArray(parsed) &&
+          parsed.length &&
+          !refs.bootstrapped.current
+        ) {
           const withConflicts = parsed.map((s) => ({
             ...s,
             conflicts: checkShiftConflicts(
@@ -158,7 +166,13 @@ export function useShiftSync(state, actions, refs, config = {}) {
         return;
       }
 
-      if (!enableAsyncInTests && process.env.NODE_ENV === "test") {
+      const isTestEnv =
+        typeof globalThis !== "undefined" &&
+        globalThis &&
+        globalThis.process &&
+        globalThis.process.env &&
+        globalThis.process.env.NODE_ENV === "test";
+      if (!enableAsyncInTests && isTestEnv) {
         return;
       }
 
@@ -192,7 +206,7 @@ export function useShiftSync(state, actions, refs, config = {}) {
         }
       } catch (error) {
         console.warn("Failed to bootstrap from repository:", error);
-        
+
         // Apply seed data as fallback
         if (state.shifts.length === 0 && !refs.seeded.current) {
           applyInitialSeedIfEmpty(actionsRef.current.initShifts);
@@ -206,12 +220,7 @@ export function useShiftSync(state, actions, refs, config = {}) {
     return () => {
       cancelled = true;
     };
-  }, [
-    disableAsyncBootstrap,
-    enableAsyncInTests,
-    state.shifts.length,
-    refs,
-  ]);
+  }, [disableAsyncBootstrap, enableAsyncInTests, state.shifts.length, refs]);
 
   /**
    * Auto-save to localStorage when data changes
@@ -220,7 +229,13 @@ export function useShiftSync(state, actions, refs, config = {}) {
     if (refs.bootstrapped.current) {
       saveToLocalStorage();
     }
-  }, [state.shifts, state.applications, state.notifications, saveToLocalStorage, refs.bootstrapped]);
+  }, [
+    state.shifts,
+    state.applications,
+    state.notifications,
+    saveToLocalStorage,
+    refs.bootstrapped,
+  ]);
 
   /**
    * Monitor online status and sync offline queue
@@ -294,12 +309,14 @@ export function useShiftSync(state, actions, refs, config = {}) {
                 }
               } else if (act.type === "withdraw") {
                 try {
-                  await repoRef.current?.withdrawApplication?.(act.payload.applicationId);
+                  await repoRef.current?.withdrawApplication?.(
+                    act.payload.applicationId,
+                  );
                 } catch {
                   enqueue(act);
                 }
               }
-            })
+            }),
           );
           drainQueue(); // Clear processed items
         } catch (error) {
@@ -320,30 +337,37 @@ export function useShiftSync(state, actions, refs, config = {}) {
    * Restore state from snapshot
    * @param {Object} snapshot - Snapshot data to restore
    */
-  const restoreFromSnapshot = useCallback((snapshot) => {
-    if (!snapshot || !snapshot.data) return;
-    
-    const {
-      shifts = [],
-      applications = [],
-      notifications = [],
-      lastActivity = Date.now(),
-    } = snapshot.data;
+  const restoreFromSnapshot = useCallback(
+    (snapshot) => {
+      if (!snapshot || !snapshot.data) return;
 
-    // Recompute conflicts for restored shifts
-    const normalized = shifts.map((s) => {
-      const conflicts = checkShiftConflicts(s, shifts.filter((o) => o.id !== s.id), applications);
-      return { ...s, conflicts };
-    });
+      const {
+        shifts = [],
+        applications = [],
+        notifications = [],
+        lastActivity = Date.now(),
+      } = snapshot.data;
 
-    // Update state
-    actionsRef.current.initShifts(normalized);
-    actionsRef.current.initApplications(applications);
-    actionsRef.current.initNotifications(notifications);
-    actionsRef.current.setLastActivity(lastActivity);
+      // Recompute conflicts for restored shifts
+      const normalized = shifts.map((s) => {
+        const conflicts = checkShiftConflicts(
+          s,
+          shifts.filter((o) => o.id !== s.id),
+          applications,
+        );
+        return { ...s, conflicts };
+      });
 
-    refs.bootstrapped.current = true;
-  }, [refs]);
+      // Update state
+      actionsRef.current.initShifts(normalized);
+      actionsRef.current.initApplications(applications);
+      actionsRef.current.initNotifications(notifications);
+      actionsRef.current.setLastActivity(lastActivity);
+
+      refs.bootstrapped.current = true;
+    },
+    [refs],
+  );
 
   /**
    * Create snapshot of current state
@@ -372,13 +396,13 @@ export function useShiftSync(state, actions, refs, config = {}) {
 
     try {
       // Push pending changes
-      const pendingShifts = state.shifts.filter(s => s.pendingSync);
+      const pendingShifts = state.shifts.filter((s) => s.pendingSync);
       await Promise.allSettled(
-        pendingShifts.map(shift => repoRef.current.updateShift(shift))
+        pendingShifts.map((shift) => repoRef.current.updateShift(shift)),
       );
 
       // Mark as synced
-      pendingShifts.forEach(shift => {
+      pendingShifts.forEach((shift) => {
         actionsRef.current.updateShift({ ...shift, pendingSync: false });
       });
 

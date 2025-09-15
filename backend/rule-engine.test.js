@@ -3,7 +3,6 @@
  */
 
 import { RuleEngine, RULES, ruleEngine } from "./rule-engine.js";
-import { CONFLICT_CODES } from "../src/features/shifts/shifts.js";
 
 // Mock the audit service for testing
 jest.mock("../src/services/auditService.js", () => ({

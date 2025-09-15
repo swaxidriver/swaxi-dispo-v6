@@ -5,11 +5,9 @@
 // Detect Jest without assuming Node globals in browser lint context
 const isTestEnv = (() => {
   try {
-    // eslint-disable-next-line no-undef
-    return (
-      typeof process !== "undefined" &&
-      process?.env?.JEST_WORKER_ID !== undefined
-    );
+    const p =
+      typeof globalThis !== "undefined" ? globalThis.process : undefined;
+    return p?.env?.JEST_WORKER_ID !== undefined;
   } catch (_) {
     return false;
   }

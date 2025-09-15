@@ -40,19 +40,19 @@ describe("Calendar Month/Week View", () => {
 
     expect(screen.getByText("Kalender")).toBeInTheDocument();
     expect(screen.getByText("Wochenübersicht der Dienste")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Woche" })).toHaveClass(
+    expect(screen.getByRole("button", { name: "Wochenansicht" })).toHaveClass(
       "bg-[var(--color-primary)]",
     );
-    expect(screen.getByRole("button", { name: "Monat" })).not.toHaveClass(
-      "bg-[var(--color-primary)]",
-    );
+    expect(
+      screen.getByRole("button", { name: "Monatsansicht" }),
+    ).not.toHaveClass("bg-[var(--color-primary)]");
     expect(screen.getByText("Diese Woche")).toBeInTheDocument();
   });
 
   it("switches to month view when Monat button is clicked", async () => {
     renderWithProviders(<Calendar />);
 
-    const monthButton = screen.getByRole("button", { name: "Monat" });
+    const monthButton = screen.getByRole("button", { name: "Monatsansicht" });
     fireEvent.click(monthButton);
 
     await waitFor(() => {
@@ -62,9 +62,9 @@ describe("Calendar Month/Week View", () => {
     });
 
     expect(monthButton).toHaveClass("bg-[var(--color-primary)]");
-    expect(screen.getByRole("button", { name: "Woche" })).not.toHaveClass(
-      "bg-[var(--color-primary)]",
-    );
+    expect(
+      screen.getByRole("button", { name: "Wochenansicht" }),
+    ).not.toHaveClass("bg-[var(--color-primary)]");
     expect(screen.getByText("Dieser Monat")).toBeInTheDocument();
 
     // Should show month header
@@ -80,7 +80,7 @@ describe("Calendar Month/Week View", () => {
     renderWithProviders(<Calendar />);
 
     // Switch to month view first
-    fireEvent.click(screen.getByRole("button", { name: "Monat" }));
+    fireEvent.click(screen.getByRole("button", { name: "Monatsansicht" }));
     await waitFor(() => {
       expect(
         screen.getByText("Monatsübersicht der Dienste"),
@@ -88,7 +88,7 @@ describe("Calendar Month/Week View", () => {
     });
 
     // Switch back to week view
-    const weekButton = screen.getByRole("button", { name: "Woche" });
+    const weekButton = screen.getByRole("button", { name: "Wochenansicht" });
     fireEvent.click(weekButton);
 
     await waitFor(() => {
@@ -98,9 +98,9 @@ describe("Calendar Month/Week View", () => {
     });
 
     expect(weekButton).toHaveClass("bg-[var(--color-primary)]");
-    expect(screen.getByRole("button", { name: "Monat" })).not.toHaveClass(
-      "bg-[var(--color-primary)]",
-    );
+    expect(
+      screen.getByRole("button", { name: "Monatsansicht" }),
+    ).not.toHaveClass("bg-[var(--color-primary)]");
     expect(screen.getByText("Diese Woche")).toBeInTheDocument();
   });
 
@@ -124,7 +124,7 @@ describe("Calendar Month/Week View", () => {
   it("shows appropriate navigation buttons for month view", async () => {
     renderWithProviders(<Calendar />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Monat" }));
+    fireEvent.click(screen.getByRole("button", { name: "Monatsansicht" }));
 
     await waitFor(() => {
       expect(
@@ -147,7 +147,7 @@ describe("Calendar Month/Week View", () => {
     renderWithProviders(<Calendar />);
 
     // Switch to month view
-    fireEvent.click(screen.getByRole("button", { name: "Monat" }));
+    fireEvent.click(screen.getByRole("button", { name: "Monatsansicht" }));
 
     await waitFor(() => {
       expect(
@@ -183,7 +183,7 @@ describe("Calendar Month/Week View", () => {
     fireEvent.click(screen.getByRole("button", { name: "Nächste Woche" }));
 
     // Switch to month view
-    fireEvent.click(screen.getByRole("button", { name: "Monat" }));
+    fireEvent.click(screen.getByRole("button", { name: "Monatsansicht" }));
 
     await waitFor(() => {
       expect(
@@ -192,7 +192,7 @@ describe("Calendar Month/Week View", () => {
     });
 
     // Switch back to week view - should be on the same date
-    fireEvent.click(screen.getByRole("button", { name: "Woche" }));
+    fireEvent.click(screen.getByRole("button", { name: "Wochenansicht" }));
 
     await waitFor(() => {
       expect(
@@ -207,7 +207,7 @@ describe("Calendar Month/Week View", () => {
   it("shows month grid layout in month view", async () => {
     renderWithProviders(<Calendar />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Monat" }));
+    fireEvent.click(screen.getByRole("button", { name: "Monatsansicht" }));
 
     await waitFor(() => {
       expect(
